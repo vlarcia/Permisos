@@ -1,0 +1,267 @@
+﻿@{
+    ViewData["Title"] = "Plan_Trabajo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datepicker/bootstrap-datepicker.min.css">
+}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-second-primary">
+                    <h6 class="m-0 font-weight-bold text-white">Plan de Trabajo</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Agrupar los datos generales del plan dentro de un form -->
+                    <form id="form-plan">
+                        <div class="form row input-group input-group-sm mb-2 col-sm-10">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="cboFinca">Código Finca</label>
+                            </div>
+                            <select class="custom-select input-validar" id="cboFinca" name="CodigoFinca">
+                            </select>
+                            <input type="text" class="mb-0 col-sm-9" id="txtNombreFinca" name="NombreFinca" disabled>
+                            <input type="hidden" id="txtIdFinca" name="idFinca">
+                        </div>
+
+                        <div class="form row input-group input-group-sm mb-2 col-sm-10">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputDescripcionPlan">Descripción del Plan</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputDescripcionPlan" id="txtDescripcionPlan" name="DescripcionPlan">
+                        </div>
+
+                        <div class="form row input-group input-group-sm mb-2 col-sm-5">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputFechainicial">Inicia</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputFechainicial" id="txtFechainicial" name="FechaInicial">
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputFechafinal">Finaliza</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputFechafinal" id="txtFechafinal" name="FechaFinal">
+                        </div>
+
+                        <div class="form row col-sm-5">
+                            <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputAvance">Avance %</span>
+                                </div>
+                                <input type="text" class="form-control text-right input-validar" aria-label="Small" aria-describedby="inputAvance" id="txtAvance" name="Avance">
+
+                                <div class="input-group-prepend pl-3">
+                                    <label class="input-group-text" for="cboEstadoPlan">Estado</label>
+                                </div>
+                                <select class="custom-select input-validar" id="cboEstadoPlan" name="EstadoPlan">
+                                    <option value="NO INICIADO">No Iniciado</option>
+                                    <option value="INICIADO">Iniciado</option>
+                                    <option value="EN PROCESO">En Proceso</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form row input-group input-group-sm mb-2 col-sm-10">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputObservaciones">Observaciones</span>
+                            </div>
+                            <textarea type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputObservaciones" id="txtObservaciones" name="Observaciones"></textarea>
+                        </div>
+                    </form>
+
+                    <!-- Botón Guardar -->
+                    <div class="d-flex">
+                        <div class="ml-auto">
+                            <div class="card shadow">
+                                <div class="form-group mb-0">
+                                    @* <button class="btn btn-success btn-sm btn-block" id="btnGuardarPlan">Guardar Plan de Trabajo</button> *@
+                                    <button class="btn btn-success" id="btnGuardarPlan"><i class="fas fa-plus"></i> Guardar Plan de Trabajo</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div> 
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 bg-second-primary">
+                            <h6 class="m-0 font-weight-bold text-white">Actividades</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <button class="btn btn-success" id="btnNuevo"><i class="fas fa-calendar-plus"></i> Nueva Actividad</button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="tbActividad" class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Descripción</th>
+                                                <th>Tipo</th>
+                                                <th>Fecha Inic</th>
+                                                <th>Fecha Fin</th>
+                                                <th>Respons.</th>
+                                                <th>Recursos</th>
+                                                <th>Estado</th>
+                                                <th>Avance %</th>
+                                                <th>Comentarios</th>
+                                                <th hidden>Requisito</th> <!-- Columna oculta -->
+                                                <th>Accion</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Las actividades se agregarán dinámicamente aquí -->
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--  Modal-->
+    <div class="modal fade" id="modalActividad" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Detalle Actividad</h6>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-actividad">
+                        <div class="form-group">
+                            <label for="txtDescripcionActividad">Descripción</label>
+                            <textarea class="form-control input-validar" id="txtDescripcionActividad" rows="2" name="DescripcionAct"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-4">
+                                <label for="cboTipo">Tipo</label>
+                                <select class="form-control input-validar" id="cboTipo">
+                                    <option value="DOCUMENTAL">Documental</option>
+                                    <option value="PROCEDIMENTAL">Procedimental</option>
+                                    <option value="INFRAESTRUCTURA">Infraestructura</option>
+                                </select>
+
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label for="txtFechainicio">Fecha Inicio</label>
+                                <input type="text" class="form-control input-validar" id="txtFechainicio" name="Fechainicio">
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label for="txtFechafin">Fecha Fin</label>
+                                <input type="text" class="form-control input-validar" id="txtFechafin" name="Fechafin">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-sm-6">
+                                <label for="txtResponsable">Responsable</label>
+                                <input type="text" class="form-control form-control-sm input-validar" id="txtResponsable" name="Responsable">
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtRecursos">Recursos</label>
+                                <input type="text" class="form-control form-control-sm input-validar" id="txtRecursos" name="Recursos">
+
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-sm-6">
+                                <label for="cboEstado">Estado</label>
+                                <select class="form-control form-control-sm" id="cboEstado">
+                                    <option value="INICIADO">Iniciado</option>
+                                    <option value="EN PROCESO">En Proceso</option>
+                                    <option value="FINALIZADO">Finalizado</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtAvanceAct">Avance Act.</label>
+                                <input type="text" class="form-control form-control-sm input-validar" id="txtAvanceAct" name="Avance">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtComentarios">Comentarios</label>
+                            <textarea class="form-control form-control-sm input-validar" id="txtComentarios" name="Comentarios" rows="2"></textarea>
+                        </div>
+                        <div class="form row input-group input-group-sm mb-2 col-sm-12">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="cboRequisito">Código Requisito</label>
+                            </div>
+                            <select class="custom-select input-validar" id="cboRequisito" name="CodigoRequisito">
+                            </select>
+                            <input type="text" class="mb-0 col-sm-8" id="txtRequisito" name="Requisito" disabled>
+                            <input type="hidden" id="txtIdRequisito" name="idRequisito">
+                        </div>
+
+
+                        <!-- Resto del formulario para la actividad -->
+                    </form>
+
+                    <div class="modal-footer">
+                        <button id="btnAgregar" class="btn btn-success">Agregar Actividad</button>
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    @section Scripts {
+        <!-- ============================================================
+        =SCRIPTS PARA ESTA PAGINA
+        ===============================================================-->
+
+        <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+        <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+        <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+        <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+        <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+        <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+        <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+
+        <script src="~/js/vistas/PlanesTrabajo_Index.js"></script>
+
+        <script src="~/vendor/select2/select2.min.js"></script>
+        <script src="~/vendor/select2/es.min.js"></script>
+
+
+
+        <script src="~/vendor/datepicker/bootstrap-datepicker.min.js"></script>
+        <script src="~/vendor/datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+
+
+        <!-- SOLO ES DE EJEMPLO - IGNORAR -->
+        @*     <script src="js/vistas/datatables-demo.js"></script> *@
+    }
+
+

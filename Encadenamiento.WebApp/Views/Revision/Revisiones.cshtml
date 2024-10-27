@@ -1,0 +1,173 @@
+﻿
+@{
+    ViewData["Title"] = "Revisiones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Revisiones de Requerimientos (Checklists)</h6>
+        </div>
+        <div class="card-body">
+            <div class="form-row align-items-end">
+                <div class="form-group col-sm-3">
+                    <label for="cboBuscarPor">Buscar por</label>
+                    <select class="form-control form-control-sm" id="cboBuscarPor">                        
+                        <option value="finca">Finca</option>
+                        <option value="fecha">Fecha</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2 busqueda-fecha">
+                    <label for="txtFechabus">Fecha</label>
+                    <input type="text" class="form-control form-control-sm" id="txtFechabus">
+                </div>              
+                <div class="form-group col-sm-4 busqueda-finca">
+                    <label for="txtFinca">Finca</label>
+                    <input type="text" class="form-control form-control-sm" id="txtFinca">
+                </div>
+                <div class="form-group col-sm-3">
+                    <button class="btn btn-success btn-block btn-sm" type="button" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
+                </div>
+            </div>
+
+            <hr />
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-sm table-striped" id="tbRevisiones">
+                        <thead>
+                            <tr>                                
+                                <th>CodFinca</th>
+                                <th>Finca</th>
+                                <th>Fecha</th>
+                                <th>Cumplimiento %</th>
+                                <th>Tipo</th>
+                                <th>Comentarios</th>                                
+                                <th>Acciones_Revision</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--  Modal-->
+    <div class="modal fade" id="modalRevisiones" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Detalle Revision</h6>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-12">                             
+                                <div class="form-row">
+                                    <div class="form-group col-sm-2">
+                                        <label for="txtCodFinca">Cod.Finca</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtCodFinca" disabled>
+                                        <input type="hidden" id="txtIdFinca" name="idFinca">
+                                    </div>
+                                    <div class="form-group col-sm-10">
+                                        <label for="txtNombreFinca">Nombre Finca</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtNombreFinca" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-sm-3">
+                                        <label for="txtFecha">Fecha</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtFecha" disabled>
+                                    </div>                                    
+                                    <div class="form-group col-sm-3">
+                                        <label for="txtCumplimiento">Cumplimiento %</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtCumplimiento" disabled>
+                                    </div>
+                                    <div class="form-group col-sm-3">                                    
+                                         <label for="cboTipo">Tipo Revision</label>
+                                          <select class="form-control form-control-sm" id="cboTipo">
+                                            <option value="INICIAL">Inicial</option>
+                                            <option value="INTERMEDIO">Intermedio</option>
+                                            <option value="FINAL">Final</option>
+                                          </select>                                    
+                                    </div>
+                                </div>
+                                
+                                <hr class="border-bottom-primary"> <!-- Linea de separacion -->
+                                <h8>Actividades</h8>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table id="tbRequisitos" class="table table-sm table-striped w-100">
+                                            <thead>
+                                                <tr>                                                    
+                                                    <th>IdReq</th>
+                                                    <th>Descripción</th>
+                                                    <th>Ambito</th>
+                                                    <th>Estado</th>
+                                                    <th>Comentarios</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-primary btn-sm" target="_blank" id="linkImprimir">Imprimir</a>               
+                    <button class="btn btn-primary btn-sm" id="btnGuardar"><i class="fas fa-database"></i>  Guardar Cambios</button>
+                    <button class="btn btn-primary btn-sm" id="btnEnviarCorreo"><i class="fas fa-envelope"></i>  Enviar</button> <!-- Nuevo botón -->
+                    <button class="btn btn-danger btn-sm" type="button" data-dismiss="modal">Cerrar</button>               
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- /.container-fluid -->
+@section Scripts {
+    <!-- ============================================================
+    =SCRIPTS PARA ESTA PAGINA
+    ===============================================================-->
+
+    <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
+    <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+    
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+        
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+
+    <script src="~/js/vistas/RevisionesMantenimiento_Index.js"></script>
+
+
+
+    <!-- SOLO ES DE EJEMPLO - IGNORAR -->
+    @*     <script src="js/vistas/datatables-demo.js"></script> *@
+}

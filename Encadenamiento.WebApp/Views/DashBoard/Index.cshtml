@@ -1,0 +1,161 @@
+﻿
+
+@{
+    ViewData["Title"] = "Indicadores";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Indicadores</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Total de Fincas -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Fincas 
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalFincas"></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-warehouse fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total de Planes -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Total Planes Activos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalPlanes"></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total de Actividades -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Actividades
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalActividades"></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-plus fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total de Visitas -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-dark shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Total de Visitas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalVisitas">totalVisitas</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Total de Revisiones -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Revisiones
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalRevisiones"></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+
+    <div class="row">
+
+        <!-- Area Chart - Fincas Visitadas días -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 bg-second-primary">
+                    <h6 class="m-0 font-weight-bold text-white">Fincas visitadas en el último mes</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area" style="height: 350px !important;">
+                        <canvas id="chartVisitas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart - Actividades Completadas-->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 bg-second-primary">
+                    <h6 class="m-0 font-weight-bold text-white">Actividades completadas en el ultimo mes</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area" style="height: 350px !important ;">
+                        <canvas id="chartActividades"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+<script src="~/vendor/chart.js/Chart.min.js"></script>
+<script src="~/js/vistas/DashBoard_Index.js"></script>
+
+<!-- SOLO ES DE EJEMPLO - IGNORAR -->
+@* <script src="~/js/vistas/chart-bar-demo.js"></script>
+<script src="~/js/vistas/chart-pie-demo.js"></script> *@
+}

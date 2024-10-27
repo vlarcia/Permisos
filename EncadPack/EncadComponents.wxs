@@ -1,0 +1,10 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <ComponentGroup Id="EncadComponents"
+					Directory="INSTALLFOLDER">
+      <Component>
+        <File Source="..\Encadenamiento.WebApp\bin\Release\net6.0\Encadenamiento.WebApp.exe" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

@@ -1,0 +1,195 @@
+﻿
+@{
+    ViewData["Title"] = "Revisiones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css"> 
+    <link rel="stylesheet" href="~/vendor/datepicker/bootstrap-datepicker.min.css">
+
+    <style>
+        /* Estilo general para las celdas que se editarán */
+        .estado-select, .comentarios-input {
+            width: 100%;
+            box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+        }
+
+        /* Asegura que los encabezados y celdas tengan un ancho mínimo */
+        #tbRequisitos th, #tbRequisitos td {
+            min-width: 50px;
+        }
+
+            /* Ajuste específico para la celda de descripción */
+            #tbRequisitos td.descripcion {
+                min-width: 100px; /* Ancho mínimo */
+                max-width: 150px; /* Ancho máximo */
+                overflow: hidden; /* Oculta el desbordamiento */
+                text-overflow: ellipsis; /* Agrega '...' al final si el texto es demasiado largo */
+                white-space: nowrap; /* No permite saltos de línea */
+            }
+
+            #tbRequisitos td.ambito {
+                min-width: 80px; /* Ancho mínimo */
+                max-width: 80px; /* Ancho máximo */
+            
+                white-space: nowrap; /* No permite saltos de línea */
+            }
+
+            /* Ajuste para la celda de comentarios */
+            #tbRequisitos td.comentarios-input {
+                min-width: 250px; /* Ancho mínimo */
+                max-width: 400px; /* Ancho máximo */
+            }
+
+            /* Ajuste para la celda de estado */
+            #tbRequisitos td.estado {
+                min-width: 100px; /* Ancho mínimo */
+                max-width: 150px; /* Ajusta el máximo a un valor razonable */
+            }
+
+
+    </style>
+}
+<div class="container-fluid">
+ 
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-second-primary">
+                    <h6 class="m-0 font-weight-bold text-white">Revisiones</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Agrupar los datos generales del plan dentro de un form -->
+                    <form id="form-revision">
+                        <div class="form row input-group input-group-sm mb-2 col-sm-10">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="cboFinca">Código Finca</label>
+                            </div>
+                            <select class="custom-select input-validar" id="cboFinca" name="CodigoFinca">
+                            </select>
+                            <input type="text" class="mb-0 col-sm-9" id="txtNombreFinca" name="NombreFinca" disabled>
+                            <input type="hidden" id="txtIdFinca" name="idFinca">
+                        </div>
+
+                        <div class="form row input-group input-group-sm mb-2 col-sm-10">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputFecha">Fecha</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputFecha" id="txtFecha" name="Fecha">
+                        
+                            <div class="input-group-prepend pl-3">
+                                <label class="input-group-text" for="cboTipo">Tipo Revision</label>
+                            </div>
+                            <select class="custom-select input-validar pl3" id="cboTipo" name="TipoRevision">
+                                <option value="INICIAL">Inicial</option>
+                                <option value="INTERMEDIO">Intermedio</option>
+                                <option value="FINAL">Final</option>
+                            </select>
+                        
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputCumplimiento">Cumplimiento</span>
+                            </div>
+                            <input type="text" class="form-control text-right input-validar" aria-label="Small" aria-describedby="inputCumplimiento" id="txtCumplimiento" name="Cumplimiento">
+                        </div>
+                     
+                    </form>
+
+                    <!-- Botón Guardar -->
+                    <div class="d-flex">
+                        <div class="ml-auto">
+                            <div class="card shadow">
+                                <div class="form-group mb-0">
+                                    @* <button class="btn btn-success btn-sm btn-block" id="btnGuardarPlan">Guardar Plan de Trabajo</button> *@
+                                    <button class="btn btn-success" id="btnGuardarRev"><i class="fas fa-plus"></i> Guardar Revision</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<div class="row">
+
+    <div class="col-sm-12">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-second-primary">
+                        <h6 class="m-0 font-weight-bold text-white">Requisitos</h6>
+                    </div>
+                    <div class="card-body">                        
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="tbRequisitos" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>IdReq</th>
+                                            <th>Descripción</th>
+                                            <th>Ambito</th>
+                                            <th>Estado</th>                                                                                        
+                                            <th>Comentarios</th>                                                                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Los Requerimientos se agregarán dinámicamente aquí -->
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+@section Scripts {
+    <!-- ============================================================
+    =SCRIPTS PARA ESTA PAGINA
+    ===============================================================-->
+
+     <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+    
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+ 
+
+    <script src="~/js/vistas/Revisiones_Index.js"></script>
+   
+    <script src="~/vendor/select2/es.min.js"></script>
+
+
+
+    <script src="~/vendor/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="~/vendor/datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+
+
+    <!-- SOLO ES DE EJEMPLO - IGNORAR -->
+    @*     <script src="js/vistas/datatables-demo.js"></script> *@
+}
+
+

@@ -1,0 +1,272 @@
+﻿@model Encadenamiento.WebApp.Models.ViewModels.VMPDFRevision;
+@{
+    Layout = null;    
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Revisión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            
+            color: #333;
+            padding: 5px;
+        }
+
+        .container {
+            
+            padding: px;
+            border-radius: 1px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: darkgreen;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .info {
+            background-color: #e6f4e6;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+            .info td {
+                padding: 8px;
+                border-bottom: 1px solid #ccc;
+            }
+
+        .image {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+            .image img {
+                width: 45%; /* Limita el ancho de cada foto al 45% */
+                height: auto;
+                margin: 10px;
+                border: 1px solid #ddd;
+            }
+
+        .observations, .activities {
+            margin-bottom: 20px;
+        }
+
+        .signature {
+            margin-top: 30px;
+        }
+
+            .signature p {
+                font-style: italic;
+            }
+        /* Logo centrado y franjas naranjas */
+        .header {
+            text-align: center;
+            position: relative;
+            padding-top: 15px;
+        }
+
+            .header img {
+                width: 180px; /* Aumentar el tamaño del logo */
+                height: auto;
+            }
+
+        .container::before,
+        .container::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 10px;
+            background-color: #F36F22; /* Naranja */
+            position: absolute;
+            left: 0;
+        }
+
+        .container::before {
+            top: 0;
+        }
+
+        .container::after {
+            bottom: 0;
+        }
+        /* Franja derecha centrada */
+        .franja-derecha {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 33%;
+            background-color: #F36F22;
+        }
+        /* Estilos para la tabla de revisiones */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e6f4e6;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .ambito-header {
+            text-align: center !important;
+            background-color: lightgray;
+            font-weight: bold;
+            font-size: 18px; /* Tamaño más grande para el encabezado del ámbito */
+            padding: 10px;
+          
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Logo centrado -->
+        <div class="header">
+            <img src="@Model.negocio.UrlLogo" alt="Logo img">
+        </div>
+        <h1>INFORME DE REVISIÓN DE REQUISITOS</h1>
+
+        <!-- Sección de Proveedor, Finca y Fecha con fondo verde tenue y distribuidos en líneas -->
+        <table class="info" style="width: 100%;">
+            <tr>
+                <td><strong>Proveedor: </strong> @Model.revision.First().Proveedor</td>
+            </tr>
+            <tr>
+                <td><strong>Finca: </strong> @Model.revision.First().NombreFinca</td>
+            </tr>
+            <tr>
+                <td><strong>Fecha: </strong>  @(DateTime.Now.ToString("dd/MM/yyyy") ?? "n/d")</td>
+            </tr>
+        </table>
+
+        <p>Estimado proveedor de caña, por este medio le hacemos llegar el informe de revisión @(Model.revision.First().Tipo ?? "") 
+            que fue efectuada en su finca en la fecha @(Model.revision.First().Fecha.ToString("dd/MM/yyyy") ?? "n/d") para efectos 
+            de seguimiento del proyecto de encadenamiento de productores de caña de azúcar que Pantaleon lleva a cabo para ayudarles
+            a mejorar en el cumplimiento de normas y regulaciones que la legislación nacional indica.</p>
+
+        <div class="image">
+            <h2>Fotos de la Revisión</h2>
+            <img src="@Model.revision.First().UrlFoto1" alt="Foto #1">
+            <img src="@Model.revision.First().UrlFoto2" alt="Foto #2">
+        </div>
+
+        <p>El cumplimiento global para su finca en esta etapa es de <strong>@((Model.revision.First().Cumplimiento ?? 0).ToString("F2")) %</strong> obtenido de la tabla que se adjunta al final. Se consideran las siguientes observaciones y actividades recomendadas apoyadas por las imágenes anteriores:</p>
+
+        <div class="observations">
+            <p><span class="section-title">Observacion:</span> @Model.revision.First().Comentarios</p>
+        </div>
+
+        <div class="activities">
+            <p><span class="section-title">Resultados obtenidos:</span></p>
+            
+             @if (Model.revision != null && Model.revision.Any())
+             {
+                 var ambitoActual = "";
+                 <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="display: table-row-group;">
+                       <tr>
+                            <th>Ambito</th>
+                            <th>Requisito</th>
+                            <th>Estado</th>
+                            <th>Comentarios</th>
+                       </tr> 
+            
+                    </thead>
+
+                    <tbody>
+                        @{
+                            var ambitoOrden = new Dictionary<string, int> {
+                            {"LABORAL", 1},
+                            {"OCUPACIONAL", 2},
+                            {"AMBIENTAL", 3},
+                            {"RSE", 4},
+                            {"ETICA", 5}
+                            };
+                        }
+                        @foreach (var rev in Model.revision.OrderBy(r => ambitoOrden[r.Ambito]))                        
+                        {
+                            if (rev.Ambito != ambitoActual)
+                            {
+                                // Si el ambito cambia, mostrar un color nuevo para el ambito
+                                ambitoActual = rev.Ambito;
+                                string backgroundColor = "";
+                            // Asignar colores en función del ámbito
+                            switch (rev.Ambito)
+                            {
+                                case "LABORAL":
+                                    backgroundColor = "#CCDBFD"; // Celeste claro
+                                    break;
+                                case "OCUPACIONAL":
+                                    backgroundColor = "#FFCAAF"; // Naranja claro
+                                    break;
+                                case "AMBIENTAL":
+                                    backgroundColor = "#D6EADF"; // Verde claro
+                                    break;
+                                case "RSE":
+                                    backgroundColor = "#CDB4DB"; // Lila claro
+                                    break;
+                                case "ETICA":
+                                    backgroundColor = "#FFFEC4"; // Gris claro
+                                    break;
+                            }
+                                // Mostrar el título del ámbito
+                                <tr class="ambito-header" style="background-color:@backgroundColor; width: 100%">
+                                    <td colspan="12" align="center">@ambitoActual</td>
+                                </tr>
+                                }
+
+                            // Mostrar los datos de revisión por cada fila
+                            <tr>
+                                <td>@rev.Ambito</td>
+                                <td>@rev.Requisito</td>
+                                <td>@rev.Estado</td>
+                                <td>@rev.Comentarios</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No se encontraron revisiones.</p>
+                }            
+        </div>
+
+
+        <div class="signature">
+            <p>Quedamos atentos a sus comentarios u observaciones al respecto.</p>
+            <p>Saludos,</p>
+            <p>Unidad de Negocios de Caña</p>
+            <br> </br>            
+        </div>
+@* 
+        <!-- Franja derecha -->
+        <div class="franja-derecha"></div> *@
+    </div>
+
+</body>
+</html>
