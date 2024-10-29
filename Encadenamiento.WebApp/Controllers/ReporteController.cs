@@ -25,6 +25,10 @@ namespace Encadenamiento.WebApp.Controllers
         {
             return View();
         }
+        public IActionResult Operativo()
+        {
+            return View();
+        }
 
         [HttpGet]
         public async Task<IActionResult> ReportePlanes(string fechaInicio, string fechaFin)

@@ -191,6 +191,7 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("fecha");
             entity.Property(e => e.IdActvidad).HasColumnName("id_actvidad");
             entity.Property(e => e.IdVisita).HasColumnName("id_visita");
+            entity.Property(e => e.IdVisita).HasColumnName("id_finca");
             entity.Property(e => e.Observaciones)
                 .HasMaxLength(250)
                 .HasColumnName("observaciones");

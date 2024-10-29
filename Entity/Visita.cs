@@ -28,6 +28,8 @@ public partial class Visita
     public string? Latitud { get; set; }
 
     public string? Longitud { get; set; }
+    public string? UrlFoto1 { get; set; }
+    public string? UrlFoto2 { get; set; }
 
     public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();
 

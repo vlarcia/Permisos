@@ -24,8 +24,11 @@ public partial class DetalleVisita
     public string? Comentarios { get; set; }
 
     public string? Observaciones { get; set; }
+    public int IdFinca { get; set; }
+    public string? UrlFoto1 {  get; set; }
 
     public virtual Actividad IdActvidadNavigation { get; set; } = null!;
 
     public virtual Visita IdVisitaNavigation { get; set; } = null!;
+    public virtual MaestroFinca? idFincaNavigation { get; set; } 
 }

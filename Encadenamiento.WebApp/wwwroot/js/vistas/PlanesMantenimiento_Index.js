@@ -22,6 +22,7 @@ const VISTA_BUSQUEDA = {
 
 let filaseleccionada = null;
 let lafinca = null;
+let editar;
 $(document).ready(function () {
 
     tablaPlanes = $('#tbPlanes').DataTable({
@@ -151,7 +152,7 @@ $('#tbPlanes tbody').on('click', '.btn-mostrar', function () {
     else {
         filaseleccionada = $(this).closest("tr");
     }
-    
+    editar = false;
     const data = tablaPlanes.row(filaseleccionada).data();
     
     $('#btnGuardar').hide();    
@@ -198,7 +199,7 @@ $('#tbPlanes tbody').on('click', '.btn-editar', function () {
     } else {
         filaseleccionada = $(this).closest("tr");
     }
-
+    editar = true;
     const data = tablaPlanes.row(filaseleccionada).data();
     lafinca = data.idFinca    //esto es para tener la finca que no cambiará en la edicion
     $('#btnGuardar').show();
@@ -209,25 +210,101 @@ $('#tbPlanes tbody').on('click', '.btn-editar', function () {
 });
 
 $('#tbActividades').on('click', 'td', function () {
-    let contenidoActual = $(this).text();
-    let columnaIndex = $(this).index();
-    let fila = $(this).closest('tr');
-    let idActividad = fila.data('id'); // Obtener el ID de la actividad
+    if (editar) {
+        let contenidoActual = $(this).text();
+        let columnaIndex = $(this).index();
+        let fila = $(this).closest('tr');
+        let idActividad = fila.data('id'); // Obtener el ID de la actividad
 
-    let input = $('<input type="text" class="form-control form-control-sm">').val(contenidoActual);
-    $(this).empty().append(input);
-    input.focus();
+        // Columna de fecha (índices 3 y 4)
+        if (columnaIndex === 2 || columnaIndex === 3) {
+            // Crear el input de tipo texto
+            let input = $('<input type="text" class="form-control form-control-sm datepicker">').val(contenidoActual);
+            $(this).empty().append(input);
+            input.focus();
 
-    input.on('blur', () => {
-        let nuevoContenido = input.val();
-        $(this).text(nuevoContenido);            
-    });
+            // Inicializa el datetimepicker
+            input.datepicker({
+                dateFormat: 'dd/mm/yy', // Asegúrate de que el formato sea el correcto
+                onClose: function () {
+                    // Al cerrar el datepicker, se asigna el valor a la celda
+                    let nuevoContenido = input.val(); // Obtener el valor del input
+                    $(input).parent().text(nuevoContenido); // Asignar el valor a la celda
+                }
+            });
 
-    input.on('keypress', function (e) {
-        if (e.which == 13) {
-            input.blur();
+            // Desplegar el datetimepicker inmediatamente
+            input.datepicker("show");
+
+            // Evento para cerrar el datepicker al presionar "Enter"
+            input.on('keypress', function (e) {
+                if (e.which == 13) {
+                    input.datepicker("hide"); // Cerrar el datepicker al presionar Enter
+                }
+            });
         }
-    });
+
+        else if (columnaIndex === 1) {
+            // Insertar select con opciones
+            let select = $(`
+                <select class="form-control form-control-sm">
+                    <option value="DOCUMENTAL">Documental</option>
+                    <option value="PROCEDIMENTAL">Procedimental</option>
+                    <option value="INFRAESTRUCTURA">Infraestructura</option>
+                </select>
+            `).val(contenidoActual.trim());
+            $(this).empty().append(select);
+            select.focus();
+
+            select.on('blur change', () => {
+                let nuevoContenido = select.val();
+                $(this).text(nuevoContenido);
+            });
+        }
+            // Columna de estado (índice 6)
+        else if (columnaIndex === 6) {
+            // Insertar select con opciones
+            let select = $(`
+                <select class="form-control form-control-sm">
+                    <option value="INICIADO">Iniciado</option>
+                    <option value="EN PROCESO">En Proceso</option>
+                    <option value="FINALIZADO">Finalizado</option>
+                </select>
+            `).val(contenidoActual.trim());
+
+            $(this).empty().append(select);
+            select.focus();
+
+            // Mostrar la lista de selección al enfocar
+            select.on('focus', function () {
+                $(this).trigger('mousedown'); // Simula el clic para mostrar la lista
+            });
+
+            // Manejar el evento blur y change
+            select.on('blur change', () => {
+                let nuevoContenido = select.val();
+                $(this).text(nuevoContenido);
+            });
+        }
+
+        // Otras columnas: Usar el input normal de texto
+        else {
+            let input = $('<input type="text" class="form-control form-control-sm">').val(contenidoActual);
+            $(this).empty().append(input);
+            input.focus();
+
+            input.on('blur', () => {
+                let nuevoContenido = input.val();
+                $(this).text(nuevoContenido);
+            });
+
+            input.on('keypress', function (e) {
+                if (e.which == 13) {
+                    input.blur();
+                }
+            });
+        }
+    }
 });
 
 $('#btnGuardar').on('click', function () {
@@ -385,8 +462,9 @@ function cargarActividades(modelo) {
             actividad.comentarios,
             actividad.idRequisito,
 
-        ]).draw(false);
+        ]).draw(false);       
     });
+   
 }
 
 function convertirFecha(fecha) {

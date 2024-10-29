@@ -63,13 +63,7 @@ namespace Encadenamiento.WebApp.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> ObtenerRequisito(string busqueda)
-        //{
-        //    List<VMCheckList> vmListaRequisito = _mapper.Map<List<VMCheckList>>(await _plantrabajoService.ObtenerRequisito(busqueda));
-        //    return StatusCode(StatusCodes.Status200OK, vmListaRequisito );
-        //}
-
+  
         [HttpGet]
         public async Task<IActionResult> Lista()
         {
