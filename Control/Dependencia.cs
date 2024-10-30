@@ -29,6 +29,8 @@ namespace Control
 
             services.AddScoped<IPlanesRepository, PlanesRepository>();
 
+            services.AddScoped<IVisitaRepository, VisitaRepository>();
+
             services.AddScoped<ICorreoService, CorreoService>();
 
             services.AddScoped<IFireBaseService, FireBaseService>();
@@ -52,6 +54,8 @@ namespace Control
             services.AddScoped<IMenuService, MenuService>();
 
             services.AddScoped<IRevisionService, RevisionService>();
+
+            services.AddScoped<IVisitaService, VisitaService>();
 
         }
     }

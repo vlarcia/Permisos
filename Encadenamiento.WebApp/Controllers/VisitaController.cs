@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Implementacion;
 using Business.Interfaces;
 using Encadenamiento.WebApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,17 @@ namespace Encadenamiento.WebApp.Controllers
         private readonly ITempDataProvider _tempDataProvider;
         private readonly INegocioService _negocioService;
         private readonly ICorreoService _correoService;
+        public VisitaController(IVisitaService visitaService, IMapper mapper,
+                                       INegocioService negocioService, ICorreoService CorreoService,
+                                       IRazorViewEngine razorViewEngine, ITempDataProvider tempDataProvider)
+        {
+            _visitaService = visitaService;
+            _mapper = mapper;            
+            _negocioService = negocioService;
+            _correoService = CorreoService;
+            _razorViewEngine = razorViewEngine;
+            _tempDataProvider = tempDataProvider;
+        }
         public IActionResult Index()
         {
             return View();
@@ -31,8 +43,8 @@ namespace Encadenamiento.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Lista()
         {
-            List<VMVisita> vmPlanesLista = _mapper.Map<List<VMPVisita>>(await _visitaService.Lista());
-            return StatusCode(StatusCodes.Status200OK, new { data = vmPlanesLista });
+            List<VMVisita> vmVisitaLista = _mapper.Map<List<VMVisita>>(await _visitaService.Lista());
+            return StatusCode(StatusCodes.Status200OK, new { data = vmVisitaLista });
         }
     }
 }

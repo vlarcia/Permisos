@@ -6,8 +6,7 @@ namespace Encadenamiento.WebApp.Models.ViewModels
     {
         public int IdVisita { get; set; }
 
-        public int IdFinca { get; set; }
-        public string? NombreFinca { get; set; }
+        public int IdFinca { get; set; }        
 
         public int IdPlan { get; set; }
 
@@ -28,8 +27,16 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? Latitud { get; set; }
 
         public string? Longitud { get; set; }
+        public string? NombreFinca { get; set; }
+        public string? CodFinca { get; set; }
+        public string? Proveedor { get; set; }
+        public string? Email { get; set; }
+        public string? DescripcionPlan { get; set; }
         public string? UrlFoto1 { get; set; }
         public string? UrlFoto2 { get; set; }
+
+        public string? NombreFoto1 { get; set; }
+        public string? NombreFoto2 { get; set; }
 
 
         public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();

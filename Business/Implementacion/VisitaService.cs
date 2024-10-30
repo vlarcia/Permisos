@@ -30,15 +30,16 @@ namespace Business.Implementacion
         }
 
         public async Task<List<Visita>> Lista()
-        {
-            {
-                IQueryable<Visita> query = await _repositorioVisita.Consultar();
-                return query.Include(p => p.IdFincaNavigation)
-                            .Include(det => det.DetalleVisita)
-                            .ToList();
-            }
+        {         
+            IQueryable<Visita> query = await _repositorioVisita.Consultar();
+            IQueryable<DetalleVisita> query2 = await _repositorioDetVis.Consultar();
+
+            List<Visita> lalista = query.Include(p => p.IdFincaNavigation)
+                        .Include(d => d.DetalleVisita)
+                        .ToList();
+            return lalista;         
         }
-        public async Task<Visita> Crear(Visita entidad)
+            public async Task<Visita> Crear(Visita entidad)
         {
             try
             {

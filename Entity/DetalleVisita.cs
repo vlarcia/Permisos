@@ -26,6 +26,7 @@ public partial class DetalleVisita
     public string? Observaciones { get; set; }
     public int IdFinca { get; set; }
     public string? UrlFoto1 {  get; set; }
+    public string? NombreFoto1 { get; set; }
 
     public virtual Actividad IdActvidadNavigation { get; set; } = null!;
 

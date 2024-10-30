@@ -191,11 +191,29 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("fecha");
             entity.Property(e => e.IdActvidad).HasColumnName("id_actvidad");
             entity.Property(e => e.IdVisita).HasColumnName("id_visita");
-            entity.Property(e => e.IdVisita).HasColumnName("id_finca");
+            entity.Property(e => e.IdFinca).HasColumnName("id_finca");
             entity.Property(e => e.Observaciones)
                 .HasMaxLength(250)
                 .HasColumnName("observaciones");
+            entity.Property(e => e.UrlFoto1).HasColumnName("urlfoto1");
+            entity.Property(e => e.NombreFoto1).HasColumnName("nombrefoto1");
 
+            entity.HasOne(dv => dv.IdActvidadNavigation)
+             .WithMany()
+             .HasForeignKey(dv => dv.IdActvidad)
+             .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(dv => dv.IdVisitaNavigation)
+             .WithMany(v => v.DetalleVisita)
+             .HasForeignKey(dv => dv.IdVisita)
+             .OnDelete(DeleteBehavior.ClientSetNull);
+             //.HasConstraintName("FK_DetalleVisitas_Visitas");
+
+            entity.HasOne(e => e.idFincaNavigation)
+             .WithMany()
+             .HasForeignKey(e => e.IdFinca)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FK_DetalleVisitas_MaestroFinca");
         });
 
         modelBuilder.Entity<MaestroFinca>(entity =>
@@ -579,7 +597,7 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("android_id");
             entity.Property(e => e.Fecha)
                 .HasColumnType("date")
-                .HasColumnName("fecha");
+                .HasColumnName("fecha");      
             entity.Property(e => e.IdFinca).HasColumnName("id_finca");
             entity.Property(e => e.IdPlan).HasColumnName("id_plan");
             entity.Property(e => e.Latitud)
@@ -599,6 +617,10 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("responsable");
             entity.Property(e => e.SentTo).HasColumnName("sent_to");
             entity.Property(e => e.Zafra).HasColumnName("zafra");
+            entity.Property(e => e.UrlFoto1).HasColumnName("urlfoto1").HasMaxLength(500);
+            entity.Property(e => e.UrlFoto2).HasColumnName("urlfoto2").HasMaxLength(500);
+            entity.Property(e => e.NombreFoto1).HasColumnName("nombrefoto1").HasMaxLength(100);
+            entity.Property(e => e.NombreFoto2).HasColumnName("nombrefoto2").HasMaxLength(100);
 
             entity.HasOne(d => d.IdFincaNavigation).WithMany(p => p.Visita)
                 .HasForeignKey(d => d.IdFinca)
@@ -609,6 +631,7 @@ public partial class CumplimientoContext : DbContext
                 .HasForeignKey(d => d.IdPlan)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Visitas_PlanesTrabajo");
+
         });
 
         OnModelCreatingPartial(modelBuilder);

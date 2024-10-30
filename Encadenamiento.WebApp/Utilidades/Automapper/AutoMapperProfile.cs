@@ -86,9 +86,16 @@ namespace Encadenamiento.WebApp.Utilidades.Automapper
 
             #region Visitas
             CreateMap<Visita, VMVisita>()
-                .ForMember(destino =>
-                destino.NombreFinca,
-                opt => opt.MapFrom(origen => origen.IdFincaNavigation.Descripcion));
+                .ForMember(dest=> dest.DetalleVisita, opt=> opt.MapFrom(src=>src.DetalleVisita))// Mapea la coleccion de detalles de la visita
+                .ForMember(dest=> dest.DescripcionPlan, opt => opt.MapFrom(src => src.IdPlanNavigation.Descripcion))
+                .ForMember(dest => dest.NombreFinca,  opt => opt.MapFrom(src => src.IdFincaNavigation.Descripcion))
+                .ForMember(dest => dest.CodFinca, opt => opt.MapFrom(src => src.IdFincaNavigation.Descripcion))
+                .ForMember(dest => dest.Proveedor, opt => opt.MapFrom(src => src.IdFincaNavigation.Proveedor))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.IdFincaNavigation.Email))
+                .ReverseMap()
+                .ForMember(dest => dest.IdFincaNavigation, opt => opt.Ignore())
+                .ForMember(dest => dest.IdPlanNavigation, opt => opt.Ignore());
+            
             #endregion 
 
             
