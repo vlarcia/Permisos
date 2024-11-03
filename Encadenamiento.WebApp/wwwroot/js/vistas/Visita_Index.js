@@ -1,51 +1,43 @@
 ﻿
-
-const MODELO_DETALLE = {
-        
-    idVisita: 0,
-    idActividad=0,    
-    idFinca=0,
-    fecha: "",        
-    avanceanterior="",
-    avances: "",
-    estado: "",
-    estadoanterior="",
-    comentarios: "",
-    observaciones: "",
-    UrlFoto1:"", 0,
-
-}
-
-let filaeditada = null;
+let filaseleccionada;
+let editar;
 $(document).ready(function () {
-    
+
     // Cargar la lista de fincas usando fetch
-  
+
     $(".card-body").LoadingOverlay("show");
-    fetch("/PlanesTrabajo/Lista")
-        .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        })
-        .then(responseJson => {
-            $(".card-body").LoadingOverlay("hide");
-            if (responseJson.data.length > 0) {
-                responseJson.data.forEach((item) => {
-                    // Para cada item de la lista, agrega una opción al combo con el formato 'codigo - nombre'
-                    $("#cboPlan").append(
-                        $("<option>")
-                            .val(item.idPlan) // El valor sigue siendo codFinca
-                            .text(item.idPlan + " - " + item.descripcion.trim() + " -finca: " +nombreFinca.trim())  // Mostrar 'codFinca - descripcion'
-                            .attr("data-idplan", item.idPlan)
-                            .attr("data-descripcion", item.Descripcion)
-                            .attr("data-nombrefinca", item.nombreFinca) // Guardar el nombre de la finca
-                            .attr("data-idfinca", item.idFinca)
-                    );
-                });
-            } else
-            {
-                swal("Lo sentimos!", responseJson.mensaje, "error")
-            }
-        });
+    try {
+        fetch("/PlanesTrabajo/Lista")
+            .then(response => {
+                return response.ok ? response.json() : Promise.reject(response);
+            })
+            .then(responseJson => {
+                //console.log(responseJson); // Verifica el contenido de la respuesta
+                $(".card-body").LoadingOverlay("hide");
+                if (responseJson.data.length > 0) {
+                    responseJson.data.forEach((item) => {
+                        $("#cboPlan").append(
+                            $("<option>")
+                                .val(item.idPlan)
+                                .text(item.idPlan + " - " + item.descripcion + " -finca: " + item.nombreFinca)
+                                .attr("data-idplan", item.idPlan)
+                                .attr("data-descripcion", item.descripcion)
+                                .attr("data-nombrefinca", item.nombreFinca)
+                                .attr("data-codfinca", item.codFinca)
+                                .attr("data-idfinca", item.idFinca)
+                        );
+                    });
+                } else {
+                    swal("Lo sentimos!", responseJson.mensaje, "error");
+                }
+            })
+            .catch(error => {
+                console.error("Error al obtener la lista de planes:", error);
+            });
+    } catch (error) {
+        console.error("Error en el bloque try:", error);
+    }
+
 
     tablaVisitas = $('#tbVisitas').DataTable({
 
@@ -57,12 +49,12 @@ $(document).ready(function () {
         },
         "columns": [
             { "data": "idVisita" },
-            { "data": "descripcion" },
+            { "data": "descripcionPlan" },
             { "data": "nombreFinca" },
 
             // Formatear fechaIni
             {
-                "data": "fechaIni",
+                "data": "fecha",
                 "render": function (data) {
                     if (data) {
                         var date = new Date(data);
@@ -76,23 +68,8 @@ $(document).ready(function () {
                 }
             },
 
-            // Formatear fechaFin
-            {
-                "data": "fechaFin",
-                "render": function (data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('es-ES', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
-                    }
-                    return ""; // Si no hay fecha, devolver vacío
-                }
-            },
-            { "data": "estado" },
-            { "data": "avance" },
+            { "data": "responsable" },
+            { "data": "mandador" },
             { "data": "observaciones" },
 
             {
@@ -112,7 +89,7 @@ $(document).ready(function () {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte Planes',
+                filename: 'Reporte Visitas',
             }, 'pageLength'
         ],
         language: {
@@ -120,136 +97,243 @@ $(document).ready(function () {
         },
     });
 
-
-    // Inicializar tabla y pone en modo responsive
-
-        var tablaActividades = $('#tbActividad').DataTable({
-            responsive: true, // Hacer que la tabla sea responsive
-            columnDefs: [
-                {
-                    targets: [9],  // Índice de la columna "Requisito" (la décima columna)
-                    visible: false // Hacerla invisible
-                }
-            ]
-        });
-
-    // Inicializar el datepicker en los campos de fecha
-    $('#txtFecha').datepicker({
-        format: "dd/mm/yyyy",   // Establecer el formato
-        todayHighlight: true,   // Resaltar la fecha de hoy
-        autoclose: true,        // Cerrar automáticamente el calendario al seleccionar
-        language: "es"          // Idioma español para los textos
+    //Inicializar tabla Detalles
+    var tablaDetalle = $('#tbDetalle').DataTable({
+        
+        responsive: true, // Hacer que la tabla sea responsive
+        searching: false,      // Ocultar el campo de búsqueda
+        lengthChange: false,   // Ocultar el campo de selección de entradas*/
+        columnDefs: [
+            {
+                targets: [0, 1],  // Índice de las columnaa "IdReg" y " IdActividad" (la primera y segunda columna)
+                visible: false // Hacerlas invisibles
+            }
+        ]
     });
 
+    // Inicializar el datepicker en los campos de fecha    
+        
+    $('#txtFecha').datepicker({
+        format: "dd/mm/yyyy",   // Establecer el formato        
+        todayHighlight: true,   // Resaltar la fecha de hoy
+        autoclose: true,        // Cerrar automáticamente el calendario al seleccionar
+        language: "es",          // Idioma español para los textos  
+        
+    });
+    
     // Evento change para cuando seleccionen un valor en el combo de fincas
     $("#cboPlan").change(function () {
         // Obtener el nombre de la finca desde el atributo 'data-nombre' de la opción seleccionada
-        var vidPlan = $("#cboPlan option:selected").attr("data-idplan")
-        var vdescripcion = $("#cboPlan option:selected").attr("data-descripcion")
-        var vnombreFinca = $("#cboFinca option:selected").attr("data-nombrefinca");
-        var vidFinca = $("#cboFinca option:selected").attr("data-idfinca");    
+        var vidPlan = $("#cboPlan option:selected").attr("data-idplan");
+        var vdescripcion = $("#cboPlan option:selected").attr("data-descripcion");
+        var vnombreFinca = $("#cboPlan option:selected").attr("data-nombrefinca");
+        var vcodFinca = $("#cboPlan option:selected").attr("data-codfinca");
+        var vidFinca = $("#cboPlan option:selected").attr("data-idfinca");
 
         // Colocar el nombre de la finca en el campo de texto deshabilitado
         $("#txtIdPlan").val(vidPlan);
-        $("#txDescripcionplan").val(vdescripcion);
+        $("#txtDescripcionplan").val(vdescripcion);
         $("#txtNombreFinca").val(vnombreFinca);
+        $("#txtCodFinca").val(vcodFinca);
         $("#txtIdFinca").val(vidFinca);
+
+        // Mostrar el overlay antes de la solicitud AJAX
+        $("#tbDetalle").LoadingOverlay("show");
+        $("#imgFoto1").LoadingOverlay("show");
+        $("#imgFoto2").LoadingOverlay("show");
+
+        // AJAX para obtener las actividades del plan
+        $.ajax({
+            url: `/PlanesTrabajo/Historial`,  //Ocupo Historial para obtener el detalle del Plan (primer registro de la lista que devuelve historial)
+            type: 'GET',
+            data: { idPlan: vidPlan },
+            success: function (data) {
+                if (data && data.length > 0) {
+                    const ladata = data[0];  // Usa el primer registro como ejemplo
+                    cargardesdePlan(ladata); // Pasa el primer registro a la función cargardesdePlan                    
+                } else {
+                    Swal.fire("No se encontraron Actividades para el plan seleccionado.");
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire("Error en la solicitud:", error);
+            },
+            complete: function () {
+                // Esto se ejecuta después de que la llamada AJAX haya terminado, sin importar si fue exitosa o no.
+                $("#tbDetalle").LoadingOverlay("hide");
+                $("#imgFoto1").LoadingOverlay("hide");
+                $("#imgFoto2").LoadingOverlay("hide");
+            }
+        });
     });
 
-    
-    $('#btnAgregar').on('click', function () {
-                
-        // Validar los campos del modal antes de agregar la actividad
-        const inputsActividad = $("#form-actividad input.input-validar").serializeArray();
-        const inputs_sin_valor = inputsActividad.filter((item) => item.value.trim() == "");
 
-        if (inputs_sin_valor.length > 0) {
-            const mensaje = `Debe completar el campo : "${inputs_sin_valor[0].name}"`;
-            toastr.warning("", mensaje);
-            $(`input[name="${inputs_sin_valor[0].name}"]`).focus();
-            return;
-        }
+    document.getElementById("txtFoto1").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto1");
 
-        $("#modalActividad").find("div.modal-content").LoadingOverlay("show");
-        // Obtener los valores de la actividad
-        const actividad = {
-            descripcion: $('#txtDescripcionActividad').val(),
-            tipo: $('#cboTipo').val(),
-            fechaini: $('#txtFechainicio').val(),
-            fechafin: $('#txtFechafin').val(),
-            responsable: $('#txtResponsable').val(),
-            recursos: $('#txtRecursos').val(),            
-            estado: $('#cboEstado').val(),
-            avances: $('#txtAvanceAct').val(),
-            comentarios: $('#txtComentarios').val(),
-            idRequisito: $('#txtIdRequisito').val()
-        };
-        if (filaeditada != null) {          
-           
-            // Reiniciar la variable filaEditada y Cambiar el texto del botón de vuelta a "Agregar"
-            filaeditada = null;
-            $('#btnAgregar').text('Agregar Actividad');
-            // Editar la fila existente en la tabla
-            tablaActividades.row(filaeditada).data([
-                actividad.descripcion,
-                actividad.tipo,
-                actividad.fechaini,
-                actividad.fechafin,
-                actividad.responsable,
-                actividad.recursos,
-                actividad.estado,
-                actividad.avances,
-                actividad.comentarios,
-                actividad.idRequisito,
-                `
-            <button class="btn btn-primary btn-editar btn-sm mr-2"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn btn-danger btn-eliminar btn-sm"><i class="fas fa-trash-alt"></i></button>
-            `
-            ]).draw(false);  // `draw(false)` asegura que la tabla no se recargue por completo, solo actualiza los datos.            
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
 
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
         } else {
-            // Agregar la actividad a la tabla usando DataTables
-            tablaActividades.row.add([
-                actividad.descripcion,
-                actividad.tipo,
-                actividad.fechaini,
-                actividad.fechafin,
-                actividad.responsable,
-                actividad.recursos,
-                actividad.estado,
-                actividad.avances,
-                actividad.comentarios,
-                actividad.idRequisito,
-
-                `
-            <button class="btn btn-primary btn-editar btn-sm mr-2"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn btn-danger btn-eliminar btn-sm"><i class="fas fa-trash-alt"></i></button>
-            `
-            ]).draw(false);  // `draw(false)` asegura que la tabla no se recargue por completo, solo actualiza los datos.
-
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
         }
-        // Cerrar el modal después de agregar la actividad
-        $("#modalActividad").find("div.modal-content").LoadingOverlay("hide");
-        $('#modalActividad').modal('hide');
     });
-    $('#tbActividad tbody').on('click', '.btn-editar', function () {
+
+    document.getElementById("txtFoto2").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto2");
+
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
+
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+        }
+    });
+
+    $('#tbDetalle').on('click', 'td', function () {
+        if (editar) {
+            let contenidoActual = $(this).text();
+            let columnaIndex = $(this).index();
+            let fila = $(this).closest('tr');
+            let idActividad = fila.data('id'); // Obtener el ID de la actividad
+
+            if (columnaIndex === 4 || columnaIndex === 5) {
+                // Insertar select con opciones
+                let select = $(`
+                    <select class="form-control form-control-sm">
+                        <option value="INICIADO">Iniciado</option>
+                        <option value="EN PROCESO">En Proceso</option>
+                        <option value="FINALIZADO">Finalizado</option>
+                    </select>
+                `).val(contenidoActual.trim());
+
+                $(this).empty().append(select);
+                select.focus();
+
+                // Mostrar la lista de selección al enfocar
+                select.on('focus', function () {
+                    $(this).trigger('mousedown'); // Simula el clic para mostrar la lista
+                });
+
+                // Manejar el evento blur y change
+                select.on('blur change', () => {
+                    let nuevoContenido = select.val();
+                    $(this).text(nuevoContenido);
+                });
+            }
+
+            // Otras columnas: Usar el input normal de texto
+            else {
+                let input = $('<input type="text" class="form-control form-control-sm">').val(contenidoActual);
+                $(this).empty().append(input);
+                input.focus();
+
+                input.on('blur', () => {
+                    let nuevoContenido = input.val();
+                    $(this).text(nuevoContenido);
+                });
+
+                input.on('keypress', function (e) {
+                    if (e.which == 13) {
+                        input.blur();
+                    }
+                });
+            }
+        }
+    });
+
+    //------------- BTN MOSTRAR ------------------------
+    $('#tbVisitas tbody').on('click', '.btn-mostrar', function () {
+
         if ($(this).closest("tr").hasClass("child")) {
-            filaeditada = $(this).closest("tr").prev();
+            filaseleccionada = $(this).closest("tr").prev();
         }
         else {
-            filaeditada = $(this).closest("tr");
+            filaseleccionada = $(this).closest("tr");
         }
+        editar = false;
+        const modelo = tablaVisitas.row(filaseleccionada).data();
         
-        const data = tablaActividades.row(filaeditada).data();
-        $('#btnAgregar').text('Guardar Cambios');
+        $('#btnGuardar').hide();
+        $('#linkImprimir').show();
+        $('#btnEnviarCorreo').show();
+        $("#linkImprimir").attr("href", `/Visita/MostrarPDFVisita?idVisita=${modelo.idVisita}`)
 
-        // Mostrar el modal
+        // Abrir el modal
+        mostrarModal(modelo, true)
         
-        mostrarModal(data);
+    })
+    // Evento para el botón "Enviar por Correo"
+    // Evento para el botón "Enviar por Correo"
+    $('#btnEnviarCorreo').on('click', function () {
+
+        const data = tablaVisitas.row(filaseleccionada).data();
+        const correoDestino = data.email;  // Obtenemos el email desde la fila seleccionada
+
+        if (correoDestino) {
+            $("#modalVisitas .modal-body").LoadingOverlay("show");
+            $.ajax({
+                url: `/Visita/EnviarVisitaPorCorreo?idVisita=${data.idVisita}&correoDestino=${correoDestino}`,
+                type: 'GET', // O POST si prefieres
+                success: function (response) {
+                    if (response.estado) {
+                        Swal.fire("Listo!", "Correo enviado con éxito!", "success");                 
+                    } else {
+                        Swal.fire("Error", response.mensaje, "error");
+                    }
+                },
+                error: function (error) {
+                    Swal.fire("Error", "No se pudo enviar el correo. " + response.mensaje, "error");
+                },      
+                complete: function () {
+                    // Esto se ejecuta después de que la llamada AJAX haya terminado, sin importar si fue exitosa o no.
+                    $("#modalVisitas .modal-body").LoadingOverlay("hide");
+                }
+            });
+        }
+    });
+
+    //-------------------------- BTN EDITAR-------------------------
+    $('#tbVisitas tbody').on('click', '.btn-editar', function () {
+        if ($(this).closest("tr").hasClass("child")) {
+            filaseleccionada = $(this).closest("tr").prev();
+        }
+        else {
+            filaseleccionada = $(this).closest("tr");
+        }
+        editar = true;
+        const data = tablaVisitas.row(filaseleccionada).data();
+
+        $('#btnGuardar').text('Guardar Cambios');
+        $('#btnGuardar').show();
+        $('#linkImprimir').hide();
+        $('#btnEnviarCorreo').hide();        
+        
+        mostrarModal(data, false);   // Mostrar el modal
     })
 
-    // Evento para eliminar actividad
-    $('#tbActividad tbody').on('click', '.btn-eliminar', function () {
+    // Evento para eliminar Visita    
+    $('#tbVisitas tbody').on('click', '.btn-eliminar', function () {
         let fila;
 
         if ($(this).closest("tr").hasClass("child")) {
@@ -258,10 +342,10 @@ $(document).ready(function () {
             fila = $(this).closest("tr");
         }
 
-        const dataelim = tablaActividades.row(fila).data();
+        const data = tablaVisitas.row(fila).data();
         Swal.fire({
             title: "¿Seguro de continuar?",
-            text: `Eliminar de la Tabla "${dataelim[0]}"`,
+            text: `Eliminar Visita "${data.idVisita} del plan ${data.descripcionPlan.length > 40 ? data.descripcionPlan.substring(0, 40) + '...' : data.descripcionPlan}" en la finca: "${data.nombreFinca}" `,
             icon: "warning", // Cambiado de 'type' a 'icon'            
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar",
@@ -269,69 +353,78 @@ $(document).ready(function () {
             customClass: {
                 confirmButton: 'btn btn-danger', // Clases CSS personalizadas
                 cancelButton: 'btn btn-secondary',
-
             },
             reverseButtons: true // Cambia el orden de los botones
-
         }).then((result) => {
             if (result.isConfirmed) { // Si el usuario confirma la acción
                 $(".showSweetAlert").LoadingOverlay("show");
-                var fila = tablaActividades.row($(this).parents('tr'));
-                fila.remove().draw(false); // Eliminar la fila y actualizar la tabla sin recargar
-                $(".showSweetAlert").LoadingOverlay("hide");
+                fetch(`/Visita/Eliminar?IdVisita=${data.idVisita}`, {
+                    method: "DELETE",
+                })
+                    .then(response => {
+                        $(".showSweetAlert").LoadingOverlay("hide");
+                        return response.ok ? response.json() : Promise.reject(response);
+                    })
+                    .then(responseJson => {
+                        if (responseJson.estado) {
+                            tablaVisitas.row(fila).remove().draw(false);
+                            Swal.fire("Listo!", "Visita " + data.idVisita + " en la finca: " + data.nombreFinca + " y su detalle fue eliminada!", "success")
+                        } else {
+                            Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
+                        }
+                    })
+                    .catch(error => {
+                        $(".showSweetAlert").LoadingOverlay("hide");
+                        Swal.fire("¡Error!", "Hubo un problema al eliminar la visita. "+error , "error");
+                    });
             }
-            
         })
     });
-
 });
 
 
-function mostrarModal(modelo = MODELO_DETALLE) {
-    
-    $("#txtDescripcionActividad").val(modelo[0])
-    $("#cboTipo").val(modelo[1])
-    $("#txtFechainicio").val(modelo[2])
-    $("#txtFechafin").val(modelo[3])
-    $("#txtResponsable").val(modelo[4])
-    $("#txtRecursos").val(modelo[5])
-    $("#cboEstado").val(modelo[6])
-    $("#txtAvanceAct").val(modelo[7])
-    $("#txtComentarios").val(modelo[8])
-    $("#cboRequisito").val(modelo[9])
-    $("#txtRequisito").val("")
-
-    $("#modalActividad").modal("show")    
-
-}
+//-------------------------- BTN CREAR NUEVA VISITA-------------------------
 $('#btnNuevo').on('click', function () {
-    // Limpiar los campos del modal
-    $('#txtDescripcionActividad').val('');
-    $('#cboTipo').val('Documental'); // Set default value
-    $('#txtFechainicio').val('');
-    $('#txtFechafin').val('');
-    $('#txtResponsable').val('');
-    $('#txtRecursos').val('');
-    $('#txtAvanceAct').val('');
-    $('#cboEstado').val('No Iniciado'); // Set default value
-    $('#txtComentarios').val('');
-    $('#cboRequisito').val('');
-    $('#txtRequisito').val('');
+    // inicializar modelo
+    editar = true;
+    $('#cboPlan').val('');
+    /// Se crea el modelo según el contenido el modal, en esta parte es x q es paa agregar
+    var modelo= {
+        idVisita: 0,
+        idPlan: 0,
+        idFinca: 0,
+        fecha: "",
+        responsable: "",
+        mandador: "",
+        zafra: 0,
+        latitud: "",
+        longitud: "",
+        observaciones: "",
+        urlFoto1: "",
+        nombreFoto1: "",
+        urlFoto2: "",
+        nombreFoto2: "",
+        nombreFinca: "",
+        codFinca: "",
+        descripcionPlan:"",
+        detalleVisita: [],
+    }
+    $('#btnGuardar').text('Guardar Nueva Visita');    
+    $('#btnGuardar').show();    
+    $('#linkImprimir').hide();
+    $('#btnEnviarCorreo').hide();
+    
 
     // Abrir el modal
-    $('#modalActividad').modal('show');
+    mostrarModal(modelo, false)    
 });
 
 
-function validarFecha(fecha) {
-    // Expresión regular para verificar el formato dd/MM/yyyy
-    var regexFecha = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-    return regexFecha.test(fecha);
-}
-$('#btnGuardarPlan').on('click', function () {
-    // Validar los campos del plan
-    const inputsPlan = $("#form-plan input.input-validar").serializeArray();
-    const inputs_sin_valor = inputsPlan.filter((item) => item.value.trim() == "");
+//-------------------------- BTN GUARDAR NUEVA VISITA Y GUARDAR CAMBIOS------------------------
+$('#btnGuardar').on('click', function () {
+    // Validar los campos de la Visita
+    const inputsVisita = $("#form-visita input.input-validar").serializeArray();
+    const inputs_sin_valor = inputsVisita.filter((item) => item.value.trim() == "");
 
     if (inputs_sin_valor.length > 0) {
         const mensaje = `Debe completar el campo : "${inputs_sin_valor[0].name}"`;
@@ -339,155 +432,262 @@ $('#btnGuardarPlan').on('click', function () {
         $(`input[name="${inputs_sin_valor[0].name}"]`).focus();
         return;
     }
-
-       // Crear el objeto modeloplan a partir del formulario
-    const modeloplan = {
-        idFinca: parseInt($("#txtIdFinca").val(), 10), // Convertir a entero
-        descripcion: $('#txtDescripcionPlan').val(),
-        fechaIni: convertirFecha($('#txtFechainicial').val()), // Convertir a Date
-        fechaFin: convertirFecha($('#txtFechafinal').val()),   // Convertir a Date
-        observaciones: $('#txtObservaciones').val(),
-        avance: parseFloat($('#txtAvance').val()), // Convertir a decimal
-        estado: $('#cboEstadoPlan').val(),
-        actividades: [] // Aquí agregarás las actividades
+    
+    // Cargar Fotos y FormData
+    const inputFoto1 = document.getElementById("txtFoto1");
+    const inputFoto2 = document.getElementById("txtFoto2");
+    const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
+    const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
+    
+    // Crear el objeto modelovisita a partir del formulario
+    const modelovisita = {
+        idVisita:   parseInt($("#txtIdVisita").val(), 10),
+        idPlan:     parseInt($("#txtIdPlan").val(), 10),
+        idFinca:    parseInt($("#txtIdFinca").val(), 10),
+        fecha:      convertirFecha($('#txtFecha').val()),
+        responsable:$('#txtResponsable').val(),
+        mandador:   $('#txtMandador').val(),        
+        zafra:      parseInt($("#txtZafra").val(), 10),
+        latitud:    $('#txtLatitud').val(),
+        longitud:   $('#txtLongitud').val(),   
+        observaciones: $('#txtObservaciones').val(),                        
+        nombreFoto1: lafoto1,
+        nombreFoto2: lafoto2,
+        sentTo: 0,        
+        detalleVisita: [] // Aquí agregar el detalle de la visita        
     };
 
-    // Recorrer las filas de la tabla y agregar las actividades al modelo
-    $('#tbActividad tbody tr').each(function () {
+        // Recorrer las filas de la tabla y agregar el detalle al modelo
+    $('#tbDetalle tbody tr').each(function () {
         let fila = $(this);
-        let actividad = {
-            descripcion: fila.find('td').eq(0).text(),
-            tipo: fila.find('td').eq(1).text(),
-            fechaIni: convertirFecha(fila.find('td').eq(2).text()),   // Convertir a Date
-            fechaFin: convertirFecha(fila.find('td').eq(3).text()),   // Convertir a Date
-            responsable: fila.find('td').eq(4).text(),
-            recursos: fila.find('td').eq(5).text(),
-            estado: fila.find('td').eq(6).text(),
-            avances: parseFloat(fila.find('td').eq(7).text()),  // Convertir a decimal
-            comentarios: fila.find('td').eq(8).text(),
-            idFinca: parseInt($("#txtIdFinca").val(), 10), // Convertir a entero
-            fechaUltimarevision: obtenerFechaActual(),
-            idRequisito: parseInt($("#txtIdRequisito").val(), 10),
-            avanceanterior:0.0
+        let idRegistro = $('#tbDetalle').DataTable().cell(fila, 0).data();
+        let idActivity = $('#tbDetalle').DataTable().cell(fila, 1).data();
+        let detalle = {
+            idReg: parseInt(idRegistro),       // Columna oculta es 0 cuando es nueva
+            idActividad: parseInt(idActivity), // Columna oculta 
+            fecha: convertirFecha($('#txtFecha').val()),
+            avanceanterior: parseFloat(fila.find('td').eq(2).text()), // Avance anterior
+            avances: parseFloat(fila.find('td').eq(3).text()), // Avance actual
+            estadoanterior: fila.find('td').eq(4).text(), // Estado anterior
+            estado: fila.find('td').eq(5).text(), // Estado actual
+            comentarios: fila.find('td').eq(6).text(), // Comentarios
+            observaciones: fila.find('td').eq(7).text(), // Observaciones
+            idFinca: parseInt($("#txtIdFinca").val(), 10),
         };
+        modelovisita.detalleVisita.push(detalle);
+    });   
 
-        modeloplan.actividades.push(actividad);
-    });
+    // Agrega las fotos y modelo de data para mandar a Registrar
+    const formData = new FormData();
     
-    
-    // Enviar el modelo completo al servidor como JSON
-    $(".showSweetAlert").LoadingOverlay("show");
-    fetch("/PlanesTrabajo/RegistrarPlan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json;charset=utf-8" }, // Enviar como JSON        
-        body: JSON.stringify(modeloplan) // Convertir el objeto modeloplan a JSON
-        
-    })
-        .then(response => {
-            
-            return response.ok ? response.json() : Promise.reject(response);
-        })
-        .then(responseJson => {            
+    formData.append("foto1", inputFoto1.files[0] ? inputFoto1.files[0] : null);
+    formData.append("foto2", inputFoto2.files[0] ? inputFoto2.files[0] : null);
+    formData.append("modelovisita", JSON.stringify(modelovisita));
 
-            if (responseJson.estado) {
-                Swal.fire("Listo!", "Plan de Trabajo "+responseJson.Objeto.id +""+"creado con éxito!", "success");
-                limpiarFormularioYTabla();
-            } else {
-                Swal.fire("Lo sentimos!", responseJson.mensaje, "error");
-            }          
+    // Mostrar overlay
+    $("#modalVisitas .modal-body").LoadingOverlay("show");
+
+    if (modelovisita.idVisita == 0) {
+
+        // Enviar datos al servidor para registrar nueva visita
+        fetch("/Visita/Registrar", {
+            method: "POST",
+            body: formData // No establecer 'Content-Type', FormData lo maneja
         })
-        .catch(error => {
-            $(".showSweetAlert").LoadingOverlay("hide");
-            Swal.fire("¡Error!", "Hubo un problema al tratar de agregar el Plan.", "error");
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(responseJson => {
+                if (responseJson.estado) {
+                    Swal.fire("Listo!", `Registro de Visita ${responseJson.objeto.idVisita} creado con éxito!`, "success");
+                    tablaVisitas.row.add(responseJson.objeto).draw(false)  //Revisar esto
+                    limpiarFormularioYTabla();
+                    $("#modalVisitas").modal("hide")
+                } else {
+                    Swal.fire("Lo sentimos!", responseJson.mensaje, "error");
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                Swal.fire("¡Error!", "Hubo un problema al tratar de agregar la visita.", "error");
+            })
+            .finally(() => {
+                $("#modalVisitas .modal-body").LoadingOverlay("hide");
+            });
+    } else {
+        // Enviar datos al servidor para editar una visita existente
+        fetch("/Visita/Editar", {
+            method: "PUT",
+            body: formData // No establecer 'Content-Type', FormData lo maneja
         })
-    $(".showSweetAlert").LoadingOverlay("hide");
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(responseJson => {
+                if (responseJson.estado) {
+                    Swal.fire("Listo!", `Registro de Visita ${responseJson.objeto.idVisita} editado con éxito!`, "success");
+                    tablaVisitas.row(filaseleccionada).data(responseJson.objeto).draw(false);                    
+                    limpiarFormularioYTabla();
+                    $("#modalVisitas").modal("hide")
+                } else {
+                    Swal.fire("Lo sentimos!", responseJson.mensaje, "error");
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                Swal.fire("¡Error!", "Hubo un problema al tratar de modificar la visita.", "error");
+            })
+            .finally(() => {
+                $("#modalVisitas .modal-body").LoadingOverlay("hide");
+            });
+    }
 });
+3
 
+//-------------------------- FUNCION MOSTRAR MODAL VISITAS-------------------------
+function mostrarModal(modelo, edita) {
+
+    $("#txtFecha").prop('disabled', edita);
+    $("#txtResponsable").prop('disabled', edita);
+    $("#txtMandador").prop('disabled', edita);
+    $("#txtZafra").prop('disabled', edita);
+    $("#txtLatitud").prop('disabled', edita);
+    $("#txtLongitud").prop('disabled', edita);
+    $("#txtObservaciones").prop('disabled', edita);
+    $("#txtFoto1").prop('disabled', edita);
+    $("#txtFoto2").prop('disabled', edita);
+    
+    $("#txtFecha").val(modelo.fecha != "" ? formatearFecha(modelo.fecha) : "");
+    $("#txtResponsable").val(modelo.responsable)
+    $("#txtMandador").val(modelo.mandador)
+    $("#txtZafra").val(modelo.zafra)
+    $("#txtLatitud").val(modelo.latitud)
+    $("#txtLongitud").val(modelo.longitud)
+    $("#txtObservaciones").val(modelo.observaciones)    
+    $("#txtNombreFinca").val(modelo.nombreFinca)
+    $("#txtCodFinca").val(modelo.codFinca)
+    $("#txtDescripcionPlan").val(modelo.descripcionPlan)
+    $("#txtIdPlan").val(modelo.idPlan)
+    $("#txtIdFinca").val(modelo.idFinca)
+    $("#txtIdVisita").val(modelo.idVisita ? modelo.idVisita :"0");
+    
+    //$("#txtFoto1").val(modelo.nombreFoto1)
+    //$("#txtFoto2").val(modelo.nombreFoto2)
+
+    cargarDetalle(modelo)   // Carga las lineas de la tabla de tbDetalles
+    
+    // Referencias a los elementos img
+    const imgElement1 = document.getElementById("imgFoto1");
+    const imgElement2 = document.getElementById("imgFoto2");
+
+    // Validar y asignar imágenes para imgFoto1 e imgFoto2
+    if (modelo.nombreFoto1 && modelo.urlFoto1) {
+        imgElement1.src = modelo.urlFoto1; // Cargar la imagen desde la URL
+        imgElement1.style.opacity = 0.9;
+    } else {
+        imgElement1.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement1.style.opacity = 0.25;
+    }    
+    if (modelo.nombreFoto2 && modelo.urlFoto2) {
+        imgElement2.src = modelo.urlFoto2; 
+        imgElement2.style.opacity = 0.9; // Opacidad predeterminada
+    } else {
+        imgElement2.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement2.style.opacity = 0.25; // Opacidad predeterminada
+    }
+
+    $("#modalVisitas").modal("show")
+
+} 
+
+//-------------------------- FUNCION LIMPIAR MODAL -------------------------
 function limpiarFormularioYTabla() {
-    // Limpiar los campos del formulario del Plan de Trabajo
-    $('#txtDescripcionPlan').val('');
+    // Limpiar los campos del formulario Visita
+    $('#txtIdPlan').val('');
     $('#txtIdFinca').val('');
-    $('#txtFechainicial').val('');
-    $('#txtFechafinal').val('');
+    $('#txtFecha').val('');
+    $('#txtResponsable').val('');
     $('#txtObservaciones').val('');
-    $('#txtAvance').val('');
-    $('#cboEstadoPlan').val('No Iniciado'); // Si tienes un valor por defecto
+    $('#txtMandador').val('');
+    $('#cboPlan').val(''); // Si tienes un valor por defecto
     $('#txtNombreFinca').val('');
+    $('#txtCodFinca').val('');
+    $('#txtDescripcionPlan').val('');
+    $('#txtZafra').val('');
+    $('#txtLongitud').val('');
+    $('#txtLatitud').val('');
+    $('#txtFoto1').val('');
+    $('#txtFoto2').val('');
 
-    // Limpiar la tabla de actividades
-    const tabla = $('#tbActividad').DataTable(); // Asumiendo que usas DataTables
-    tabla.clear().draw(); // Eliminar todas las filas de la tabla
+    
+    const tabla = $('#tbDetalle').DataTable();  // Limpiar la tabla de detalles Asumiendo que usas DataTables
+    tabla.clear().draw();                      // Eliminar todas las filas de la tabla
 
-    // Si no usas DataTables, puedes limpiar la tabla manualmente así:
-    // $('#tbActividad tbody').empty();
+                                            // Si no usas DataTables, puedes limpiar la tabla manualmente así:
+                                            // $('#tbActividad tbody').empty();
+}
+
+
+function cargarDetalle(modelo) {
+    // Limpiar la tabla antes de agregar nuevas actividades
+    $('#tbDetalle').DataTable().clear().draw();
+
+    // Recorrer las actividades en el modelo y agregarlas a la tabla
+    modelo.detalleVisita.forEach(function (detalle) {
+        $('#tbDetalle').DataTable().row.add([
+            detalle.idReg,
+            detalle.idActividad,
+            detalle.descripcionActividad,
+            detalle.tipo,
+            detalle.avanceanterior,
+            detalle.avances,
+            detalle.estadoanterior,
+            detalle.estado,            
+            detalle.comentarios,
+            detalle.observaciones,
+        ]).draw(false);
+    });
+}
+function cargardesdePlan(modelo) {
+    // Limpiar la tabla antes de agregar nuevas actividades
+    $('#tbDetalle').DataTable().clear().draw();
+
+    // Recorrer las actividades en el modelo y agregarlas a la tabla
+    modelo.actividades.forEach(function (actividad) {
+        if (actividad.estado != "FINALIZADO") {
+            $('#tbDetalle').DataTable().row.add([        
+                0,                            // Este será el IdReg de detalleVisita, 
+                actividad.idActividad,
+                actividad.descripcion,
+                actividad.tipo,
+                actividad.avances,
+                "",                
+                actividad.estado,
+                "",                
+                "",
+                "",
+            ]).draw(false);
+        }     
+    });
+    if ($('#tbDetalle').DataTable().rows().count() === 0) {
+        Swal.fire("El Plan no tiene Actividades con estatus en proceso, revise en el modulo de planes.");
+    }
 }
 
 function convertirFecha(fecha) {
+
     const partes = fecha.split("/");
     const dia = partes[0];
     const mes = partes[1] - 1; // Restar 1 al mes
     const anio = partes[2];
     return new Date(anio, mes, dia);
 }
-function obtenerFechaActual() {
-    const hoy = new Date();
-    const anio = hoy.getFullYear();
-    const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Meses de 0 a 11, sumamos 1
-    const dia = String(hoy.getDate()).padStart(2, '0'); // Día con dos dígitos
 
-    return `${anio}-${mes}-${dia}`; // Formato yyyy-MM-dd
+function formatearFecha(fechaISO) {
+    // Convertir la cadena ISO a un objeto Date
+    const fecha = new Date(fechaISO);
+
+    // Extraer día, mes y año
+    const dia = String(fecha.getDate()).padStart(2, '0'); // Obtener día con dos dígitos
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Obtener mes, sumando 1 porque los meses en JS van de 0 a 11
+    const anio = fecha.getFullYear(); // Obtener año completo
+
+    // Formatear y retornar como dd/MM/yyyy
+    return `${dia}/${mes}/${anio}`;
 }
-
-
-
-
-// Esto era para menejar fechas con formato amigable
-
-
-
-//function convertirFecha(fechaAmigable) {
-//    // Mapa de meses
-//    const meses = {
-//        "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04", "Mayo": "05", "Junio": "06",
-//        "Julio": "07", "Agosto": "08", "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
-//    };
-
-//    // Dividir la fecha amigable en partes
-//    var partesFecha = fechaAmigable.split('/');
-
-//    var dia = partesFecha[0]; // Día
-//    var mesTexto = partesFecha[1]; // Mes en formato de texto
-//    var anio = partesFecha[2]; // Año
-
-//    // Reemplazar el nombre del mes por su número correspondiente
-//    var mesNumero = meses[mesTexto];
-
-//    // Construir la fecha en formato dd/mm/yyyy
-//    var fechaGuardar = dia + "/" + mesNumero + "/" + anio;
-
-//    return fechaGuardar;
-//}
-
-//var fechaInicial = $('#txtFechainicial').datepicker('getFormattedDate');
-//var fechaFinal = $('#txtFechafinal').datepicker('getFormattedDate');
-
-//// Mostrar la primera alerta
-//Swal.fire({
-//    title: 'Las fechas como vienen',
-//    text: "Inicia: " + fechaInicial + " Finaliza: " + fechaFinal,
-//    icon: 'info'
-//}).then(() => {
-//    // Después de cerrar la primera alerta, continuar con la lógica
-//    var fechaIniGuarda = convertirFecha(fechaInicial);
-//    var fechaFinGuarda = convertirFecha(fechaFinal);
-
-//    // Mostrar la segunda alerta
-//    Swal.fire({
-//        title: 'Las fechas como se guardan',
-//        text: "Inicia: " + fechaIniGuarda + " Finaliza: " + fechaFinGuarda,
-//        icon: 'success'
-//    }).then(() => {
-//        // Aquí puedes agregar la lógica para guardar los datos
-//        // Por ejemplo, enviar una solicitud AJAX o continuar con el proceso
-//    });
-//});

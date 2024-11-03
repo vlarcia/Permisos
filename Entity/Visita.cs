@@ -28,12 +28,16 @@ public partial class Visita
     public string? Latitud { get; set; }
 
     public string? Longitud { get; set; }
-    public string? UrlFoto1 { get; set; }
-    public string? UrlFoto2 { get; set; }
 
-    public string? NombreFoto1 { get; set; }
-    public string? NombreFoto2 { get; set; }
-    public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();    
+    public string? Urlfoto1 { get; set; }
+
+    public string? Urlfoto2 { get; set; }
+
+    public string? Nombrefoto1 { get; set; }
+
+    public string? Nombrefoto2 { get; set; }
+
+    public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();
 
     public virtual MaestroFinca IdFincaNavigation { get; set; } = null!;
 

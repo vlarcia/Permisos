@@ -37,7 +37,11 @@ public partial class MaestroFinca
 
     public string? Telefono { get; set; }
 
+    public int? Grupo { get; set; }
+
     public virtual ICollection<Actividad> Actividades { get; set; } = new List<Actividad>();
+
+    public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();
 
     public virtual ICollection<PlanesTrabajo> PlanesTrabajos { get; set; } = new List<PlanesTrabajo>();
 

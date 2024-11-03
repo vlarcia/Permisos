@@ -37,7 +37,7 @@
                             <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputDescripcionPlan" id="txtDescripcionPlan" name="DescripcionPlan">
                         </div>
 
-                        <div class="form row input-group input-group-sm mb-2 col-sm-5">
+                        <div class="form row input-group input-group-sm mb-2 col-sm-10">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="inputFechainicial">Inicia</span>
                             </div>
@@ -46,25 +46,19 @@
                                 <span class="input-group-text" id="inputFechafinal">Finaliza</span>
                             </div>
                             <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputFechafinal" id="txtFechafinal" name="FechaFinal">
-                        </div>
-
-                        <div class="form row col-sm-5">
-                            <div class="input-group input-group-sm mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputAvance">Avance %</span>
-                                </div>
-                                <input type="text" class="form-control text-right input-validar" aria-label="Small" aria-describedby="inputAvance" id="txtAvance" name="Avance">
-
-                                <div class="input-group-prepend pl-3">
-                                    <label class="input-group-text" for="cboEstadoPlan">Estado</label>
-                                </div>
-                                <select class="custom-select input-validar" id="cboEstadoPlan" name="EstadoPlan">
-                                    <option value="NO INICIADO">No Iniciado</option>
-                                    <option value="INICIADO">Iniciado</option>
-                                    <option value="EN PROCESO">En Proceso</option>
-                                </select>
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputAvance">Avance %</span>
                             </div>
-                        </div>
+                            <input type="text" class="form-control text-right input-validar" aria-label="Small" aria-describedby="inputAvance" id="txtAvance" name="Avance">
+                            <div class="input-group-prepend pl-3">
+                                <label class="input-group-text" for="cboEstadoPlan">Estado</label>
+                            </div>
+                            <select class="custom-select input-validar" id="cboEstadoPlan" name="EstadoPlan">
+                                <option value="NO INICIADO">No Iniciado</option>
+                                <option value="INICIADO">Iniciado</option>
+                                <option value="EN PROCESO">En Proceso</option>
+                            </select>
+                         </div>
 
                         <div class="form row input-group input-group-sm mb-2 col-sm-10">
                             <div class="input-group-prepend">

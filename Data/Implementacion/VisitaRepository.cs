@@ -26,7 +26,7 @@ namespace Data.Implementacion
             {
                 try
                 {
-                    // 1. Guardar el plan de trabajo con el modelo de Actividades 
+                    // 1. Guardar la visita con el modelo de Actividades 
                     _dbContext.Visitas.Add(entidad);
                     await _dbContext.SaveChangesAsync();                    
                     visitaGenerada = entidad;
@@ -47,11 +47,9 @@ namespace Data.Implementacion
             List<DetalleVisita>listaResumen = await _dbContext.DetalleVisitas
 
                 .Include(a => a.Avances)
-                .Include(ac => ac.IdActvidadNavigation.Descripcion)                
-                .Include(f => f.idFincaNavigation.Descripcion)
-                .Include(p => p.IdVisitaNavigation.Observaciones)                                
-                .Where(act=> act.IdVisitaNavigation.Fecha.Value.Date >= Fechainicio &&
-                             act.IdVisitaNavigation.Fecha.Value.Date <= Fechafin).ToListAsync();
+                .Include(ac => ac.IdActividadNavigation.Descripcion)                                
+                .Where(act=> act.Fecha.Value.Date >= Fechainicio &&
+                             act.Fecha.Value.Date <= Fechafin).ToListAsync();
 
             return listaResumen;
         }

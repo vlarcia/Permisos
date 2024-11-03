@@ -149,27 +149,23 @@ $("#btnGuardar").click(function () {
             method: "PUT",
             body: formData
         })
-            .then(response => {
-                $("#modalData").find("div.modal-content").LoadingOverlay("hide");
-                return response.ok ? response.json() : Promise.reject(response);
-            })
-            .then(responseJson => {
-                if (responseJson.estado) {
-                    tablaData.row(filaSeleccionada).data(responseJson.objeto).draw(false);
-                    filaSeleccionada = null
-                    $("#modalData").modal("hide")
+        .then(response => {
+            $("#modalData").find("div.modal-content").LoadingOverlay("hide");
+            return response.ok ? response.json() : Promise.reject(response);
+        })
+        .then(responseJson => {
+            if (responseJson.estado) {
+                tablaData.row(filaSeleccionada).data(responseJson.objeto).draw(false);
+                filaSeleccionada = null
+                $("#modalData").modal("hide")
 
-                    Swal.fire("Listo!", "Usuario modificado con éxito!", "success");
+                Swal.fire("Listo!", "Usuario modificado con éxito!", "success");
                     
-                } else {
-                    Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
-                }
-            }) 
-
-
-
+            } else {
+                Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
+            }
+        }) 
     }
-
 })
 
 
@@ -182,7 +178,7 @@ $("#tbdata tbody").on("click", ".btn-editar", function () {
         filaSeleccionada = $(this).closest("tr");
     }
     const data = tablaData.row(filaSeleccionada).data();
-    $("#linkImprimir").attr("href", `/PlanesTrabajo/MostrarPDFPlan?idPlan=27}`)
+  
     mostrarModal(data);
 })
 $("#tbdata tbody").on("click", ".btn-eliminar", function () {

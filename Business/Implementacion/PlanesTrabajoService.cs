@@ -98,7 +98,10 @@ namespace Business.Implementacion
                 bool respuesta = await _repositorioplanes.Editar(plan_editado);
                 if (!respuesta)
                     throw new TaskCanceledException("No se pudo editar el plan.   Revise!");
-                PlanesTrabajo plan_fueeditado = queryPlan.First();
+                PlanesTrabajo plan_fueeditado = queryPlan
+                                                   .Include(f=> f.IdFincaNavigation)
+                                                   .Include(a => a.Actividades)
+                                                    .First();
                 return plan_fueeditado;
 
             }

@@ -116,6 +116,7 @@ namespace Business.Implementacion
                     string urlFoto = await _firebaseService.SubirStorage(Foto, "carpeta_usuario", usuario_editar.NombreFoto);
                     usuario_editar.UrlFoto = urlFoto;
                 }
+
                 bool respuesta = await _repositorio.Editar(usuario_editar);
                 if(!respuesta)
                     throw new TaskCanceledException("No se pudo actualizar el usuario.  Revise !");

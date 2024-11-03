@@ -34,15 +34,9 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? DescripcionPlan { get; set; }
         public string? UrlFoto1 { get; set; }
         public string? UrlFoto2 { get; set; }
-
         public string? NombreFoto1 { get; set; }
         public string? NombreFoto2 { get; set; }
-
-
-        public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();
-
-        public virtual MaestroFinca IdFincaNavigation { get; set; } = null!;
-
-        public virtual PlanesTrabajo IdPlanNavigation { get; set; } = null!;
+        public virtual ICollection<VMDetalleVisita> DetalleVisita { get; set; } = new List<VMDetalleVisita>();
+ 
     }
 }

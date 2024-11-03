@@ -8,8 +8,17 @@
 @section Estilos {
     <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">    
+    
 }
+ <style>
+    
+    .datepicker {
+        width: 150px;
+        
+        
+    }
+</style> 
 <div class="container-fluid">
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -36,7 +45,7 @@
                                 <th>Responsable</th>
                                 <th>Mandador</th>
                                 <th>Observaciones</th>
-                                <th>Acciones</th>
+                                <th>Acciones_Visitas</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,7 +57,7 @@
     </div>
 
     <!--  Modal-->
-    <!--  Modal-->
+    <!-- Modal -->
     <div class="modal fade" id="modalVisitas" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -59,109 +68,128 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="form-visita">
+                        <!-- Código Plan -->
+                        <div class="form row input-group input-group-sm mb-2 col-sm-12">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="cboPlan">Código Plan</label>                                                             
+                            </div>
+                            <select class="custom-select input-validar" id="cboPlan" name="CodigoPlan"></select>
+                            <input type="text" class="mb-0 col-sm-8" id="txtDescripcionplan" name="DescripcionPlan" disabled>
+                            <input type="hidden" id="txtIdVisita" name="idVisita">
+                            <input type="hidden" id="txtIdPlan" name="idPlan">
+                            <input type="hidden" id="txtIdFinca" name="idFinca">
+                        </div>
+
+                        <!-- Cod.Finca y Nombre Finca en línea completa -->
 
                         <div class="form row input-group input-group-sm mb-2 col-sm-12">
                             <div class="input-group-prepend">
-                                <label class="input-group-text" for="cboPlan">Código Plan</label>
+                                <span class="input-group-text" id="inputCodFinca">Cod. Finca</span>
                             </div>
-                            <select class="custom-select input-validar" id="cboPlan" name="CodigoPlan">
-                            </select>
-                            <input type="text" class="mb-0 col-sm-9" id="txtDescripcionplan" name="DescripcionPlan" disabled>
-                            <input type="hidden" id="txtIdPlan" name="idPlan">
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputCodFinca" id="txtCodFinca" name="CodFinca" disabled>
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputNombreFinca">Nombre Finca</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputNombreFinca" id="txtNombreFinca" name="NombreFinca" disabled>
                         </div>
 
+                        <!-- Fecha, Mandador y Responsable en una fila -->
+                        <div class="form row input-group input-group-sm mb-2 col-sm-12">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputFecha">Fecha</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputFecha" id="txtFecha" name="Fecha" disabled>
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputMandador">Mandador</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputMandador" id="txtMandador" name="Mandador" disabled>
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputResponsable">Responsable</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputResponsable" id="txtResponsable" name="Responsable" disabled>
+                        </div>
 
+                        <!-- Zafra, Latitud y Longitud en otra fila -->
+                        <div class="form row input-group input-group-sm mb-2 col-sm-12">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputZafra">Zafra</span>
+                            </div>
+                            <input type="number" class="form-control" arial-label="Small" aria-describedby="inputZafra"  id="txtZafra" name="Zafra" disabled>
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputLatitud">Latitud</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputLatitud" id="txtLatitud" name="Latitud" disabled>
+                            <div class="input-group-prepend pl-3">
+                                 <span class="input-group-text" id="inputLongitud">Longitud</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputLongitu" id="txtLongitud" name="Longitud" disabled>                           
+                        </div>
+                
+
+                        <!-- Observaciones en una fila completa -->
+                        <div class="form row input-group input-group-sm mb-2 col-sm-12">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputObservaciones">Observaciones</span>
+                            </div>
+                            <textarea type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputObservaciones" id="txtObservaciones" name="Observaciones"></textarea>
+                        </div>
+
+                        <!-- Fotos en la misma línea -->
+                        <div class="form-row mb-2">
+                            <div class="form-group col-sm-6">
+                                <label for="txtFoto1" class="col-form-label">Foto 1</label>
+                                <input class="form-control-file" type="file" id="txtFoto1" />
+                                <img id="imgFoto1" style="max-height:110px; max-width:140 ;opacity: 0.25;" src="~/images/eog-image-photo-svgrepo-com.svg" class="rounded mx-auto d-block" alt="Foto1">
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtFoto2" class="col-form-label">Foto 2</label>
+                                <input class="form-control-file" type="file" id="txtFoto2" />
+                                <img id="imgFoto2" style="max-height:110px; max-width:140; opacity: 0.25;" src="~/Images/eog-image-photo-svgrepo-com.svg" class="rounded mx-auto d-block" alt="Foto2">
+                            </div>
+                            <div class="col-sm-4">
+                            
+                            </div>
+                            <div class="col-sm-4">
+                                
+                            </div>
+                        </div>
+
+                        <h7 style="color: royalblue"><strong>Detalle de la Visita</strong></h7>
+                        <hr class="border-bottom-primary"> <!-- Línea de separación -->                       
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="form-row">
-                                    <div class="form-group col-sm-2">
-                                        <label for="txtId">IdPlan</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtId" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-10">
-                                        <label for="txtDescripcion">Descripción</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtDescripcion" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-sm-2">
-                                        <label for="txtCodFinca">Cod.Finca</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtCodFinca" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-10">
-                                        <label for="txtNombreFinca">Nombre Finca</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtNombreFinca" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtFechaIniPlan">Fecha</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtFecha" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtFechaFinPlan">Fecha Fin</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtFechaFinPlan" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtAvance">Responsable</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtResponsable" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtMandador">Mandador</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtMandador" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-sm-12">
-                                        <label for="txtObservaciones">Observaciones</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtObservaciones" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtFoto1">Foto1</label>
-                                    <input class="form-control-file" type="file" id="txtFoto1" />
-                                    <label for="txtFoto2">Foto1</label>
-                                    <input class="form-control-file" type="file" id="txtFoto2" />
-                                </div>
-
-                                <hr class="border-bottom-primary"> <!-- Linea de separacion -->
-                                <h8>Actividades Revisadas</h8>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <table id="tbActividades" class="table table-sm table-striped w-100">
-                                            <thead>
-                                                <tr>
-                                                    <th hidden>IdActividad</th> <!-- Columna oculta -->
-                                                    <th>Descripción</th>
-                                                    <th>Tipo</th>                                                    
-                                                    <th>Avance_Ant.</th>
-                                                    <th>Avance_Act.</th>
-                                                    <th>Estado_Ant.</th>
-                                                    <th>Estado_Act.</th>
-                                                    <th>Comentarios</th>
-                                                    <th>Observaciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <table id="tbDetalle" class="table table-sm table-striped w-100">
+                                    <thead>
+                                        <tr>
+                                            <th hidden>IdReg</th> <!-- Columna oculta --> 
+                                            <th hidden>IdActividad</th> <!-- Columna oculta -->
+                                            <th>Descripción</th>
+                                            <th>Tipo</th>
+                                            <th>Avance_Ant.</th>
+                                            <th>Avance_Act.</th>
+                                            <th>Estado_Ant.</th>
+                                            <th>Estado_Act.</th>
+                                            <th>Comentarios</th>
+                                            <th>Observaciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <a href="#" class="btn btn-primary btn-sm" target="_blank" id="linkImprimir">Imprimir</a>
-                    <button class="btn btn-primary btn-sm" id="btnGuardar"><i class="fas fa-database"></i>  Guardar Cambios</button>
-                    <button class="btn btn-primary btn-sm" id="btnEnviarCorreo"><i class="fas fa-envelope"></i>  Enviar</button> <!-- Nuevo botón -->
+                    <button class="btn btn-primary btn-sm" id="btnGuardar"><i class="fas fa-database"></i> Guardar Cambios</button>
+                    <button class="btn btn-primary btn-sm" id="btnEnviarCorreo"><i class="fas fa-envelope"></i> Enviar</button>
                     <button class="btn btn-danger btn-sm" type="button" data-dismiss="modal">Cerrar</button>
                 </div>
-
             </div>
         </div>
     </div>
+
   
 </div>
 
@@ -169,6 +197,8 @@
     <!-- ============================================================
     =SCRIPTS PARA ESTA PAGINA
     ===============================================================-->
+
+
 
     <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
@@ -181,15 +211,10 @@
     <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
 
 
-    <script src="~/js/vistas/Visita_Index.js"></script>
-
-    <script src="~/vendor/select2/select2.min.js"></script>
-    <script src="~/vendor/select2/es.min.js"></script>
-
-
-
     <script src="~/vendor/datepicker/bootstrap-datepicker.min.js"></script>
     <script src="~/vendor/datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+
+    <script src="~/js/vistas/Visita_Index.js"></script>
 
 
     <!-- SOLO ES DE EJEMPLO - IGNORAR -->

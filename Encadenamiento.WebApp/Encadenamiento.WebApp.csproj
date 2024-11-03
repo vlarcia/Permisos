@@ -8,14 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Images\eog-image-photo-svgrepo-com.svg" />
     <Content Remove="wwwroot\js\vistas\DashBoard_Index.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\Images\eog-image-photo-svgrepo-com.svg" />
     <_ContentIncludedByDefault Remove="wwwroot\js\vistas\DashBoard_Index.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Images\eog-image-photo-svgrepo-com.svg" />
     <None Include="wwwroot\js\vistas\DashBoard_Index.js" />
   </ItemGroup>
 
@@ -37,6 +40,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="Views\Visita\PDFVisita.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\js\vistas\RevisionesMantenimiento_Index.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -51,10 +58,6 @@
 	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	</None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Visitas\" />
   </ItemGroup>
 
 </Project>

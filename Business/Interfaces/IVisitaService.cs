@@ -11,8 +11,10 @@ namespace Business.Interfaces
     {
         
         Task<List<Visita>> Lista();        
-        Task<Visita> Crear(Visita entidad);
-        Task<Visita> Editar(Visita entidad);        
-        Task<bool> Eliminar(int idVisita);          
+        Task<Visita> Registrar(Visita entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "");
+        Task<Visita> Editar(Visita entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "");        
+        Task<bool> Eliminar(int idVisita);
+        Task<Visita> Detalle(int idVisita);
+        Task<List<DetalleVisita>> ListaDetalle();
     }
 }

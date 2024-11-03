@@ -64,7 +64,7 @@ namespace Business.Implementacion
                     foreach (var revision in entidad)
                     {
                          // Validar cada revisión o aplicar lógica adicional si es necesario
-                        if (revision.IdFinca.Value!=null && revision.Fecha.Value!=null)
+                        if (revision.IdFinca!=null && revision.Fecha!=null)
                         {
                             _dbcontext.Revisiones.Add(revision);
                             revision_creada = revision;

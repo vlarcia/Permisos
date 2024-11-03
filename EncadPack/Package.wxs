@@ -1,9 +1,0 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="EncadPack" Manufacturer="Solintea" Version="1.0.0.1" UpgradeCode="6a00ea92-ef74-47cd-81fe-749427c9243d">
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
-
-    <Feature Id="Main">
-      <ComponentGroupRef Id="EncadComponents" />
-    </Feature>
-  </Package>
-</Wix>

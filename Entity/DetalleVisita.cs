@@ -9,7 +9,7 @@ public partial class DetalleVisita
 
     public int IdVisita { get; set; }
 
-    public int IdActvidad { get; set; }
+    public int IdActividad { get; set; }
 
     public DateTime? Fecha { get; set; }
 
@@ -24,12 +24,16 @@ public partial class DetalleVisita
     public string? Comentarios { get; set; }
 
     public string? Observaciones { get; set; }
-    public int IdFinca { get; set; }
-    public string? UrlFoto1 {  get; set; }
-    public string? NombreFoto1 { get; set; }
 
-    public virtual Actividad IdActvidadNavigation { get; set; } = null!;
+    public string? Urlfoto1 { get; set; }
+
+    public string? Nombrefoto1 { get; set; }
+
+    public int? IdFinca { get; set; }
+
+    public virtual Actividad IdActividadNavigation { get; set; } = null!;
+
+    public virtual MaestroFinca? IdFincaNavigation { get; set; }
 
     public virtual Visita IdVisitaNavigation { get; set; } = null!;
-    public virtual MaestroFinca? idFincaNavigation { get; set; } 
 }

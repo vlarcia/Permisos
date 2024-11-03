@@ -89,16 +89,27 @@ namespace Encadenamiento.WebApp.Utilidades.Automapper
                 .ForMember(dest=> dest.DetalleVisita, opt=> opt.MapFrom(src=>src.DetalleVisita))// Mapea la coleccion de detalles de la visita
                 .ForMember(dest=> dest.DescripcionPlan, opt => opt.MapFrom(src => src.IdPlanNavigation.Descripcion))
                 .ForMember(dest => dest.NombreFinca,  opt => opt.MapFrom(src => src.IdFincaNavigation.Descripcion))
-                .ForMember(dest => dest.CodFinca, opt => opt.MapFrom(src => src.IdFincaNavigation.Descripcion))
+                .ForMember(dest => dest.CodFinca, opt => opt.MapFrom(src => src.IdFincaNavigation.CodFinca))
                 .ForMember(dest => dest.Proveedor, opt => opt.MapFrom(src => src.IdFincaNavigation.Proveedor))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.IdFincaNavigation.Email))
                 .ReverseMap()
-                .ForMember(dest => dest.IdFincaNavigation, opt => opt.Ignore())
+                .ForMember(dest => dest.IdFincaNavigation, opt => opt.Ignore())     
                 .ForMember(dest => dest.IdPlanNavigation, opt => opt.Ignore());
-            
-            #endregion 
 
-            
+            CreateMap<DetalleVisita, VMDetalleVisita>()
+               // Mapeo para mostrar NombreFinca, NombrePlan y FechaPlanIni
+               .ForMember(dest => dest.DescripcionActividad, opt => opt.MapFrom(src => src.IdActividadNavigation.Descripcion))
+               .ForMember(dest => dest.Tipo, opt => opt.MapFrom(src => src.IdActividadNavigation.Tipo))
+               .ForMember(dest => dest.FechaInicia, opt => opt.MapFrom(src => src.IdActividadNavigation.FechaIni))
+               .ForMember(dest => dest.FechaFinaliza, opt => opt.MapFrom(src => src.IdActividadNavigation.FechaFin))
+               .ForMember(dest => dest.FechaUltimarevision, opt => opt.MapFrom(src => src.IdActividadNavigation.FechaUltimarevision))
+
+               // Evitar que AutoMapper intente mapear las propiedades de navegación al hacer el mapeo inverso
+               .ReverseMap()
+               .ForMember(dest => dest.IdFincaNavigation, opt => opt.Ignore())  // Ignorar IdFincaNavigation para evitar crear una nueva finca
+               .ForMember(dest => dest.IdActividadNavigation, opt => opt.Ignore());  // Ignorar IdPlanNavigation para evitar crear un nuevo plan
+
+#endregion
 
             #region Menu
             CreateMap<Menu, VMMenu>()

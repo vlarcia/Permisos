@@ -1,0 +1,174 @@
+﻿@model Encadenamiento.WebApp.Models.ViewModels.VMPDFVisita;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Planes de Trabajo</title>
+    <style>
+        .contenedor {
+            width: 900px !important;
+            height: 842px !important;
+            margin: auto;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif
+        }
+
+        p.title {
+            font-weight: bold;
+        }
+
+        p.title2 {
+            font-weight: bold;
+            color: #006400;
+            font-size: 15px;
+        }
+
+        p.text {
+            font-size: 15px;
+            font-weight: 100;
+            color: #858585;
+        }
+
+        p {
+            margin: 0px
+        }
+
+        .tbth {
+            text-align: left;
+        }
+
+        table.tbproductos {
+            border-collapse: separate;
+            border-spacing: 4px;
+        }
+
+            table.tbproductos thead tr th {
+                background-color: darkgreen;
+                padding: 10px;
+                font-size: 15px;
+                color: white;
+                opacity: 8;
+            }
+
+            table.tbproductos tbody tr td {
+                padding: 10px;
+            }
+
+        .item {
+            font-size: 15px;
+            font-weight: 100;
+            color: #757575;
+        }
+
+        .item-2 {
+            font-size: 15px;
+            font-weight: bold;
+            color: #757575;
+        }
+
+        .item-3 {
+            font-size: 15px;
+            font-weight: bold;
+            background-color: #008000;
+            color: white;
+        }
+
+        .td-item {
+            border-bottom: 2px solid #E8E8E8 !important;
+        }
+
+        .tabla-proveedor {
+            width: 80%;
+            background-color: rgba(0, 100, 0, 0.8); /* darkgreen con 80% de transparencia */
+            opacity: 0.2; /* Opacidad general de 20% */
+        }
+
+            .tabla-proveedor td {
+                color: darkblue;
+                font-size: 15px;
+            }
+        /* Logo centrado y franjas naranjas */
+        .header {
+            text-align: center;
+            position: relative;
+            padding-top: 15px;
+        }
+
+            .header img {
+                width: 125px; /* Aumentar el tamaño del logo */
+                height: auto;
+            }
+
+    </style>
+
+</head>
+<body style="background-color:rgba(0, 100, 0, 0.1)">
+    <div style="background-color: rgba(0, 100, 0, 0.2);">
+        <div class="header">
+            <img src="@Model.negocio.UrlLogo" alt="Logo">
+        </div>
+        <table style="width:100%; background-color: rgba(0, 100, 0, 0.1);">
+
+            <tr>
+                <td>
+                    <p style="color: darkblue; font-size: 15px; text-align: left;">Proveedor: @Model.visita.Proveedor</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="color: darkblue; font-size: 15px; text-align: left;">Finca: @Model.visita.NombreFinca</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="border-radius:5px; margin:auto; box-shadow:2px 2px 10px #DEDEDE; padding:10px; background-color: rgba(0, 100, 0, 0.08)">
+        <table style="width:100%">
+            <tr>
+                <td align="center" colspan="2">
+                    <h3 style="color:#004DAF">Informme de visita con número de sistema @(Model.visita.IdVisita.ToString() ?? "n/d")</h3>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p class="text" style="color: #2f2f2f; font-size: 15px;">
+                        Por este medio estamos adjuntando un informe relacionado con la visita realizada a su finca con codigo
+                        @(Model.visita.CodFinca?.ToString() ?? "n/d") y razon social @(Model.visita.NombreFinca?.ToString() ?? "n/d"), donde se
+                        abordaron las actividades del plan de trabajo @Model.visita.IdPlan.ToString() con descripcion: @Model.visita.DescripcionPlan?.ToString()
+                        en la fecha @(Model.visita.Fecha?.ToString("dd/MM/yyyy") ?? "n/d").  Los comentarios y observaciones que se registraron
+                        en la visita, se muestran en el documento adjunto, esperando le sirvan como elemento de apoyo en sus tareas de mejora.
+                    </p>
+                    <br />
+                    <p class="text" style="color: #2f2f2f; font-size: 15px;">
+                        Agradecemos su participación en este programa, esperando que podamos contribuir en sus acciones y esfuerzos por establecer procesos
+                        mas estandarizados.  Le recordamos que este es un programa de apoyo hacia ustedes, con el fin de establecer acciones encaminadas a
+                        reducir las brechas de cumplimiento, implementando mejores prácticas y un modelo de mejora continua.
+                    </p>
+                </td>
+            </tr>
+            <tr> </tr>
+            <tr> </tr>
+            <tr> </tr>
+            <tr>
+                <td><h4 style="color:#004DAF;margin:2px">Contactarnos:</h4></td>
+                <td>Teléfonos y Contactos tipo: @Model.visita.Email</td>
+            </tr>
+        </table>
+        <hr />
+        <hr />
+        <div padding:15px; margin-top:15px; margin-bottom:15px;">
+            <!-- Fondo verde claro -->
+            <p style="color: #2f2f2f; font-size: 15px;">Para cualquier aclaración le recomendamos mantenerse en contacto con el supervisor de Negocios de Caña de Monte Rosa que le asiste.</p>
+            <p style="color: #2f2f2f; font-size: 15px;">Muchas Gracias.</p>
+        </div>
+    </div>
+
+    <br />
+    <br />
+</body>
+</html>

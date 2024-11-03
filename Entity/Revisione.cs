@@ -5,15 +5,15 @@ namespace Entity;
 
 public partial class Revisione
 {
-    public int? IdRevision { get; set; }
+    public int IdRevision { get; set; }
 
-    public int? IdFinca { get; set; }
+    public int IdFinca { get; set; }
 
-    public int? IdRequisito { get; set; }
+    public int IdRequisito { get; set; }
 
-    public DateTime? Fecha { get; set; }
+    public DateTime Fecha { get; set; }
 
-    public string? Estado { get; set; } = null!;
+    public string Estado { get; set; } = null!;
 
     public string? Observaciones { get; set; }
 
@@ -22,6 +22,8 @@ public partial class Revisione
     public string? Tipo { get; set; }
 
     public decimal? Cumplimiento { get; set; }
+
+    public int? Grupo { get; set; }
 
     public virtual MaestroFinca IdFincaNavigation { get; set; } = null!;
 

@@ -15,7 +15,5 @@ public partial class RolMenu
 
     public DateTime? FechaRegistro { get; set; }
 
-    public virtual Menu? IdMenuNavigation { get; set; }
-
     public virtual Rol? IdRolNavigation { get; set; }
 }

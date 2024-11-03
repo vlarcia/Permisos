@@ -50,7 +50,9 @@ public partial class CumplimientoContext : DbContext
 
     public virtual DbSet<Visita> Visitas { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)    { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    { }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -189,31 +191,32 @@ public partial class CumplimientoContext : DbContext
             entity.Property(e => e.Fecha)
                 .HasColumnType("date")
                 .HasColumnName("fecha");
-            entity.Property(e => e.IdActvidad).HasColumnName("id_actvidad");
-            entity.Property(e => e.IdVisita).HasColumnName("id_visita");
+            entity.Property(e => e.IdActividad).HasColumnName("id_actividad");
             entity.Property(e => e.IdFinca).HasColumnName("id_finca");
+            entity.Property(e => e.IdVisita).HasColumnName("id_visita");
+            entity.Property(e => e.Nombrefoto1)
+                .HasMaxLength(100)
+                .HasColumnName("nombrefoto1");
             entity.Property(e => e.Observaciones)
                 .HasMaxLength(250)
                 .HasColumnName("observaciones");
-            entity.Property(e => e.UrlFoto1).HasColumnName("urlfoto1");
-            entity.Property(e => e.NombreFoto1).HasColumnName("nombrefoto1");
+            entity.Property(e => e.Urlfoto1)
+                .HasMaxLength(500)
+                .HasColumnName("urlfoto1");
 
-            entity.HasOne(dv => dv.IdActvidadNavigation)
-             .WithMany()
-             .HasForeignKey(dv => dv.IdActvidad)
-             .OnDelete(DeleteBehavior.ClientSetNull);
+            entity.HasOne(d => d.IdActividadNavigation).WithMany(p => p.DetalleVisita)
+                .HasForeignKey(d => d.IdActividad)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleVisitas_Actividades");
 
-            entity.HasOne(dv => dv.IdVisitaNavigation)
-             .WithMany(v => v.DetalleVisita)
-             .HasForeignKey(dv => dv.IdVisita)
-             .OnDelete(DeleteBehavior.ClientSetNull);
-             //.HasConstraintName("FK_DetalleVisitas_Visitas");
+            entity.HasOne(d => d.IdFincaNavigation).WithMany(p => p.DetalleVisita)
+                .HasForeignKey(d => d.IdFinca)
+                .HasConstraintName("FK_DetalleVisitas_MaestroFinca");
 
-            entity.HasOne(e => e.idFincaNavigation)
-             .WithMany()
-             .HasForeignKey(e => e.IdFinca)
-             .OnDelete(DeleteBehavior.ClientSetNull)
-             .HasConstraintName("FK_DetalleVisitas_MaestroFinca");
+            entity.HasOne(d => d.IdVisitaNavigation).WithMany(p => p.DetalleVisita)
+                .HasForeignKey(d => d.IdVisita)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DetalleVisitas_Visitas");
         });
 
         modelBuilder.Entity<MaestroFinca>(entity =>
@@ -226,20 +229,15 @@ public partial class CumplimientoContext : DbContext
             entity.Property(e => e.Area)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("area");
-            entity.Property(e => e.CodFinca)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("cod_finca");
+            entity.Property(e => e.CodFinca).HasColumnName("cod_finca");
             entity.Property(e => e.DatetimeUpdate)
-                .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("datetime_update");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(150)
-                .HasDefaultValueSql("(N'N/A')")
                 .HasColumnName("descripcion");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
-                .HasDefaultValueSql("(N'N/A')")
                 .IsFixedLength()
                 .HasColumnName("email");
             entity.Property(e => e.Emailsuper)
@@ -247,21 +245,17 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("emailsuper");
             entity.Property(e => e.Empresa)
                 .HasMaxLength(30)
-                .HasDefaultValueSql("(N'MR')")
                 .HasColumnName("empresa");
             entity.Property(e => e.Encargado)
                 .HasMaxLength(100)
                 .HasColumnName("encargado");
-            entity.Property(e => e.Propiedad)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("propiedad");
+            entity.Property(e => e.Grupo).HasColumnName("grupo");
+            entity.Property(e => e.Propiedad).HasColumnName("propiedad");
             entity.Property(e => e.Proveedor)
                 .HasMaxLength(200)
-                .HasDefaultValueSql("(N'N/A')")
                 .HasColumnName("proveedor");
             entity.Property(e => e.Supervisor)
                 .HasMaxLength(100)
-                .HasDefaultValueSql("(N'N/A')")
                 .HasColumnName("supervisor");
             entity.Property(e => e.Tecnico)
                 .HasMaxLength(100)
@@ -274,13 +268,12 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("variedad");
             entity.Property(e => e.Zona)
                 .HasMaxLength(30)
-                .HasDefaultValueSql("(N'N/A')")
                 .HasColumnName("zona");
         });
 
         modelBuilder.Entity<Menu>(entity =>
         {
-            entity.HasKey(e => e.IdMenu).HasName("PK__Menu__C26AF4830CEEEFD6");
+            entity.HasKey(e => e.IdMenu).HasName("PK__Menu__C26AF483F3CF62CE");
 
             entity.ToTable("Menu");
 
@@ -310,12 +303,12 @@ public partial class CumplimientoContext : DbContext
 
             entity.HasOne(d => d.IdMenuPadreNavigation).WithMany(p => p.InverseIdMenuPadreNavigation)
                 .HasForeignKey(d => d.IdMenuPadre)
-                .HasConstraintName("FK__Menu__idMenuPadr__7849DB76");
+                .HasConstraintName("FK__Menu__idMenuPadr__4CA06362");
         });
 
         modelBuilder.Entity<Negocio>(entity =>
         {
-            entity.HasKey(e => e.IdNegocio).HasName("PK__Negocio__70E1E107F96AAC20");
+            entity.HasKey(e => e.IdNegocio).HasName("PK__Negocio__70E1E1071F41FBCE");
 
             entity.ToTable("Negocio");
 
@@ -361,7 +354,7 @@ public partial class CumplimientoContext : DbContext
 
         modelBuilder.Entity<NumeroCorrelativo>(entity =>
         {
-            entity.HasKey(e => e.IdNumeroCorrelativo).HasName("PK__NumeroCo__25FB547E976301F1");
+            entity.HasKey(e => e.IdNumeroCorrelativo).HasName("PK__NumeroCo__25FB547E51A5919B");
 
             entity.ToTable("NumeroCorrelativo");
 
@@ -407,7 +400,6 @@ public partial class CumplimientoContext : DbContext
             entity.HasOne(d => d.IdFincaNavigation).WithMany(p => p.PlanesTrabajos)
                 .HasForeignKey(d => d.IdFinca)
                 .HasConstraintName("FK_PlanesTrabajo_MaestroFinca");
-
         });
 
         modelBuilder.Entity<Revisione>(entity =>
@@ -418,20 +410,17 @@ public partial class CumplimientoContext : DbContext
             entity.Property(e => e.Comentarios)
                 .HasMaxLength(250)
                 .HasColumnName("comentarios");
-            entity.Property(e => e.Cumplimiento)
-                .HasColumnType("decimal(18, 3)")
-                .HasColumnName("cumplimiento");
+            entity.Property(e => e.Cumplimiento).HasColumnType("decimal(18, 3)");
             entity.Property(e => e.Estado)
                 .HasMaxLength(15)
                 .HasColumnName("estado");
             entity.Property(e => e.Fecha)
                 .HasColumnType("date")
                 .HasColumnName("fecha");
+            entity.Property(e => e.Grupo).HasColumnName("grupo");
             entity.Property(e => e.IdFinca).HasColumnName("id_finca");
             entity.Property(e => e.IdRequisito).HasColumnName("id_requisito");
-            entity.Property(e => e.Observaciones)
-                .HasMaxLength(250)
-                .HasColumnName("observaciones");
+            entity.Property(e => e.Observaciones).HasColumnName("observaciones");
             entity.Property(e => e.Tipo)
                 .HasMaxLength(15)
                 .HasColumnName("tipo");
@@ -449,7 +438,7 @@ public partial class CumplimientoContext : DbContext
 
         modelBuilder.Entity<Rol>(entity =>
         {
-            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F767E04EDE8");
+            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F766F396DCE");
 
             entity.ToTable("Rol");
 
@@ -460,38 +449,32 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("descripcion");
             entity.Property(e => e.EsActivo).HasColumnName("esActivo");
             entity.Property(e => e.FechaRegistro)
-                .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("fechaRegistro");
         });
 
         modelBuilder.Entity<RolMenu>(entity =>
         {
-            entity.HasKey(e => e.IdRolMenu).HasName("PK__RolMenu__CD2045D8A4D3049D");
+            entity.HasKey(e => e.IdRolMenu).HasName("PK__RolMenu__CD2045D863B9180F");
 
             entity.ToTable("RolMenu");
 
             entity.Property(e => e.IdRolMenu).HasColumnName("idRolMenu");
             entity.Property(e => e.EsActivo).HasColumnName("esActivo");
             entity.Property(e => e.FechaRegistro)
-                .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("fechaRegistro");
             entity.Property(e => e.IdMenu).HasColumnName("idMenu");
             entity.Property(e => e.IdRol).HasColumnName("idRol");
 
-            entity.HasOne(d => d.IdMenuNavigation).WithMany(p => p.RolMenus)
-                .HasForeignKey(d => d.IdMenu)
-                .HasConstraintName("FK__RolMenu__idMenu__793DFFAF");
-
             entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.RolMenus)
                 .HasForeignKey(d => d.IdRol)
-                .HasConstraintName("FK__RolMenu__idRol__7A3223E8");
+                .HasConstraintName("FK__RolMenu__idRol__5070F446");
         });
 
         modelBuilder.Entity<TipoInforme>(entity =>
         {
-            entity.HasKey(e => e.IdTipoInforme).HasName("PK__TipoInfo__5F1A7A0D3AEF4018");
+            entity.HasKey(e => e.IdTipoInforme).HasName("PK__TipoInfo__5F1A7A0DEDAD506D");
 
             entity.ToTable("TipoInforme");
 
@@ -509,7 +492,7 @@ public partial class CumplimientoContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__645723A65B831FC0");
+            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__645723A617AD72F1");
 
             entity.ToTable("Usuario");
 
@@ -547,7 +530,7 @@ public partial class CumplimientoContext : DbContext
 
             entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdRol)
-                .HasConstraintName("FK__Usuario__idRol__7B264821");
+                .HasConstraintName("FK__Usuario__idRol__5165187F");
         });
 
         modelBuilder.Entity<Usuario1>(entity =>
@@ -597,7 +580,7 @@ public partial class CumplimientoContext : DbContext
                 .HasColumnName("android_id");
             entity.Property(e => e.Fecha)
                 .HasColumnType("date")
-                .HasColumnName("fecha");      
+                .HasColumnName("fecha");
             entity.Property(e => e.IdFinca).HasColumnName("id_finca");
             entity.Property(e => e.IdPlan).HasColumnName("id_plan");
             entity.Property(e => e.Latitud)
@@ -609,6 +592,12 @@ public partial class CumplimientoContext : DbContext
             entity.Property(e => e.Mandador)
                 .HasMaxLength(100)
                 .HasColumnName("mandador");
+            entity.Property(e => e.Nombrefoto1)
+                .HasMaxLength(100)
+                .HasColumnName("nombrefoto1");
+            entity.Property(e => e.Nombrefoto2)
+                .HasMaxLength(100)
+                .HasColumnName("nombrefoto2");
             entity.Property(e => e.Observaciones)
                 .HasMaxLength(250)
                 .HasColumnName("observaciones");
@@ -616,11 +605,13 @@ public partial class CumplimientoContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("responsable");
             entity.Property(e => e.SentTo).HasColumnName("sent_to");
+            entity.Property(e => e.Urlfoto1)
+                .HasMaxLength(500)
+                .HasColumnName("urlfoto1");
+            entity.Property(e => e.Urlfoto2)
+                .HasMaxLength(500)
+                .HasColumnName("urlfoto2");
             entity.Property(e => e.Zafra).HasColumnName("zafra");
-            entity.Property(e => e.UrlFoto1).HasColumnName("urlfoto1").HasMaxLength(500);
-            entity.Property(e => e.UrlFoto2).HasColumnName("urlfoto2").HasMaxLength(500);
-            entity.Property(e => e.NombreFoto1).HasColumnName("nombrefoto1").HasMaxLength(100);
-            entity.Property(e => e.NombreFoto2).HasColumnName("nombrefoto2").HasMaxLength(100);
 
             entity.HasOne(d => d.IdFincaNavigation).WithMany(p => p.Visita)
                 .HasForeignKey(d => d.IdFinca)
@@ -631,7 +622,6 @@ public partial class CumplimientoContext : DbContext
                 .HasForeignKey(d => d.IdPlan)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Visitas_PlanesTrabajo");
-
         });
 
         OnModelCreatingPartial(modelBuilder);

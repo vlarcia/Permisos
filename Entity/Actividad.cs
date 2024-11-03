@@ -34,7 +34,8 @@ public partial class Actividad
     public DateTime? FechaUltimarevision { get; set; }
 
     public int? IdFinca { get; set; }
-   
+
+    public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();
 
     public virtual MaestroFinca? IdFincaNavigation { get; set; }
 

@@ -308,42 +308,41 @@ $('#tbActividades').on('click', 'td', function () {
 });
 
 $('#btnGuardar').on('click', function () {
-    
-        const modeloplan = {
-            
-            idPlan: parseInt($('#txtId').val(),10),
-            descripcion: $('#txtDescripcion').val(),
-            fechaIni: convertirFecha($('#txtFechaIniPlan').val()),
-            fechaFin: convertirFecha($('#txtFechaFinPlan').val()),
-            avance: parseFloat($('#txtAvance').val()),
-            estado: $('#cboestado').val(),
-            observaciones: $('#txtObservaciones').val(),
-            idFinca: parseInt(lafinca,10),
-            actividades: [] // Aquí irán las actividades
-        };
+    $("#modalPlanes .modal-body").LoadingOverlay("show");
+    const modeloplan = {            
+        idPlan: parseInt($('#txtId').val(),10),
+        descripcion: $('#txtDescripcion').val(),
+        fechaIni: convertirFecha($('#txtFechaIniPlan').val()),
+        fechaFin: convertirFecha($('#txtFechaFinPlan').val()),
+        avance: parseFloat($('#txtAvance').val()),
+        estado: $('#cboestado').val(),
+        observaciones: $('#txtObservaciones').val(),
+        idFinca: parseInt(lafinca,10),
+        actividades: [] // Aquí irán las actividades
+    };
         
-        // Obtener actividades del modal
-        $('#tbActividades tbody tr').each(function () {
+    // Obtener actividades del modal
+    $('#tbActividades tbody tr').each(function () {
             
-            let fila = $(this);
-            let idActivity = $('#tbActividades').DataTable().cell(fila, 0).data();
-            let actividad = {
+        let fila = $(this);
+        let idActivity = $('#tbActividades').DataTable().cell(fila, 0).data();
+        let actividad = {
                 
-                idActividad: parseInt(idActivity),
-                descripcion: fila.find('td').eq(0).text(),
-                tipo: fila.find('td').eq(1).text(),
-                fechaIni: convertirFecha(fila.find('td').eq(2).text()),
-                fechaFin: convertirFecha(fila.find('td').eq(3).text()),
-                responsable: fila.find('td').eq(4).text(),
-                recursos: fila.find('td').eq(5).text(),
-                estado: fila.find('td').eq(6).text(),
-                avances: parseFloat(fila.find('td').eq(7).text()),
-                comentarios: fila.find('td').eq(8).text(),
-                idRequisito: parseInt(fila.find('td').eq(9).text(), 10),
-                idFinca: parseInt(lafinca, 10),
-            };
-            modeloplan.actividades.push(actividad);
-        });
+            idActividad: parseInt(idActivity),
+            descripcion: fila.find('td').eq(0).text(),
+            tipo: fila.find('td').eq(1).text(),
+            fechaIni: convertirFecha(fila.find('td').eq(2).text()),
+            fechaFin: convertirFecha(fila.find('td').eq(3).text()),
+            responsable: fila.find('td').eq(4).text(),
+            recursos: fila.find('td').eq(5).text(),
+            estado: fila.find('td').eq(6).text(),
+            avances: parseFloat(fila.find('td').eq(7).text()),
+            comentarios: fila.find('td').eq(8).text(),
+            idRequisito: parseInt(fila.find('td').eq(9).text(), 10),
+            idFinca: parseInt(lafinca, 10),
+        };
+        modeloplan.actividades.push(actividad);
+    });
       
         // Hacer la petición al servidor para actualizar
         fetch("/PlanesTrabajo/EditarPlan", {
@@ -357,10 +356,14 @@ $('#btnGuardar').on('click', function () {
             .then(responseJson => {
                 if (responseJson.estado) {
                     Swal.fire("Listo!", "Plan de Trabajo modificado con éxito!", "success");
+                    tablaPlanes.row(filaseleccionada).data(responseJson.objeto).draw(false);          
                     $('#modalPlanes').modal('hide');
                 } else {
                     Swal.fire("Lo sentimos!", responseJson.mensaje, "error");
-                }          
+                }                          
+            })
+            .finally(() => {
+                $("#modalPlanes .modal-body").LoadingOverlay("hide");
             }); 
 });
 
