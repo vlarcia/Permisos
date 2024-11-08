@@ -19,14 +19,14 @@ function cargarDatos(idGrupo) {
         .then(responseJson => {
             if (responseJson.estado) {
                 const seriesDeCumplimiento = responseJson.seriesDeCumplimiento;
-                const fechas = [];
+                const tipos = [];
                 const datasetsCumplimiento = []; // Valores absolutos para la gráfica
                 const datasetsTipo = [];
                 const datasetsCumplimientoPorcentajes = []; // Porcentajes para la tabla
                 const cumplimientoGeneralValues = []; // Array para Cumplimiento General
 
                 seriesDeCumplimiento.forEach((serie, index) => {
-                    fechas.push(serie.fecha);
+                    tipos.push(serie.tipo);
 
                     // Valores absolutos para la gráfica de cumplimiento
                     datasetsCumplimiento.push([
@@ -60,7 +60,7 @@ function cargarDatos(idGrupo) {
                     data: {
                         labels: ['CUMPLE', 'CUMPLE PARCIAL', 'NO CUMPLE', 'NO APLICA'],
                         datasets: datasetsCumplimiento.map((data, index) => ({
-                            label: fechas[index],
+                            label: tipos[index],
                             data: data,
                             backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E']
                         }))
@@ -73,7 +73,7 @@ function cargarDatos(idGrupo) {
                         },
                     }
                 });
-
+                const elbackgroundColor = ['#4E73DF', '#4CAF50', '#F44336', '#FFC107', '#9E9E9E']
                 // Gráfica de Tipos con porcentajes
                 const ctx2 = document.getElementById('graficoCumplimiento2').getContext('2d');
                 new Chart(ctx2, {
@@ -81,9 +81,9 @@ function cargarDatos(idGrupo) {
                     data: {
                         labels: ['LABORAL', 'OCUPACIONAL', 'AMBIENTAL', 'RSE'],
                         datasets: datasetsTipo.map((data, index) => ({
-                            label: fechas[index],
+                            label: tipos[index], 
                             data: data,
-                            backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E']
+                            backgroundColor: elbackgroundColor[index]
                         }))
                     },
                     options: {
@@ -96,9 +96,9 @@ function cargarDatos(idGrupo) {
                 });
 
                 // Generar tabla de Cumplimiento con porcentajes
-                let tablaCumplimientoHTML = '<table class="table table-bordered text-right"><thead><tr><th class="text-center">Fecha</th>';
-                fechas.forEach(fecha => {
-                    tablaCumplimientoHTML += `<th class="text-center">${fecha}</th>`;
+                let tablaCumplimientoHTML = '<table class="table table-bordered text-right"><thead><tr><th class="text-center">Tipo</th>';
+                tipos.forEach(tipo => {
+                    tablaCumplimientoHTML += `<th class="text-center">${tipo}</th>`;
                 });
                 tablaCumplimientoHTML += '</tr></thead><tbody>';
 
@@ -121,9 +121,9 @@ function cargarDatos(idGrupo) {
                 document.getElementById("tablaCumplimiento").innerHTML = tablaCumplimientoHTML;
 
                 // Generar tabla de Tipo
-                let tablaTipoHTML = '<table class="table table-bordered text-right"><thead><tr><th class="text-center">Fecha</th>';
-                fechas.forEach(fecha => {
-                    tablaTipoHTML += `<th class="text-center">${fecha}</th>`;
+                let tablaTipoHTML = '<table class="table table-bordered text-right"><thead><tr><th class="text-center">Tipo</th>';
+                tipos.forEach(tipo => {
+                    tablaTipoHTML += `<th class="text-center">${tipo}</th>`;
                 });
                 tablaTipoHTML += '</tr></thead><tbody>';
 

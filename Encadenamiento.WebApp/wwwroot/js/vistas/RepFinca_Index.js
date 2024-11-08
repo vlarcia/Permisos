@@ -102,6 +102,7 @@ function cargarDatos(idFinca) {
                     }
                 });
 
+                const elbackgroundColor = ['#4E73DF', '#4CAF50', '#F44336']
                 // Gráfica de Tipos con porcentajes
                 const ctx2 = document.getElementById('graficoCumplimiento2').getContext('2d');
                 new Chart(ctx2, {
@@ -111,7 +112,7 @@ function cargarDatos(idFinca) {
                         datasets: datasetsTipo.map((data, index) => ({
                             label: fechas[index],
                             data: data,
-                            backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E']
+                            backgroundColor: elbackgroundColor[index]
                         }))
                     },
                     options: {

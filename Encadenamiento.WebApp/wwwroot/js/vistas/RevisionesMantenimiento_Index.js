@@ -84,7 +84,12 @@ $(document).ready(function () {
                 extend: 'excelHtml5',
                 title: '',
                 filename: 'Reporte_Revisiones',            
-            }, 'pageLength'
+            },
+            'pageLength',
+            {
+                extend: 'pdfHtml5',
+                title: 'Listado Revisiones'
+            },
         ],
         language: {
             url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
@@ -217,10 +222,114 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                 "lengthMenu": [15, 25, 35, 45, 53],
                 "pageLength": 15,
                 order: [[0, "asc"]],
-                dom: "lrtip"
+                dom: "Bfrtip",
+                buttons: [                           
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Revision de Finca',
+                         exportOptions: {
+                            modifier: {
+                                page: 'all'
+                            }
+                        },
+                        customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                            // Captura valores del formulario
+                            var codigoFinca = $('#txtCodFinca').val();
+                            var nombreFinca = $('#txtNombreFinca').val();
+                            var fecha = $('#txtFecha').val();
+                            var tipoRevision = $('#cboTipo').val();
+                            var cumplimiento = $('#txtCumplimiento').val();
+
+                            // Crear una nueva fila con las celdas de cabecera en dos columnas: Descripción y Valor
+                            var newRows = `
+                                <row r="2">
+                                    <c t="inlineStr"><is><t>Código Finca:</t></is></c>
+                                    <c t="inlineStr"><is><t>${codigoFinca}</t></is></c>
+                                </row>
+                                <row r="3">
+                                    <c t="inlineStr"><is><t>Nombre Finca:</t></is></c>
+                                    <c t="inlineStr"><is><t>${nombreFinca}</t></is></c>
+                                </row>
+                                <row r="4">
+                                    <c t="inlineStr"><is><t>Fecha:</t></is></c>
+                                    <c t="inlineStr"><is><t>${fecha}</t></is></c>
+                                </row>
+                                <row r="5">
+                                    <c t="inlineStr"><is><t>Tipo Revisión:</t></is></c>
+                                    <c t="inlineStr"><is><t>${tipoRevision}</t></is></c>
+                                </row>
+                                <row r="6">
+                                    <c t="inlineStr"><is><t>Cumplimiento:</t></is></c>
+                                    <c t="inlineStr"><is><t>${cumplimiento}</t></is></c>
+                                </row>
+                            `;
+
+                            // Insertar las nuevas filas antes de los datos actuales (filas 1-5)
+                            var rows = sheet.getElementsByTagName('sheetData')[0];
+                            rows.innerHTML = newRows + rows.innerHTML;
+
+                            // Desplazar los datos de la tabla para que comiencen en la fila 8
+                            var dataRows = sheet.getElementsByTagName('row');
+                            var rowIndex = 7;  // Comenzamos en la fila 8 (el índice en XML es 0-based, así que usamos 7)
+                            for (var i = 5; i < dataRows.length; i++) {
+                                var row = dataRows[i];
+                                var cells = row.getElementsByTagName('c');
+
+                                // Cambiar el atributo 'r' (número de fila) para que los datos empiecen en la fila 8
+                                row.setAttribute('r', rowIndex + 1); // Ajustar el número de fila
+                                for (var j = 0; j < cells.length; j++) {
+                                    var cell = cells[j];
+                                    var cellRef = cell.getAttribute('r');
+
+                                    if (cellRef) {
+                                        var rowIndexInCell = parseInt(cellRef.match(/\d+/)[0]);
+                                        var colRef = cellRef.match(/[A-Z]+/)[0];
+                                        var newCellRef = colRef + (rowIndex + 1); // Ajustamos la fila para las celdas
+                                        cell.setAttribute('r', newCellRef); // Actualizamos la referencia de la celda
+                                    }
+                                }
+                                rowIndex++;  // Aumentamos el índice de fila
+                            }
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Revision de Fincas'
+                    },
+                    {
+                        extend: 'print',
+                        title: 'Revision de Fincas',
+                        customize: function (win) {
+                            // Obtener los valores del formulario
+                            var codigoFinca = $('#txtCodFinca').val();
+                            var nombreFinca = $('#txtNombreFinca').val();
+                            var fecha = $('#txtFecha').val();
+                            var tipoRevision = $('#cboTipo').val();
+                            var cumplimiento = $('#txtCumplimiento').val();
+
+                            // Crear el encabezado con los datos del formulario
+                            var headerHTML = `
+                    <div style="text-align: center; font-weight: bold;">
+                        <h2>Reporte de Requisitos</h2>
+                        <p>Código Finca: ${codigoFinca}</p>
+                        <p>Nombre Finca: ${nombreFinca}</p>
+                        <p>Fecha: ${fecha}</p>
+                        <p>Tipo Revisión: ${tipoRevision}</p>
+                        <p>Cumplimiento: ${cumplimiento}</p>
+                    </div>
+                    <br />
+                `;
+
+                            // Insertar el encabezado antes de la tabla impresa
+                            $(win.document.body).find('table').before(headerHTML);
+                        }
+                    }        
+                ]
             });
 
-            // Ahora, después de que la tabla esté creada con los datos, se muestra el modal
+            // Muestra el modal una vez creada la tabla con los datos
             mostrarModal(data.data[0], true);  // Usa el primer registro como ejemplo
         }
     });
