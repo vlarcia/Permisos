@@ -14,6 +14,6 @@ namespace Business.Interfaces
         Task<Revisione> Crear(List<Revisione> entidad);
         Task<Revisione> Editar(List<Revisione> entidad);        
         Task<bool> Eliminar(List<int> entidad);  
-        Task<List<Revisione>> ObtenerRevision(int idfinca, string fecha);
+        Task<List<Revisione>> ObtenerRevision(int idfinca=0, string fecha="", int grupo=0);        
     }
 }

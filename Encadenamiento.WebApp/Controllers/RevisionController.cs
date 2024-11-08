@@ -261,5 +261,140 @@ namespace Encadenamiento.WebApp.Controllers
                 return sw.ToString();
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerCumplimientoGeneral(int idFinca, string fecha, int grupo)
+        {
+            // Obtener la lista de revisiones del servicio
+            var revisiones = await _revisionService.ObtenerRevision(idFinca, fecha, grupo);
+
+            // Mapeo a VMRevisiones
+            var vmRevisiones = _mapper.Map<List<VMRevisiones>>(revisiones);
+
+            // Contar cada estado de cumplimiento
+            int totalCumple = vmRevisiones.Count(r => r.Estado == "CUMPLE");
+            int totalParcial = vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL");
+            int totalNoCumple = vmRevisiones.Count(r => r.Estado == "NO CUMPLE");
+            int totalNoAplica = vmRevisiones.Count(r => r.Estado == "NO APLICA");
+
+            int totalLaboral = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "LABORAL");
+            int totalOcupacional = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "OCUPACIONAL");
+            int totalAmbiental = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "AMBIENTAL");
+            int totalRse = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "RSE");
+
+
+
+            int totalgeneral =totalCumple+totalParcial+totalNoCumple+totalNoAplica;
+            decimal porcentCumple = (decimal)totalCumple / totalgeneral *100;
+            decimal porcentParcial=(decimal)totalParcial / totalgeneral *100;
+            decimal porcentNoCumple=(decimal)totalNoCumple / totalgeneral * 100;
+            decimal porcentNoAplica=(decimal)totalNoAplica / totalgeneral * 100;
+
+            decimal porcLaboral=(vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "LABORAL")+ (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "LABORAL")*0.5m))/totalLaboral *100;
+            decimal porcOcupacional = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "OCUPACIONAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "OCUPACIONAL") * 0.5m)) / totalOcupacional *100;
+            decimal porcAmbiental =(vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "AMBIENTAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "AMBIENTAL") * 0.5m)) / totalAmbiental * 100;
+            decimal porcRse = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "RSE") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "RSE") * 0.5m)) / totalRse * 100;
+
+
+
+            // Calcular el porcentaje de cumplimiento general
+            decimal cumplimientoGeneral = (totalCumple + (totalParcial * 0.5m)) / (totalCumple + totalParcial + totalNoCumple) * 100;
+
+            // Crear el objeto de respuesta con los datos necesarios
+            var respuesta = new
+            {
+                CumplimientoGeneral = cumplimientoGeneral,
+                estado=true,
+                Estados = new
+                {
+                    Cumple = totalCumple,
+                    Parcial = totalParcial,
+                    NoCumple = totalNoCumple,
+                    NoAplica = totalNoAplica,
+
+                    porcCumple=porcentCumple,
+                    porcParcial=porcentParcial,                    
+                    porcNoCumple=porcentNoCumple,
+                    porcNoAplica = porcentNoAplica,
+
+                    porcLaboral = porcLaboral,
+                    porcOcupacional = porcOcupacional,
+                    porcAmbiental = porcAmbiental,
+                    porcRse = porcRse,
+                },
+              
+            };
+
+            return StatusCode(StatusCodes.Status200OK, respuesta);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerCumplimientoxFinca(int idFinca)
+        {
+            // Obtener todas las revisiones de la finca, ordenadas por fecha
+            var revisiones = await _revisionService.ObtenerRevision(idFinca, "", 0);
+
+            // Agrupa las revisiones por fecha
+            var revisionesAgrupadas = revisiones
+                .GroupBy(r => r.Fecha)
+                .OrderBy(g => g.Key) // Ordena por fecha para mantener el orden cronológico
+                .ToList();
+
+            // Lista para almacenar los datos de cada fecha
+            var seriesDeCumplimiento = new List<object>();
+
+            // Procesa cada grupo de revisiones (cada fecha)
+            foreach (var grupoRevisiones in revisionesAgrupadas)
+            {
+                var vmRevisiones = _mapper.Map<List<VMRevisiones>>(grupoRevisiones);
+
+                int totalCumple = vmRevisiones.Count(r => r.Estado == "CUMPLE");
+                int totalParcial = vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL");
+                int totalNoCumple = vmRevisiones.Count(r => r.Estado == "NO CUMPLE");
+                int totalNoAplica = vmRevisiones.Count(r => r.Estado == "NO APLICA");
+
+                int totalLaboral = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "LABORAL");
+                int totalOcupacional = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "OCUPACIONAL");
+                int totalAmbiental = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "AMBIENTAL");
+                int totalRse = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "RSE");
+
+                int totalGeneral = totalCumple + totalParcial + totalNoCumple + totalNoAplica;
+                decimal porcentCumple = (decimal)totalCumple / totalGeneral * 100;
+                decimal porcentParcial = (decimal)totalParcial / totalGeneral * 100;
+                decimal porcentNoCumple = (decimal)totalNoCumple / totalGeneral * 100;
+                decimal porcentNoAplica = (decimal)totalNoAplica / totalGeneral * 100;
+
+                decimal porcLaboral = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "LABORAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "LABORAL") * 0.5m)) / totalLaboral * 100;
+                decimal porcOcupacional = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "OCUPACIONAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "OCUPACIONAL") * 0.5m)) / totalOcupacional * 100;
+                decimal porcAmbiental = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "AMBIENTAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "AMBIENTAL") * 0.5m)) / totalAmbiental * 100;
+                decimal porcRse = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "RSE") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "RSE") * 0.5m)) / totalRse * 100;
+
+                decimal cumplimientoGeneral = (totalCumple + (totalParcial * 0.5m)) / (totalCumple + totalParcial + totalNoCumple) * 100;
+
+                // Agregar datos de esta fecha a la serie de cumplimiento
+                seriesDeCumplimiento.Add(new
+                {
+                    Fecha = (grupoRevisiones.Key).ToString("dd/MM/yyyy"),
+                    CumplimientoGeneral = cumplimientoGeneral,                
+                    Cumple = totalCumple,
+                    Parcial = totalParcial,
+                    NoCumple = totalNoCumple,
+                    NoAplica = totalNoAplica,
+                    porcCumple = porcentCumple,
+                    porcParcial = porcentParcial,
+                    porcNoCumple = porcentNoCumple,
+                    porcNoAplica = porcentNoAplica,
+                    porcLaboral = porcLaboral,
+                    porcOcupacional = porcOcupacional,
+                    porcAmbiental = porcAmbiental,
+                    porcRse = porcRse                
+                });
+            }
+
+            // Devolver el resultado con estado = true y la lista de series de cumplimiento
+            return StatusCode(StatusCodes.Status200OK, new { estado = true, SeriesDeCumplimiento = seriesDeCumplimiento });
+        }
+
+
     }
 }

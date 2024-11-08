@@ -152,7 +152,7 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
     $.ajax({
         url: `/Revision/ObtenerRevision`,
         type: 'GET',
-        data: { idFinca: idFinca, Fecha: fecha },
+        data: { idFinca: idFinca, Fecha: fecha, grupo:0 },
         success: function (data) {
             // Crear tabla con los datos recibidos
             tablaRequisitos = $('#tbRequisitos').DataTable({
@@ -277,7 +277,7 @@ $('#tbRevisiones tbody').on('click', '.btn-editar', function () {
     $.ajax({
         url: `/Revision/ObtenerRevision`,
         type: 'GET',
-        data: { idFinca: idFinca, Fecha: fecha },
+        data: { idFinca: idFinca, Fecha: fecha, grupo:0 },
         success: function (data) {
             // Crear tabla con los datos recibidos
             tablaRequisitos = $('#tbRequisitos').DataTable({
@@ -478,7 +478,7 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
     $.ajax({
         url: `/Revision/ObtenerRevision`,
         type: 'GET',
-        data: { idFinca: idFinca, Fecha: fecha },
+        data: { idFinca: idFinca, Fecha: fecha, grupo:0 },
         success: function (data) {
             // Guardar los datos recibidos en la variable externa
             filas = data;

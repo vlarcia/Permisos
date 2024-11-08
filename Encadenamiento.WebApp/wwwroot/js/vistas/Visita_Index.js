@@ -243,7 +243,8 @@ $(document).ready(function () {
             }
 
             // Otras columnas: Usar el input normal de texto
-            else {
+            else if (columnaIndex !== 0 && columnaIndex !== 1)
+            {
                 let input = $('<input type="text" class="form-control form-control-sm">').val(contenidoActual);
                 $(this).empty().append(input);
                 input.focus();
@@ -343,6 +344,7 @@ $(document).ready(function () {
         }
 
         const data = tablaVisitas.row(fila).data();
+
         Swal.fire({
             title: "¿Seguro de continuar?",
             text: `Eliminar Visita "${data.idVisita} del plan ${data.descripcionPlan.length > 40 ? data.descripcionPlan.substring(0, 40) + '...' : data.descripcionPlan}" en la finca: "${data.nombreFinca}" `,
@@ -352,7 +354,7 @@ $(document).ready(function () {
             cancelButtonText: "No, cancelar",
             customClass: {
                 confirmButton: 'btn btn-danger', // Clases CSS personalizadas
-                cancelButton: 'btn btn-secondary',
+                cancelButton: 'btn btn-primary',
             },
             reverseButtons: true // Cambia el orden de los botones
         }).then((result) => {
@@ -666,7 +668,24 @@ function cargardesdePlan(modelo) {
         }     
     });
     if ($('#tbDetalle').DataTable().rows().count() === 0) {
-        Swal.fire("El Plan no tiene Actividades con estatus en proceso, revise en el modulo de planes.");
+        Swal.fire({
+            title: "El Plan no tiene Actividades con estatus en proceso, revise en el modulo de planes.",
+            showClass: {
+                popup: `
+      animate__animated
+      animate__fadeInUp
+      animate__faster
+    `
+            },
+            hideClass: {
+                popup: `
+      animate__animated
+      animate__fadeOutDown
+      animate__faster
+    `
+            },
+            confirmButtonColor: "#3085d6",
+        });        
     }
 }
 

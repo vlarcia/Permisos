@@ -183,21 +183,47 @@ namespace Business.Implementacion
                 return true;
             }
 
-        }    
-        public async Task<List<Revisione>> ObtenerRevision(int idfinca, string fecha)
+        }
+        public async Task<List<Revisione>> ObtenerRevision(int idfinca, string fecha, int grupo)
         {
-             // Convertir el string de la fecha a un objeto DateTime
-             DateTime lafecha = DateTime.ParseExact(fecha, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-             IQueryable<Revisione> query = await _repositorioRev.Consultar();
+            // Convertir el string de la fecha a un objeto DateTime
+            try
+            {
+                IQueryable<Revisione> query = await _repositorioRev.Consultar();
+                var resultado = query.ToList();
+                if (fecha != "")
+                {
+                    DateTime lafecha = DateTime.ParseExact(fecha, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
-            // Filtrar las revisiones por finca y fecha
-            var resultado = query
-                .Include(f => f.IdFincaNavigation)
-                .Include(r => r.IdRequisitoNavigation)
-                .Where(r => r.IdFinca == idfinca && r.Fecha == lafecha) // Comparar por IdFinca y la fecha                
-                .ToList();
-
-            return resultado;
+                    // Filtrar las revisiones por finca y fecha
+                    resultado = query
+                    .Include(f => f.IdFincaNavigation)
+                    .Include(r => r.IdRequisitoNavigation)
+                    .Where(r => r.IdFinca == idfinca && r.Fecha == lafecha) // Filtrar por IdFinca y la fecha                
+                    .ToList();
+                }
+                else if (idfinca != 0)
+                {
+                    resultado = query
+                    .Include(f => f.IdFincaNavigation)
+                    .Include(r => r.IdRequisitoNavigation)
+                    .Where(r => r.IdFinca == idfinca) // Filtar solo por finca
+                    .ToList();
+                }
+                else if(grupo!=0)
+                {
+                    resultado = query
+                    .Include(f => f.IdFincaNavigation)
+                    .Include(r => r.IdRequisitoNavigation)
+                    .Where(r => r.IdFincaNavigation.Grupo == grupo) // Filtrar solo por Grupo de fincas
+                    .ToList();
+                }
+                return resultado;
+            }
+            catch (Exception ex)
+            {              
+                throw ex;
+            }
         }
 
 

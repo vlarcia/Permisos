@@ -25,7 +25,15 @@ namespace Encadenamiento.WebApp.Controllers
         {
             return View();
         }
-        public IActionResult Operativo()
+        public IActionResult RepFinca()
+        {
+            return View();
+        }
+        public IActionResult RepGrupo()
+        {
+            return View();
+        }
+        public IActionResult RepVisita()
         {
             return View();
         }

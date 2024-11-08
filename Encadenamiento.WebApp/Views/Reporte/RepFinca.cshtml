@@ -1,10 +1,11 @@
 ﻿
 @{
-    ViewData["Title"] = "Reportes";
+    ViewData["Title"] = "Reporte_por_Finca";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Estilos { 
+
+@section Estilos {
     <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
@@ -31,7 +32,7 @@
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h5 class="mb-0" style="color:darkgreen">Reportes de Revisiones Individuales Finca </h5>
+        <h5 class="mb-0" style="color:darkgreen">Historial de Revisiones por Finca </h5>
     </div>
 
     <!-- Content Row -->
@@ -39,10 +40,10 @@
 
         <div class="form row input-group input-group-sm mb-2 col-sm-9">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="cboRevision">Revision</label>
+                <label class="input-group-text" for="cboFinca">Finca</label>
             </div>
-            <select class="custom-select input-validar" id="cboRevision" name="CodigoRevision"></select>    
-            
+            <select class="custom-select input-validar" id="cboFinca" name="CodigoFinca"></select>
+
             <input type="hidden" id="txtIdFinca" name="idFinca">
         </div>
         <!-- Cod.Finca y Nombre Finca en línea completa -->
@@ -50,18 +51,14 @@
         <div class="form row input-group input-group-sm mb-2 col-sm-12">
 
             <div class="input-group-prepend">
-                <span class="input-group-text" id="inputCodFinca" >Cod. Finca</span>
+                <span class="input-group-text" id="inputCodFinca">Cod. Finca</span>
             </div>
             <input type="text" style="font-weight:bold;color:darkgreen" class="form-control input-validar col-sm-1" aria-label="Small" aria-describedby="inputCodFinca" id="txtCodFinca" name="CodFinca" disabled>
             <div class="input-group-prepend pl-3">
                 <span class="input-group-text" id="inputNombreFinca">Nombre Finca</span>
             </div>
             <input type="text" style="font-weight:bold;color:darkgreen" class="form-control input-validar col-sm-6" aria-label="Small" aria-describedby="inputNombreFinca" id="txtNombreFinca" name="NombreFinca" disabled>
-            <div class="input-group-prepend pl-3">
-                <span class="input-group-text" id="inputFecha">Fecha</span>
-            </div>
-            <input type="text" style="font-weight:bold;color:darkgreen" class="form-control input-validar col-sm-2" aria-label="Small" aria-describedby="inputFecha" id="txtFecha" name="Fecha" disabled>
-        </div>
+         </div>
     </div>
 
     <!-- Content Row -->
@@ -69,8 +66,8 @@
     <div class="row">
 
         <!-- Area Chart - Cumplimiento x Finca -->
-        <div class="col-xl-6 col-lg-6" >
-             <div class="card shadow mb-1"> 
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-1">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 bg-second-primary">
                     <h6 class="m-0 font-weight-bold text-white">Cumplimiento de la Finca</h6>
@@ -81,35 +78,10 @@
                         <canvas id="graficoCumplimiento1"></canvas>
                     </div>
                 </div>
-             </div>
+            </div>
             <div class="card shadow mb-1">
-                <h3 style="color:darkgreen">Estado de Requerimientos</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th><h6><strong>Cumplimiento Global</strong></h6></th>
-                        <th><strong> <input style="text-align:right; color:red;font-weight:bold "  id="txtCumplimiento1" /> (%) </strong></th>
-                    </tr>
-                </thead>
-                <tbody>
-                        <tr>
-                            <td>CUMPLE</td>
-                            <td> <input style="text-align:right" id="txtCumplePorc" /> %</td>
-                        </tr>
-                        <tr>
-                            <td>CUMPLE PARCIAL</td>
-                            <td> <input style="text-align:right" id="txtParcialPorc" /> %</td>
-                        </tr>
-                        <tr>
-                            <td>NO CUMPLE</td>
-                            <td><input style="text-align:right" id="txtNoCumplePorc" /> %</td>
-                        </tr>
-                        <tr>
-                            <td>NO APLICA</td>
-                            <td><input style="text-align:right" id="txtNoAplicaPorc" /> %</td>
-                        </tr>
-                </tbody>
-            </table>
+                <h3 style="color:darkgreen">Historial de Requerimientos</h3>
+                <div id="tablaCumplimiento"></div> <!-- Tabla Cumplimiento -->                
             </div>
         </div>
 
@@ -126,45 +98,20 @@
                         <canvas id="graficoCumplimiento2"></canvas>
                     </div>
                 </div>
-                
+
             </div>
             <div class="card shadow mb-1">
                 <h3 style="color:darkgreen">% Cumplimiento por Ambito</h3>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th><h6><strong>Cumplimiento Global</strong></h6></th>
-                            <th><strong> <input style="text-align:right; color:red;font-weight:bold " id="txtCumplimiento2" /> (%) </strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>LABORAL</td>
-                            <td> <input style="text-align:right" id="txtLaboralPorc" /> %</td>
-                        </tr>
-                        <tr>
-                            <td>OCUPACIONAL</td>
-                            <td> <input style="text-align:right" id="txtOcupacionalPorc" /> %</td>
-                        </tr>
-                        <tr>
-                            <td>AMBIENTAL</td>
-                            <td><input style="text-align:right" id="txtAmbientalPorc" /> %</td>
-                        </tr>
-                        <tr>
-                            <td>RSE</td>
-                            <td><input style="text-align:right" id="txtRsePorc" /> %</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div id="tablaTipo"></div> <!-- Tabla Tipo -->                
             </div>
         </div>
     </div>
 
 </div>
 
-@section Scripts {    
-    <script src="~/vendor/chart.js/Chart.min.js"></script>    
+@section Scripts {
+    <script src="~/vendor/chart.js/Chart.min.js"></script>
     <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
     <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
-    <script src="~/js/vistas/Reporte_Index.js"></script>
+    <script src="~/js/vistas/RepFinca_Index.js"></script>
 }

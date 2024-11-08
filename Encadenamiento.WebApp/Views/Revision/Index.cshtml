@@ -19,7 +19,7 @@
 
         /* Asegura que los encabezados y celdas tengan un ancho mínimo */
         #tbRequisitos th, #tbRequisitos td {
-            min-width: 50px;
+            /* min-width: 50px; */
         }
 
             /* Ajuste específico para la celda de descripción */
@@ -32,13 +32,18 @@
             }
 
             #tbRequisitos td.ambito {
-                min-width: 80px; /* Ancho mínimo */
-                max-width: 80px; /* Ancho máximo */
+                min-width: 50px; /* Ancho mínimo */
+                max-width: 50px; /* Ancho máximo */
             
                 white-space: nowrap; /* No permite saltos de línea */
             }
 
-            /* Ajuste para la celda de comentarios */
+            #tbRequisitos td.idReq {
+                min-width: 25px; /* Ancho mínimo */
+                max-width: 30px; /* Ancho máximo */
+                white-space: nowrap; /* No permite saltos de línea */
+                /* Ajuste para la celda de comentarios */
+            }
             #tbRequisitos td.comentarios-input {
                 min-width: 250px; /* Ancho mínimo */
                 max-width: 400px; /* Ancho máximo */
@@ -49,8 +54,6 @@
                 min-width: 100px; /* Ancho mínimo */
                 max-width: 150px; /* Ajusta el máximo a un valor razonable */
             }
-
-
     </style>
 }
 <div class="container-fluid">
@@ -132,7 +135,7 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                <table id="tbRequisitos" class="table table-striped">
+                                <table id="tbRequisitos" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>IdReq</th>

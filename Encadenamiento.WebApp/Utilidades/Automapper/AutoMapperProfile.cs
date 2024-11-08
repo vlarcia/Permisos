@@ -53,6 +53,7 @@ namespace Encadenamiento.WebApp.Utilidades.Automapper
                 .ForMember(dest => dest.CodFinca, opt => opt.MapFrom(orig => orig.IdFincaNavigation.CodFinca))
                 .ForMember(dest => dest.Requisito, opt => opt.MapFrom(orig => orig.IdRequisitoNavigation.Descripcion))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.IdFincaNavigation.Email))
+                .ForMember(dest => dest.Grupo, opt => opt.MapFrom(src => src.IdFincaNavigation.Grupo))
                 .ForMember(dest => dest.Ambito, opt => opt.MapFrom(orig => orig.IdRequisitoNavigation.Ambito))
                 .ReverseMap()
                 .ForMember(dest => dest.IdFincaNavigation, opt => opt.Ignore())  // Ignorar IdFincaNavigation para evitar crear una nueva finca

@@ -355,7 +355,13 @@ $('#btnGuardar').on('click', function () {
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson.estado) {
-                    Swal.fire("Listo!", "Plan de Trabajo modificado con éxito!", "success");
+                    Swal.fire({title    :"Listo!",
+                        text: "Plan de Trabajo modificado con éxito!",
+                        icon: "success",
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: `<i class="fa fa-thumbs-up"></i>  OK !`,
+                    });
+
                     tablaPlanes.row(filaseleccionada).data(responseJson.objeto).draw(false);          
                     $('#modalPlanes').modal('hide');
                 } else {

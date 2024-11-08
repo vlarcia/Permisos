@@ -21,6 +21,7 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? Ambito { get; set; }
         public int? CodFinca { get; set; }
         public string? Email { get; set; }
+        public int? Grupo { get; set; }
        
     }
 }
