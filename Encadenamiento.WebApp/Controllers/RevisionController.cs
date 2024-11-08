@@ -312,15 +312,15 @@ namespace Encadenamiento.WebApp.Controllers
                     NoCumple = totalNoCumple,
                     NoAplica = totalNoAplica,
 
-                    porcCumple=porcentCumple,
-                    porcParcial=porcentParcial,                    
-                    porcNoCumple=porcentNoCumple,
-                    porcNoAplica = porcentNoAplica,
+                    porcCumple=Math.Round(porcentCumple,2),
+                    porcParcial= Math.Round(porcentParcial,2),                    
+                    porcNoCumple= Math.Round(porcentNoCumple, 2),
+                    porcNoAplica = Math.Round(porcentNoAplica, 2),
 
-                    porcLaboral = porcLaboral,
-                    porcOcupacional = porcOcupacional,
-                    porcAmbiental = porcAmbiental,
-                    porcRse = porcRse,
+                    porcLaboral = Math.Round(porcLaboral, 2),
+                    porcOcupacional = Math.Round(porcOcupacional, 2),
+                    porcAmbiental = Math.Round(porcAmbiental, 2),
+                    porcRse = Math.Round(porcRse, 2),
                 },
               
             };
@@ -380,14 +380,14 @@ namespace Encadenamiento.WebApp.Controllers
                     Parcial = totalParcial,
                     NoCumple = totalNoCumple,
                     NoAplica = totalNoAplica,
-                    porcCumple = porcentCumple,
-                    porcParcial = porcentParcial,
-                    porcNoCumple = porcentNoCumple,
-                    porcNoAplica = porcentNoAplica,
-                    porcLaboral = porcLaboral,
-                    porcOcupacional = porcOcupacional,
-                    porcAmbiental = porcAmbiental,
-                    porcRse = porcRse                
+                    porcCumple = Math.Round(porcentCumple, 2),
+                    porcParcial = Math.Round(porcentParcial,2),
+                    porcNoCumple = Math.Round(porcentNoCumple,2),
+                    porcNoAplica = Math.Round(porcentNoAplica,2),
+                    porcLaboral = Math.Round(porcLaboral,2),
+                    porcOcupacional = Math.Round(porcOcupacional,2),
+                    porcAmbiental = Math.Round(porcAmbiental,2),
+                    porcRse = Math.Round(porcRse,2),
                 });
             }
 
@@ -395,6 +395,72 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, new { estado = true, SeriesDeCumplimiento = seriesDeCumplimiento });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ObtenerCumplimientoxGrupo(int grupo)
+        {
+            // Obtener todas las revisiones del grupo seleccionado
+            var revisiones = await _revisionService.ObtenerRevision(0, "", grupo);           
+
+            // Agrupar las revisiones por tipo (INICIAL, INTERMEDIO, FINAL)
+            var revisionesAgrupadasPorTipo = revisiones
+                .GroupBy(r => r.Tipo) // Agrupar por tipo (INICIAL, INTERMEDIO, FINAL)
+                .OrderBy(g => g.Key) // Ordenar por tipo para mantener el orden
+                .ToList();
+
+            // Lista para almacenar los datos de cada tipo
+            var seriesDeCumplimiento = new List<object>();
+
+            // Procesar cada grupo de revisiones (por tipo)
+            foreach (var grupoRevisiones in revisionesAgrupadasPorTipo)
+            {
+                var vmRevisiones = _mapper.Map<List<VMRevisiones>>(grupoRevisiones);
+
+                int totalCumple = vmRevisiones.Count(r => r.Estado == "CUMPLE");
+                int totalParcial = vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL");
+                int totalNoCumple = vmRevisiones.Count(r => r.Estado == "NO CUMPLE");
+                int totalNoAplica = vmRevisiones.Count(r => r.Estado == "NO APLICA");
+
+                int totalLaboral = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "LABORAL");
+                int totalOcupacional = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "OCUPACIONAL");
+                int totalAmbiental = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "AMBIENTAL");
+                int totalRse = vmRevisiones.Count(r => r.Estado != "NO APLICA" && r.Ambito == "RSE");
+
+                int totalGeneral = totalCumple + totalParcial + totalNoCumple + totalNoAplica;
+                decimal porcentCumple = (decimal)totalCumple / totalGeneral * 100;
+                decimal porcentParcial = (decimal)totalParcial / totalGeneral * 100;
+                decimal porcentNoCumple = (decimal)totalNoCumple / totalGeneral * 100;
+                decimal porcentNoAplica = (decimal)totalNoAplica / totalGeneral * 100;
+
+                decimal porcLaboral = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "LABORAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "LABORAL") * 0.5m)) / totalLaboral * 100;
+                decimal porcOcupacional = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "OCUPACIONAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "OCUPACIONAL") * 0.5m)) / totalOcupacional * 100;
+                decimal porcAmbiental = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "AMBIENTAL") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "AMBIENTAL") * 0.5m)) / totalAmbiental * 100;
+                decimal porcRse = (vmRevisiones.Count(r => r.Estado == "CUMPLE" && r.Ambito == "RSE") + (vmRevisiones.Count(r => r.Estado == "CUMPLE PARCIAL" && r.Ambito == "RSE") * 0.5m)) / totalRse * 100;
+
+                decimal cumplimientoGeneral = (totalCumple + (totalParcial * 0.5m)) / (totalCumple + totalParcial + totalNoCumple) * 100;
+
+                // Agregar datos de este tipo a la serie de cumplimiento
+                seriesDeCumplimiento.Add(new
+                {
+                    Tipo = grupoRevisiones.Key, // Tipo de revisión (INICIAL, INTERMEDIO, FINAL)
+                    CumplimientoGeneral = cumplimientoGeneral,
+                    Cumple = totalCumple,
+                    Parcial = totalParcial,
+                    NoCumple = totalNoCumple,
+                    NoAplica = totalNoAplica,
+                    porcCumple = Math.Round(porcentCumple, 2),
+                    porcParcial = Math.Round(porcentParcial, 2),
+                    porcNoCumple = Math.Round(porcentNoCumple, 2),
+                    porcNoAplica = Math.Round(porcentNoAplica, 2),
+                    porcLaboral = Math.Round(porcLaboral, 2),
+                    porcOcupacional = Math.Round(porcOcupacional, 2),
+                    porcAmbiental = Math.Round(porcAmbiental, 2),
+                    porcRse = Math.Round(porcRse, 2),
+                });
+            }
+
+            // Devolver el resultado con estado = true y la lista de series de cumplimiento
+            return StatusCode(StatusCodes.Status200OK, new { estado = true, SeriesDeCumplimiento = seriesDeCumplimiento });
+        }
 
     }
 }

@@ -54,18 +54,27 @@ function cargarDatos(idFinca, fecha) {
         .then(response => response.ok ? response.json() : Promise.reject(response))
         .then(responseJson => {
             if (responseJson.estado) {
-                // Datos de los porcentajes
+                // Extraer Cumplimiento General
+                const cumplimientoGeneral = responseJson.cumplimientoGeneral.toFixed(2);
+
+                // Datos para la primera gráfica y tabla
                 const cantCumple = responseJson.estados.cumple;
                 const cantParcial = responseJson.estados.parcial;
                 const cantNoCumple = responseJson.estados.noCumple;
                 const cantNoAplica = responseJson.estados.noAplica;
-                const porcentLaboral = responseJson.estados.porcLaboral;
-                const porcentOcupacional = responseJson.estados.porcOcupacional;
-                const porcentAmbiental = responseJson.estados.porcAmbiental;
-                const porcentRse = responseJson.estados.porcRse;
-                // Gráfica
-                const ctx = document.getElementById('graficoCumplimiento1').getContext('2d');
 
+                const porcCumple = responseJson.estados.porcCumple.toFixed(2);
+                const porcParcial = responseJson.estados.porcParcial.toFixed(2);
+                const porcNoCumple = responseJson.estados.porcNoCumple.toFixed(2);
+                const porcNoAplica = responseJson.estados.porcNoAplica.toFixed(2);
+
+                const porcentLaboral = responseJson.estados.porcLaboral.toFixed(2);
+                const porcentOcupacional = responseJson.estados.porcOcupacional.toFixed(2);
+                const porcentAmbiental = responseJson.estados.porcAmbiental.toFixed(2);
+                const porcentRse = responseJson.estados.porcRse.toFixed(2);
+
+                // Gráfica de Estado de Requerimientos
+                const ctx = document.getElementById('graficoCumplimiento1').getContext('2d');
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -73,34 +82,23 @@ function cargarDatos(idFinca, fecha) {
                         datasets: [{
                             label: 'Estado de Requerimientos',
                             data: [cantCumple, cantParcial, cantNoCumple, cantNoAplica],
-                            backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E'] // Agregar un color adicional para "NO APLICA"
+                            backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E']
                         }]
                     },
                     options: {
                         responsive: true,
                         scales: {
-                            xAxes: [{
-                                gridLines: {
-                                    display: false,
-                                    drawBorder: false
-                                },
-                                maxBarThickness: 80,
-                            }],
+                            xAxes: [{ gridLines: { display: false, drawBorder: false }, maxBarThickness: 80 }],
                             yAxes: [{
-                                ticks: {
-                                    min: 0,
-                                    maxTicksLimit: 11
-                                },
-                                scaleLabel: {  // Aquí va scaleLabel en lugar de title
-                                    display: true,
-                                    labelString: 'Cantidad de Requerimientos'  // Cambia text a labelString
-                                },
-                                padding: 10  // Ajusta este valor para reducir el espacio
+                                ticks: { min: 0, maxTicksLimit: 11 },
+                                scaleLabel: { display: true, labelString: 'Cantidad de Requerimientos' },
+                                padding: 10
                             }],
                         },
                     }
                 });
 
+                // Gráfica de Cumplimiento por Ámbito
                 const ctx2 = document.getElementById('graficoCumplimiento2').getContext('2d');
                 new Chart(ctx2, {
                     type: 'bar',
@@ -109,44 +107,66 @@ function cargarDatos(idFinca, fecha) {
                         datasets: [{
                             label: 'Cumplimiento por Ámbito',
                             data: [porcentLaboral, porcentOcupacional, porcentAmbiental, porcentRse],
-                            backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E'] // Agregar un color adicional para "NO APLICA"
+                            backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E']
                         }]
                     },
                     options: {
                         responsive: true,
                         scales: {
-                            xAxes: [{
-                                gridLines: {
-                                    display: false,
-                                    drawBorder: false
-                                },
-                                maxBarThickness: 80,
-                            }],
+                            xAxes: [{ gridLines: { display: false, drawBorder: false }, maxBarThickness: 80 }],
                             yAxes: [{
-                                ticks: {
-                                    min: 0,
-                                    maxTicksLimit: 10
-                                },
-                                scaleLabel: {  // Aquí va scaleLabel en lugar de title
-                                    display: true,
-                                    labelString: 'Porcentaje (%)'  // Cambia text a labelString
-                                }
+                                ticks: { min: 0, maxTicksLimit: 10 },
+                                scaleLabel: { display: true, labelString: 'Porcentaje (%)' }
                             }],
                         },
                     }
                 });
-            
-                // Llenar la tabla con los datos de cumplimiento
-                $("#txtCumplePorc").val(responseJson.estados.porcCumple.toFixed(2));
-                $("#txtParcialPorc").val(responseJson.estados.porcParcial.toFixed(2));
-                $("#txtNoCumplePorc").val(responseJson.estados.porcNoCumple.toFixed(2));
-                $("#txtNoAplicaPorc").val(responseJson.estados.porcNoAplica.toFixed(2));
-                $("#txtCumplimiento1").val(responseJson.cumplimientoGeneral.toFixed(2));
-                $("#txtLaboralPorc").val(responseJson.estados.porcLaboral.toFixed(2));
-                $("#txtOcupacionalPorc").val(responseJson.estados.porcOcupacional.toFixed(2));
-                $("#txtAmbientalPorc").val(responseJson.estados.porcAmbiental.toFixed(2));
-                $("#txtRsePorc").val(responseJson.estados.porcRse.toFixed(2));
-                $("#txtCumplimiento2").val(responseJson.cumplimientoGeneral.toFixed(2));
+
+                // Construir la tabla Cumplimiento
+                const tablaCumplimiento = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;">Estado</th>
+                                <th style="text-align:center;">Porcentaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="font-weight:bold;">
+                                <td>Cumplimiento Global</td>
+                                <td style="color:red; text-align:right;">${cumplimientoGeneral}%</td>
+                            </tr>
+                            <tr><td>CUMPLE</td><td style="text-align:right;">${porcCumple}%</td></tr>
+                            <tr><td>CUMPLE PARCIAL</td><td style="text-align:right;">${porcParcial}%</td></tr>
+                            <tr><td>NO CUMPLE</td><td style="text-align:right;">${porcNoCumple}%</td></tr>
+                            <tr><td>NO APLICA</td><td style="text-align:right;">${porcNoAplica}%</td></tr>
+                        </tbody>
+                    </table>`;
+
+                document.getElementById("tablaCumplimiento").innerHTML = tablaCumplimiento;
+
+                // Construir la tabla Tipo
+                const tablaTipo = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;">Tipo</th>
+                                <th style="text-align:center;">Porcentaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="font-weight:bold;">
+                                <td>Cumplimiento Global</td>
+                                <td style="color:red; text-align:right;">${cumplimientoGeneral}%</td>
+                            </tr>
+                            <tr><td>LABORAL</td><td style="text-align:right;">${porcentLaboral}%</td></tr>
+                            <tr><td>OCUPACIONAL</td><td style="text-align:right;">${porcentOcupacional}%</td></tr>
+                            <tr><td>AMBIENTAL</td><td style="text-align:right;">${porcentAmbiental}%</td></tr>
+                            <tr><td>RSE</td><td style="text-align:right;">${porcentRse}%</td></tr>
+                        </tbody>
+                    </table>`;
+
+                document.getElementById("tablaTipo").innerHTML = tablaTipo;
 
             } else {
                 Swal.fire("Lo sentimos!", responseJson.mensaje, "error");

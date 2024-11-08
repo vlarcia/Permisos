@@ -186,45 +186,45 @@ namespace Business.Implementacion
         }
         public async Task<List<Revisione>> ObtenerRevision(int idfinca, string fecha, int grupo)
         {
-            // Convertir el string de la fecha a un objeto DateTime
             try
             {
-                IQueryable<Revisione> query = await _repositorioRev.Consultar();
-                var resultado = query.ToList();
-                if (fecha != "")
+                IQueryable<Revisione> query = await _repositorioRev.Consultar(); // No ejecutar la consulta inmediatamente
+
+                // Incluir las relaciones de navegación
+                query = query
+                    .Include(f => f.IdFincaNavigation)
+                    .Include(r => r.IdRequisitoNavigation);
+
+                // Filtrar por fecha si se proporciona
+                if (!string.IsNullOrEmpty(fecha))
                 {
                     DateTime lafecha = DateTime.ParseExact(fecha, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
-                    // Filtrar las revisiones por finca y fecha
-                    resultado = query
-                    .Include(f => f.IdFincaNavigation)
-                    .Include(r => r.IdRequisitoNavigation)
-                    .Where(r => r.IdFinca == idfinca && r.Fecha == lafecha) // Filtrar por IdFinca y la fecha                
-                    .ToList();
+                    query = query.Where(r => r.IdFinca == idfinca && r.Fecha == lafecha); // Filtro por finca y fecha
                 }
+                // Filtrar solo por finca si se proporciona
                 else if (idfinca != 0)
                 {
-                    resultado = query
-                    .Include(f => f.IdFincaNavigation)
-                    .Include(r => r.IdRequisitoNavigation)
-                    .Where(r => r.IdFinca == idfinca) // Filtar solo por finca
-                    .ToList();
+                    query = query.Where(r => r.IdFinca == idfinca); // Filtrar por finca
                 }
-                else if(grupo!=0)
-                {
-                    resultado = query
-                    .Include(f => f.IdFincaNavigation)
-                    .Include(r => r.IdRequisitoNavigation)
-                    .Where(r => r.IdFincaNavigation.Grupo == grupo) // Filtrar solo por Grupo de fincas
-                    .ToList();
+                // Filtrar por grupo si se proporciona
+                else if (grupo != 0)
+                {                  
+                    var temporal =query.ToList(); // Filtrar por grupo                    
+                    temporal=temporal.Where(r => r.IdFincaNavigation.Grupo == grupo).ToList();
+                    return temporal;
                 }
+
+                // Ejecutar la consulta y obtener los resultados
+                var resultado = await query.ToListAsync(); // Ahora ejecutamos la consulta cuando se aplican todos los filtros
+
                 return resultado;
             }
             catch (Exception ex)
-            {              
-                throw ex;
+            {
+                throw ex; // Capturar el error, pero sería bueno manejarlo más adecuadamente (ej. log)
             }
         }
+
 
 
     }
