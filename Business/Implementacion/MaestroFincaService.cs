@@ -68,6 +68,7 @@ namespace Business.Implementacion
                 finca_editar.Proveedor = entidad.Proveedor;
                 finca_editar.Email = entidad.Email;
                 finca_editar.Telefono = entidad.Telefono;
+                finca_editar.Grupo = entidad.Grupo;
 
                 bool respuesta = await _repositorio.Editar(finca_editar);
                 if(!respuesta)

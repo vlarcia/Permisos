@@ -15,7 +15,9 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? Email { get; set; }
         public decimal? Area { get; set; }
 
-        public string? Telefono { get; set; }        
+        public string? Telefono { get; set; }
+
+        public int? Grupo { get; set; }
 
     }
 }

@@ -240,14 +240,7 @@ $('#btnGuardarRev').on('click', function () {
         Swal.fire("¡Error!", "Hubo un problema al agregar la revisión");
     });
 })
-function convertirFecha(fecha) {
 
-    const partes = fecha.split("/");
-    const dia = partes[0];
-    const mes = partes[1] - 1; // Restar 1 al mes
-    const anio = partes[2];
-    return new Date(anio, mes, dia);
-}
 function limpiarFormularioYTabla() {
     // Limpiar los campos del formulario del Plan de Trabajo
     $('#cboFinca').val('');

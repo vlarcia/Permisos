@@ -36,6 +36,7 @@
                                 <th>Email</th>
                                 <th>Area(ha)</th>
                                 <th>Teléfono</th>
+                                <th>Grupo</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -61,37 +62,51 @@
                     <form>
                         <input type="hidden" value="0" id="txtId">
                         <div class="row">
-                            <div class="col-sm-8">
+                            <div class="col-sm-12">
                                 <div class="form-row">
-                                    <div class="form-group col-sm-6">
+                                    <div class="form-group col-sm-4">
                                         <label for="txtCodFinca">Cod_Finca</label>
                                         <input type="text" class="form-control form-control-sm input-validar" id="txtCodFinca" name="CodFinca">
                                     </div>
-                                    <div class="form-group col-sm-6">
+                                    <div class="form-group col-sm-8">
                                         <label for="txtDescripcion">Descripcion</label>
                                         <input type="text" class="form-control form-control-sm input-validar" id="txtDescripcion" name="Descripcion">
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-sm-6">
+                                    <div class="form-group col-sm-7">
                                         <label for="txtProveedor">Proveedor</label>
                                         <input type="text" class="form-control form-control-sm input-validar" id="txtProveedor" name="Proveedor">
                                     </div>
-                                    <div class="form-group col-sm-6">
+                                    <div class="form-group col-sm-5">
                                         <label for="txtEmail">Email</label>
                                         <input type="email" class="form-control form-control-sm input-validar" id="txtEmail" name="Email">
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-sm-6">
-                                        <label for="txtTelefono">Telefono</label>
-                                        <input type="text" class="form-control form-control-sm input-validar" id="txtTelefono" name="Telefono">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="txtArea">Area</label>
-                                        <input type="text" class="form-control form-control-sm input-validar" id="txtArea" name="Area">
 
+                                    <div class="input-group-prepend">
+                                        <label style="color:darkgreen; font-size:small" class="input-group-text mb-2" for="txtTelefono">Telefono</label>
                                     </div>
+                                    <input type="text" class="form-control  input-validar col-sm-2" style="text-align:right; font-size:small" id="txtTelefono" name="Telefono">
+                                  
+                                    <div class="input-group-prepend pl-3">
+                                        <label style="color:darkgreen; font-size:small" class="input-group-text mb-2" for="txtArea">Area</label>
+                                    </div>                                    
+                                    <input type="text" class="form-control input-validar col-sm-2 campoDecimal"
+                                           aria-label="Small" style="text-align:right; font-size:small" id="txtArea" name="Area">
+                               
+                                    <div class="input-group-prepend pl-3">
+                                        <label style="color:darkgreen; font-size:small" class="input-group-text mb-2" for="cboGrupo">Grupo/Etapa </label>
+                                    </div>
+                                    <select style="color:darkgreen; font-size:small" class="custom-select col-sm-2 mb-2" aria-label="Small" id="cboGrupo" name="TipoRevision">
+                                        <option value=1>Etapa 1era</option>
+                                        <option value=2>Etapa 2da</option>
+                                        <option value=3>Etapa 3ra</option>
+                                        <option value=4>Etapa 4ta</option>
+                                        <option value=5>Etapa 5ta</option>
+                                        <option value=6>Etapa 6ta</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -120,8 +135,10 @@
     <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
     <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
     <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
-    
+
+    <script src="~/js/vistas/Common.js"></script>
     <script src="~/js/vistas/MaestroFinca_Index.js"></script>
+    
 
     <!-- SOLO ES DE EJEMPLO - IGNORAR -->
     @* <script src="~/js/vistas/datatables-demo.js"></script> *@

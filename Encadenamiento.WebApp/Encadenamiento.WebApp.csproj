@@ -9,16 +9,19 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\Images\eog-image-photo-svgrepo-com.svg" />
+    <Content Remove="wwwroot\js\vistas\Common.js" />
     <Content Remove="wwwroot\js\vistas\DashBoard_Index.js" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\Images\eog-image-photo-svgrepo-com.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\vistas\Common.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\vistas\DashBoard_Index.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\Images\eog-image-photo-svgrepo-com.svg" />
+    <None Include="wwwroot\js\vistas\Common.js" />
     <None Include="wwwroot\js\vistas\DashBoard_Index.js" />
   </ItemGroup>
 

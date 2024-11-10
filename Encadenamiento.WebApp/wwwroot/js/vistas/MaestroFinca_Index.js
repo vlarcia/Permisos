@@ -6,7 +6,8 @@ const MODELO_BASE = {
     proveedor: "",
     email: "",
     area: 0.0,
-    telefono: ""
+    telefono: "",
+    grupo:0,
 }
 
 let tablaData;
@@ -28,7 +29,7 @@ $(document).ready(function () {
             { "data": "email" },
             { "data": "area" },
             { "data": "telefono" },
-
+            { "data": "grupo" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-editar btn-sm mr-2"><i class="fas fa-pencil-alt"></i></button>' +
                     '<button class="btn btn-danger btn-eliminar btn-sm"><i class="fas fa-trash-alt"></i></button>',
@@ -63,6 +64,7 @@ function mostrarModal(modelo = MODELO_BASE) {
     $("#txtEmail").val(modelo.email)
     $("#txtArea").val(modelo.area)
     $("#txtTelefono").val(modelo.telefono)    
+    $("#cboGrupo").val(modelo.grupo)    
 
     $("#modalFinca").modal("show")
 }
@@ -90,7 +92,7 @@ $("#btnGuardar").click(function () {
     modelo["email"] = $("#txtEmail").val()
     modelo["area"] = parseFloat($("#txtArea").val())
     modelo["telefono"] = $("#txtTelefono").val()
-    
+    modelo["grupo"] = parseInt($("#cboGrupo").val())
        
     const formData = new FormData();    
     formData.append("modelo", JSON.stringify(modelo))
@@ -134,13 +136,8 @@ $("#btnGuardar").click(function () {
                     Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
                 }
             })
-
-
-
     }
-
 })
-
 
 let filaSeleccionada;
 $("#tbdatafinca tbody").on("click", ".btn-editar", function () {
@@ -207,7 +204,3 @@ $("#tbdatafinca tbody").on("click", ".btn-eliminar", function () {
         }
     })
 })
-
-
-                         
-                             

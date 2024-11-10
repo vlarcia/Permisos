@@ -446,34 +446,3 @@ function mostrarModal(modelo, edita) {
 }
 
 
-function convertirFecha(fecha) {
-
-    const partes = fecha.split("/");
-    const dia = partes[0];
-    const mes = partes[1] - 1; // Restar 1 al mes
-    const anio = partes[2];
-    return new Date(anio, mes, dia);
-}
-
-function formatearFecha(fechaISO) {
-    // Convertir la cadena ISO a un objeto Date
-    const fecha = new Date(fechaISO);
-
-    // Extraer día, mes y año
-    const dia = String(fecha.getDate()).padStart(2, '0'); // Obtener día con dos dígitos
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Obtener mes, sumando 1 porque los meses en JS van de 0 a 11
-    const anio = fecha.getFullYear(); // Obtener año completo
-
-    // Formatear y retornar como dd/MM/yyyy
-    return `${dia}/${mes}/${anio}`;
-}
-function obtenerFechaActual() {
-    const hoy = new Date();
-    const anio = hoy.getFullYear();
-    const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Meses de 0 a 11, sumamos 1
-    const dia = String(hoy.getDate()).padStart(2, '0'); // Día con dos dígitos
-
-    return `${anio}-${mes}-${dia}`; // Formato yyyy-MM-dd
-}
-
-
