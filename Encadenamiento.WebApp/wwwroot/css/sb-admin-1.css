@@ -10932,6 +10932,12 @@ a:focus {
   background-position: center;
   background-size: cover;
 }
+.bg-privacy-image {
+    background-image: url('/Images/Prueba 2.png');
+    background-position: center;
+    background-size:contain;
+
+}
 
 .bg-register-image {
     background: url('/Images/ingenio.jpg');
