@@ -96,6 +96,47 @@ $(document).ready(function () {
         autoclose: true,
         language: "es"
     });
+    document.getElementById("txtFoto1").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto1");
+
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
+
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+        }
+    });
+
+    document.getElementById("txtFoto2").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto2");
+
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
+
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+        }
+    });
 });
 
 // Evento de cambio en la columna de "estado"
@@ -185,14 +226,29 @@ $('#btnGuardarRev').on('click', function () {
         return;
     }
 
+    // Cargar Fotos y FormData
+    const inputFoto1 = document.getElementById("txtFoto1");
+    const inputFoto2 = document.getElementById("txtFoto2");
+    const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
+    const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
+
+    const modeloGeneral={
+        idFinca:    idFinca,
+        fecha:      fecha,
+        tipo: tipo,
+        observaciones: $("#txtObservaciones").val(),
+        cumplimiento: cumplimiento,
+        nombrefoto1:lafoto1,
+        nombrefoto2: lafoto2,        
+        sentTo:0
+    }
     const filas = $('#tbRequisitos').DataTable().rows().data();
     const revisiones = [];
 
     for (let index = 0; index < filas.length; index++) {
         const rowData = filas[index];
         const idRequisito = rowData.idRequisito;
-        const estado = rowData.estado;
-        const observaciones = rowData.observaciones ? rowData.observaciones.substring(0, 100) : ' ';        
+        const estado = rowData.estado;       
         const comentarios = rowData.comentarios;
 
         // Si el estado está vacío, mostramos el mensaje y detenemos la función
@@ -205,22 +261,24 @@ $('#btnGuardarRev').on('click', function () {
             IdFinca: idFinca,
             IdRequisito: parseInt(idRequisito),
             Fecha: fecha,
-            Estado: estado,
-            Observaciones: observaciones,
+            Estado: estado,           
             Comentarios: comentarios,
             Tipo: tipo,
             Cumplimiento: cumplimiento
         });
     }
+    // Agrega las fotos y modelo de data para mandar a Registrar
+    const formData = new FormData();
 
+    formData.append("revisiones", JSON.stringify(revisiones));    
+    formData.append("foto1", inputFoto1.files[0] ? inputFoto1.files[0] : null);
+    formData.append("foto2", inputFoto2.files[0] ? inputFoto2.files[0] : null);
+    formData.append("modeloGeneral", JSON.stringify(modeloGeneral));    
    $(".card-body").LoadingOverlay("show");
 
    fetch("/Revision/Crear", {
-       method: "POST",
-       headers: {
-           "Content-Type": "application/json"
-       },
-       body: JSON.stringify(revisiones)
+       method: "POST",       
+       body: formData      // No establezco 'Content-Type', FormData lo maneja
    })
     .then(response => {
         return response.ok ? response.json() : Promise.reject(response);
@@ -249,7 +307,7 @@ function limpiarFormularioYTabla() {
     $('#txtFecha').val('');    
     $('#cboTipo').val('');
     $('#txtCumplimiento').val('');    
-  
+    $('#txtObservaciones').val('');    
     // Limpiar la tabla de actividades
     tablaRequisitos.ajax.reload();
     

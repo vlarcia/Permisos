@@ -47,5 +47,7 @@ public partial class MaestroFinca
 
     public virtual ICollection<Revisione> Revisiones { get; set; } = new List<Revisione>();
 
+    public virtual ICollection<Revision> Revision { get; set; } = new List<Revision>();
+
     public virtual ICollection<Visita> Visita { get; set; } = new List<Visita>();
 }

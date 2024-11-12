@@ -13,8 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
-
-
 namespace Business.Implementacion
 {
     public class VisitaService : IVisitaService

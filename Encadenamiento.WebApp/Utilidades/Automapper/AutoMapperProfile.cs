@@ -58,6 +58,16 @@ namespace Encadenamiento.WebApp.Utilidades.Automapper
                 .ReverseMap()
                 .ForMember(dest => dest.IdFincaNavigation, opt => opt.Ignore())  // Ignorar IdFincaNavigation para evitar crear una nueva finca
                 .ForMember(dest => dest.IdRequisitoNavigation, opt => opt.Ignore());  // Ignorar IdRequisitoNaviigation para evitar crear un nuevo plan
+
+            CreateMap<Revision, VMRevisions>()  // Esta tabla surgió por necesidad y no se consideró en el diseño original- evitar confundor con el detalle de la revision, se hizo para contener las fotos y control de envío de correos.
+                .ForMember(dest => dest.NombreFinca, opt => opt.MapFrom(orig => orig.IdFincaNavigation.Descripcion))
+                .ForMember(dest => dest.Proveedor, opt => opt.MapFrom(orig => orig.IdFincaNavigation.Proveedor))
+                .ForMember(dest => dest.CodFinca, opt => opt.MapFrom(orig => orig.IdFincaNavigation.CodFinca))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.IdFincaNavigation.Email))
+                .ForMember(dest => dest.Grupo, opt => opt.MapFrom(src => src.IdFincaNavigation.Grupo))
+                .ReverseMap()
+                .ForMember(dest => dest.IdFincaNavigation, opt => opt.Ignore());  // Ignorar IdFincaNavigation para evitar crear una nueva finca
+                
             #endregion Revisiones
 
 

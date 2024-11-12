@@ -38,6 +38,8 @@ public partial class CumplimientoContext : DbContext
 
     public virtual DbSet<Revisione> Revisiones { get; set; }
 
+    public virtual DbSet<Revision> Revisions { get; set; }
+
     public virtual DbSet<Rol> Rols { get; set; }
 
     public virtual DbSet<RolMenu> RolMenus { get; set; }
@@ -434,6 +436,31 @@ public partial class CumplimientoContext : DbContext
                 .HasForeignKey(d => d.IdRequisito)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Revisiones_CheckList");
+        });
+
+        modelBuilder.Entity<Revision>(entity =>
+        {
+            entity.HasKey(e => e.IdReg);
+
+            entity.Property(e => e.IdReg).HasColumnName("id_reg");
+           
+            entity.Property(e => e.Cumplimiento).HasColumnType("decimal(18, 3)").HasColumnName("cumplimiento");
+           
+            entity.Property(e => e.Fecha).HasColumnType("date").HasColumnName("fecha");
+           
+            entity.Property(e => e.IdFinca).HasColumnName("id_finca");
+           
+            entity.Property(e => e.Observaciones).HasColumnName("observaciones");
+            entity.Property(e => e.Nombrefoto1).HasMaxLength(100).HasColumnName("nombrefoto1");
+            entity.Property(e => e.Nombrefoto2).HasMaxLength(100).HasColumnName("nombrefoto2");            
+            entity.Property(e => e.SentTo).HasColumnName("sent_to");
+            entity.Property(e => e.Urlfoto1).HasMaxLength(500).HasColumnName("urlfoto1");
+            entity.Property(e => e.Urlfoto2).HasMaxLength(500).HasColumnName("urlfoto2");
+
+            entity.HasOne(d => d.IdFincaNavigation).WithMany(p=>p.Revision)
+                .HasForeignKey(d => d.IdFinca)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Revisions_MaestroFinca");
         });
 
         modelBuilder.Entity<Rol>(entity =>

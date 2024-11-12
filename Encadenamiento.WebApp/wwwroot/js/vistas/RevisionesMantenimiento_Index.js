@@ -22,6 +22,7 @@ let filaseleccionada = null;
 let lafinca = null;
 let editando = false;
 var tablaRequisitos;
+let modeloGeneral;
 $(document).ready(function () {
 
     tablaRevisiones = $('#tbRevisiones').DataTable({
@@ -104,6 +105,50 @@ $(document).ready(function () {
     
 });
 
+
+document.getElementById("txtFoto1").addEventListener("change", function (event) {
+    const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+    const imgElement = document.getElementById("imgFoto1");
+
+    if (file) {
+        const reader = new FileReader(); // Crear un objeto FileReader
+
+        // Definir la función a ejecutar cuando se carga el archivo
+        reader.onload = function (e) {
+            imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+            imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+        };
+
+        reader.readAsDataURL(file); // Leer el archivo como URL de datos
+    } else {
+        // Si no hay archivo, puedes asignar la imagen predeterminada
+        imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+        imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+    }
+});
+
+document.getElementById("txtFoto2").addEventListener("change", function (event) {
+    const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+    const imgElement = document.getElementById("imgFoto2");
+
+    if (file) {
+        const reader = new FileReader(); // Crear un objeto FileReader
+
+        // Definir la función a ejecutar cuando se carga el archivo
+        reader.onload = function (e) {
+            imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+            imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+        };
+
+        reader.readAsDataURL(file); // Leer el archivo como URL de datos
+    } else {
+        // Si no hay archivo, puedes asignar la imagen predeterminada
+        imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+        imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+    }
+});
+
+
 $("#cboBuscarPor").val('');
 $("#cboBuscarPor").change(function () {
     if ($("#cboBuscarPor").val() == "fecha") {
@@ -131,7 +176,8 @@ $("#btnBuscar").click(function () {
 })
 
 $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
-    editando = false;  // Asegúrate de estar en modo de solo lectura
+    editando = false;  // Asegúrate de estar en modo de solo lectura    
+  
     if ($(this).closest("tr").hasClass("child")) {
         filaseleccionada = $(this).closest("tr").prev();
     } else {
@@ -147,17 +193,25 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
     $('#linkImprimir').show();
     $("#linkImprimir").attr("href", `/Revision/MostrarPDFRevision?idFinca=${ladata.idFinca}&fecha=${fecha}`);
 
-
-
+    
     if ($.fn.DataTable.isDataTable('#tbRequisitos')) {
         $('#tbRequisitos').DataTable().clear().destroy();
     }
 
-    // AJAX para obtener las revisiones y crear la tabla
+    // AJAX para obtener el registro general de revisiones
+    $.ajax({
+        url: `/Revision/ObtenerRevisionGeneral`,
+        type: 'GET',
+        data: { idFinca: idFinca, Fecha: fecha},
+        success: function (data) {
+            modeloGeneral = data.data;                       
+        }
+    });
+
     $.ajax({
         url: `/Revision/ObtenerRevision`,
         type: 'GET',
-        data: { idFinca: idFinca, Fecha: fecha, grupo:0 },
+        data: { idFinca: idFinca, Fecha: fecha, grupo: 0 },
         success: function (data) {
             // Crear tabla con los datos recibidos
             tablaRequisitos = $('#tbRequisitos').DataTable({
@@ -223,11 +277,11 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                 "pageLength": 15,
                 order: [[0, "asc"]],
                 dom: "Bfrtip",
-                buttons: [                           
+                buttons: [
                     {
                         extend: 'excelHtml5',
                         title: 'Revision de Finca',
-                         exportOptions: {
+                        exportOptions: {
                             modifier: {
                                 page: 'all'
                             }
@@ -264,6 +318,10 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                                     <c t="inlineStr"><is><t>Cumplimiento:</t></is></c>
                                     <c t="inlineStr"><is><t>${cumplimiento}</t></is></c>
                                 </row>
+                                <row r="7">
+                                    <c t="inlineStr"><is><t>Observaciones:</t></is></c>
+                                    <c t="inlineStr"><is><t>${observaciones}</t></is></c>
+                                </row>
                             `;
 
                             // Insertar las nuevas filas antes de los datos actuales (filas 1-5)
@@ -272,7 +330,7 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
 
                             // Desplazar los datos de la tabla para que comiencen en la fila 8
                             var dataRows = sheet.getElementsByTagName('row');
-                            var rowIndex = 7;  // Comenzamos en la fila 8 (el índice en XML es 0-based, así que usamos 7)
+                            var rowIndex = 8;  // Comenzamos en la fila 8 (el índice en XML es 0-based, así que usamos 7)
                             for (var i = 5; i < dataRows.length; i++) {
                                 var row = dataRows[i];
                                 var cells = row.getElementsByTagName('c');
@@ -308,6 +366,7 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                             var fecha = $('#txtFecha').val();
                             var tipoRevision = $('#cboTipo').val();
                             var cumplimiento = $('#txtCumplimiento').val();
+                            var observaciones = $('#txtObservaciones').val();
 
                             // Crear el encabezado con los datos del formulario
                             var headerHTML = `
@@ -318,6 +377,7 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                         <p>Fecha: ${fecha}</p>
                         <p>Tipo Revisión: ${tipoRevision}</p>
                         <p>Cumplimiento: ${cumplimiento}</p>
+                        <p>Observaciones: ${observaciones}</p>
                     </div>
                     <br />
                 `;
@@ -325,12 +385,12 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                             // Insertar el encabezado antes de la tabla impresa
                             $(win.document.body).find('table').before(headerHTML);
                         }
-                    }        
+                    }
                 ]
             });
 
             // Muestra el modal una vez creada la tabla con los datos
-            mostrarModal(data.data[0], true);  // Usa el primer registro como ejemplo
+            mostrarModal(data.data[0], true, modeloGeneral);  // Usa el primer registro
         }
     });
 });
@@ -363,7 +423,7 @@ $('#btnEnviarCorreo').on('click', function () {
 
 
 $('#tbRevisiones tbody').on('click', '.btn-editar', function () {
-
+    
     editando = true;
     if ($(this).closest("tr").hasClass("child")) {
         filaseleccionada = $(this).closest("tr").prev();
@@ -382,6 +442,18 @@ $('#tbRevisiones tbody').on('click', '.btn-editar', function () {
     if ($.fn.DataTable.isDataTable('#tbRequisitos')) {
         $('#tbRequisitos').DataTable().clear().destroy();
     };
+
+    // AJAX para obtener el registro general de revisiones
+    $.ajax({
+        url: `/Revision/ObtenerRevisionGeneral`,
+        type: 'GET',
+        data: { idFinca: idFinca, Fecha: fecha },
+        success: function (data) {
+            modeloGeneral = data.data;            
+            
+        }
+    });
+
     // AJAX para obtener las revisiones y crear la tabla
     $.ajax({
         url: `/Revision/ObtenerRevision`,
@@ -447,7 +519,7 @@ $('#tbRevisiones tbody').on('click', '.btn-editar', function () {
             });
 
             // Ahora, después de que la tabla esté creada con los datos, se muestra el modal
-            mostrarModal(data.data[0], false);  // Usa el primer registro como ejemplo
+            mostrarModal(data.data[0], false, modeloGeneral);  // Usa el primer registro como ejemplo
         }
     });
 });
@@ -507,7 +579,18 @@ $('#btnGuardar').on('click', function () {
         toastr.warning("Por favor, complete los campos generales (Tipo, Cumplimiento)");
         return;
     }
+    // Cargar Fotos y FormData
+    const inputFoto1 = document.getElementById("txtFoto1");
+    const inputFoto2 = document.getElementById("txtFoto2");
+    const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
+    const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
 
+    modeloGeneral.observaciones = $("#txtObservaciones").val();
+    modeloGeneral.nombrefoto1 = lafoto1;
+    modeloGeneral.nombrefoto2 = lafoto2;
+    modeloGeneral.tipo = tipo;
+    modeloGeneral.cumplimiento = cumplimiento;        
+    
     const filas = $('#tbRequisitos').DataTable().rows().data();
     const revisiones = [];
 
@@ -515,8 +598,7 @@ $('#btnGuardar').on('click', function () {
         const rowData = filas[index];
         const idRevision = rowData.idRevision;
         const idRequisito = rowData.idRequisito;
-        const estado = rowData.estado;
-        const observaciones = rowData.observaciones ? rowData.observaciones.substring(0, 100) : ' ';
+        const estado = rowData.estado;        
         const comentarios = rowData.comentarios;
 
         // Si el estado está vacío, mostramos el mensaje y detenemos la función
@@ -530,22 +612,25 @@ $('#btnGuardar').on('click', function () {
             IdFinca: parseInt(idFinca),
             IdRequisito: parseInt(idRequisito),
             Fecha: fecha,
-            Estado: estado,
-            Observaciones: observaciones,
+            Estado: estado,          
             Comentarios: comentarios,
             Tipo: tipo,
             Cumplimiento: cumplimiento
         });
     }
+    // Agrega las fotos y modelo de data para mandar a Registrar
+    const formData = new FormData();
+
+    formData.append("revisiones", JSON.stringify(revisiones));
+    formData.append("foto1", inputFoto1.files[0] ? inputFoto1.files[0] : null);
+    formData.append("foto2", inputFoto2.files[0] ? inputFoto2.files[0] : null);
+    formData.append("modeloGeneral", JSON.stringify(modeloGeneral));
 
     $(".card-body").LoadingOverlay("show");
 
     fetch("/Revision/Editar", {
-        method: "PUT",        
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(revisiones)
+        method: "PUT",                
+        body: formData    // No establezco 'Content-Type', FormData lo maneja
     })
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
@@ -571,6 +656,8 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
 
     let filas;
     let revisiones = [];    
+    let filasmodeloGeneral;
+    let rev_general = 0;
     
     if ($(this).closest("tr").hasClass("child")) {
         filaseleccionada = $(this).closest("tr").prev();
@@ -581,9 +668,25 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
     const idFinca = ladata.idFinca;
     const fecha = formatearFecha(ladata.fecha);
 
+    const formData = new FormData();
     // Declarar la variable afuera del bloque AJAX
     
-
+    // AJAX para obtener el registro general de revisiones
+    $.ajax({
+        url: `/Revision/ObtenerRevisionGeneral`,
+        type: 'GET',
+        data: { idFinca: idFinca, Fecha: fecha},
+        success: function (data) {
+            if (data) {
+                filasmodeloGeneral = data;
+                const id_general = filasmodeloGeneral.data[0].idReg
+                rev_general=parseInt(id_general)                
+            } else {
+                console.log("No se recibió ningún dato.");
+            }
+        }        
+    });
+    
     $.ajax({
         url: `/Revision/ObtenerRevision`,
         type: 'GET',
@@ -619,13 +722,13 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
             }).then((result) => {
                 if (result.isConfirmed) { // Si el usuario confirma la acción
                     $(".showSweetAlert").LoadingOverlay("show");
-                    console.log(revisiones)
+
+                    formData.append("rev_eliminar", JSON.stringify(rev_eliminar))
+                    formData.append("rev_general", rev_general)
+
                     fetch(`/Revision/Eliminar`, {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(rev_eliminar)
+                        method: "DELETE",                        
+                        body: formData
                     })
                         .then(response => {
                             $(".showSweetAlert").LoadingOverlay("hide");
@@ -650,7 +753,7 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
     });
 })
 
-function mostrarModal(modelo, edita) {
+function mostrarModal(modelo, edita, modeloGeneral) {
     
     $("#txtIdFinca").prop('disabled', true)    
     $("#txtFecha").prop('disabled', true)    
@@ -658,6 +761,8 @@ function mostrarModal(modelo, edita) {
     $("#cboTipo").prop('disabled', edita)
     $("#txtNombreFinca").prop('disabled', true)
     $("#txtCodFinca").prop('disabled', true)
+    $("#txtFoto1").prop('disabled', edita);
+    $("#txtFoto2").prop('disabled', edita);
 
     $("#txtIdFinca").val(parseInt(modelo.idFinca))
     $("#txtNombreFinca").val(modelo.nombreFinca)
@@ -666,7 +771,28 @@ function mostrarModal(modelo, edita) {
     $("#cboTipo").val(modelo.tipo)
     $("#txtNombreFinca").val(modelo.nombreFinca)
     $("#txtCodFinca").val(modelo.codFinca) 
-           
+    $("#txtObservaciones").val(modeloGeneral.observaciones) 
+
+    const imgElement1 = document.getElementById("imgFoto1");
+    const imgElement2 = document.getElementById("imgFoto2");
+
+    // Validar y asignar imágenes para imgFoto1 e imgFoto2
+    if (modeloGeneral.nombrefoto1 && modeloGeneral.urlfoto1) {
+        imgElement1.src = modeloGeneral.urlfoto1; // Cargar la imagen desde la URL
+        imgElement1.style.opacity = 0.9;
+    } else {
+        imgElement1.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement1.style.opacity = 0.3;
+    }
+    if (modeloGeneral.nombrefoto2 && modeloGeneral.urlfoto2) {
+        imgElement2.src = modeloGeneral.urlfoto2;
+        imgElement2.style.opacity = 0.9; // Opacidad predeterminada
+    } else {
+        imgElement2.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement2.style.opacity = 0.3; // Opacidad predeterminada
+    }
+
+
     $("#modalRevisiones").modal("show")
 }
 

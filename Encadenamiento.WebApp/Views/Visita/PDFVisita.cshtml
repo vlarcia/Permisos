@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan de Trabajo</title>
+    <title>Visitas de Campo</title>
 
     <style>
         body {
@@ -143,12 +143,16 @@
             margin-bottom: 20px;
         }
 
-            .image-container .image img {
-                width: 47%; /* Cada imagen ocupa el 48% del ancho */
-                display: inline-block;
-                margin: 1%; /* Espaciado entre imágenes */
-                height: auto;
-                border: 1px solid #ddd; /* Borde opcional */
+        .image-container .image img {
+            width: auto; /* El ancho se ajustará automáticamente */
+            max-width: 47%; /* Limita el ancho de cada imagen */
+            max-height: 300px; /* Altura máxima fija para ambas imágenes */
+            display: inline-block;
+            margin: 1%;
+            object-fit: cover; /* Recorta la imagen para mantener la misma altura */
+            border: 1px solid #ddd; /* Borde opcional */
+        }
+
     </style>
 
 </head>

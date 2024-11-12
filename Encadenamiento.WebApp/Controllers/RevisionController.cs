@@ -76,23 +76,54 @@ namespace Encadenamiento.WebApp.Controllers
             List<VMRevisiones> vmRevisionfinca = _mapper.Map<List<VMRevisiones>>(await _revisionService.ObtenerRevision(idFinca, fecha));
             return StatusCode(StatusCodes.Status200OK, new { data = vmRevisionfinca });
         }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerRevisionGeneral(int idFinca, string fecha)
+        {
+            VMRevisions vmRevisiongeneral = _mapper.Map<VMRevisions>(await _revisionService.ObtenerRevisionGeneral(idFinca, fecha));
+            return StatusCode(StatusCodes.Status200OK, new { data = vmRevisiongeneral });
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Crear([FromBody] List<Revisione> modelo)
+        public async Task<IActionResult> Crear([FromForm] string revisiones, [FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] string modeloGeneral)
         {
-            GenericResponse<VMRevisiones> gResponse = new GenericResponse<VMRevisiones>();
+            GenericResponse<VMRevisiones> gResponse = new GenericResponse<VMRevisiones>();            
             
-            if (modelo == null || !modelo.Any())
-            {
-                gResponse.Estado = false;
-                gResponse.Mensaje = "No se enviaron datos para guardar.";
-            }
             try
-            {                                
-                Revisione revision_creada = await _revisionService.Crear(_mapper.Map<List<Revisione>>(modelo));
-                VMRevisiones vmRevision = _mapper.Map<VMRevisiones>(revision_creada); //Tendré el ultimo registro de la revision
-                gResponse.Estado=true;
-                gResponse.Objeto = vmRevision;
+            {
+                var listaRevisione = JsonConvert.DeserializeObject<List<Revisione>>(revisiones);
+                VMRevisions registroGeneral = JsonConvert.DeserializeObject<VMRevisions>(modeloGeneral);
+                string nombrefoto1 = "";
+                string nombrefoto2 = "";
+                Stream fotoStream1 = null;
+                Stream fotoStream2 = null;
+
+                if (listaRevisione == null || !listaRevisione.Any())
+                {
+                    gResponse.Estado = false;
+                    gResponse.Mensaje = "No se enviaron datos para guardar.";
+                }
+                else
+                {                    
+                    if (foto1 != null)
+                    {                        
+                        string extension = Path.GetExtension(foto1.FileName);
+                        nombrefoto1 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto1, extension);
+                        fotoStream1 = foto1.OpenReadStream();
+                    }
+                    if (foto2 != null)
+                    {
+                        string extension = Path.GetExtension(foto2.FileName);
+                        nombrefoto2 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto2, extension);
+                        fotoStream2 = foto2.OpenReadStream();
+                    }
+
+
+                    Revisione revision_creada = await _revisionService.Crear(_mapper.Map<List<Revisione>>(listaRevisione));
+                    VMRevisiones vmRevision = _mapper.Map<VMRevisiones>(revision_creada); //Tendré el ultimo registro de la revision
+                    Revision fotosrevision_creada = await _revisionService.CrearRevisions(_mapper.Map<Revision>(registroGeneral), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2);
+                    gResponse.Estado = true;
+                    gResponse.Objeto = vmRevision;
+                }
             }
             catch (Exception ex)
             {
@@ -104,21 +135,42 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Editar([FromBody] List<Revisione> modelo)
+        public async Task<IActionResult> Editar([FromForm] string revisiones, [FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] string modeloGeneral)
         {
             GenericResponse<VMRevisiones> gResponse = new GenericResponse<VMRevisiones>();
 
             try
             {
-                if (modelo == null || !modelo.Any())
+                var listaRevisione = JsonConvert.DeserializeObject<List<Revisione>>(revisiones);
+                Revision registroGeneral = JsonConvert.DeserializeObject<Revision>(modeloGeneral);
+                string nombrefoto1 = "";
+                string nombrefoto2 = "";
+                Stream fotoStream1 = null;
+                Stream fotoStream2 = null;
+
+                if (listaRevisione == null || !listaRevisione.Any())
                 {
                     gResponse.Estado = false;
                     gResponse.Mensaje = "No se enviaron datos para editar.";
                 }
                 else
                 {
-                    Revisione revision_editada = await _revisionService.Editar(_mapper.Map<List<Revisione>>(modelo));
+                    if (foto1 != null)
+                    {
+                        string extension = Path.GetExtension(foto1.FileName);
+                        nombrefoto1 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto1, extension);
+                        fotoStream1 = foto1.OpenReadStream();
+                    }
+                    if (foto2 != null)
+                    {
+                        string extension = Path.GetExtension(foto2.FileName);
+                        nombrefoto2 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto2, extension);
+                        fotoStream2 = foto2.OpenReadStream();
+                    }
+                    
+                    Revisione revision_editada = await _revisionService.Editar(_mapper.Map<List<Revisione>>(listaRevisione));
                     VMRevisiones vmRevision = _mapper.Map<VMRevisiones>(revision_editada);
+                    Revision fotosrevision_modificada = await _revisionService.EditarRevisions((registroGeneral), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2);
                     gResponse.Estado = true;
                     gResponse.Objeto = vmRevision;
                 }
@@ -132,20 +184,21 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Eliminar([FromBody] List<int> modelo)
+        public async Task<IActionResult> Eliminar([FromForm] string rev_eliminar, [FromForm] int rev_general)
         {
             GenericResponse<string> gResponse = new GenericResponse<string>();
             
             try
             {
-                if (modelo == null || !modelo.Any())
+                List<int> listaenteros= JsonConvert.DeserializeObject<List<int>>(rev_eliminar);
+                if (listaenteros == null || !listaenteros.Any())
                 {
                     gResponse.Estado = false;
                     gResponse.Mensaje = "No se procesaron los registros de revisones a eliminar";
                 }
                 else
                 {
-                    gResponse.Estado = await _revisionService.Eliminar(modelo);
+                    gResponse.Estado = await _revisionService.Eliminar(listaenteros, rev_general);
                     gResponse.Estado = true;
                     gResponse.Mensaje = "Revision eliminada con exito";
                 }
@@ -162,10 +215,11 @@ namespace Encadenamiento.WebApp.Controllers
         {
             List<VMRevisiones> vmRevision = _mapper.Map<List<VMRevisiones>>(await _revisionService.ObtenerRevision(idFinca,fecha));
             VMNegocio vmNegocio = _mapper.Map<VMNegocio>(await _negocioService.Obtener());
-
+            VMRevisions vmGenerales = _mapper.Map<VMRevisions>(await _revisionService.ObtenerRevisionGeneral(idFinca, fecha));
             VMPDFRevision modelo = new VMPDFRevision();
             modelo.negocio = vmNegocio;
             modelo.revision = vmRevision;
+            modelo.generales= vmGenerales;
 
             return modelo;
 

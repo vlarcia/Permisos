@@ -49,17 +49,17 @@
                 border-bottom: 1px solid #ccc;
             }
 
-        .image {
+       /*  .image {
             text-align: center;
             margin-bottom: 10px;
         }
 
-            .image img {
-                width: 45%; /* Limita el ancho de cada foto al 45% */
+            /* .image img {
+                width: 45%; 
                 height: auto;
                 margin: 10px;
                 border: 1px solid #ddd;
-            }
+            } */
 
         .observations, .activities {
             margin-bottom: 20px;
@@ -139,6 +139,22 @@
             padding: 10px;
           
         }
+
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .image-container .image img {
+                width: auto; /* El ancho se ajustará automáticamente */
+                max-width: 47%; /* Limita el ancho de cada imagen */
+                max-height: 300px; /* Altura máxima fija para ambas imágenes */
+                display: inline-block;
+                margin: 1%;
+                object-fit: cover; /* Recorta la imagen para mantener la misma altura */
+                border: 1px solid #ddd; /* Borde opcional */
+            }
+
     </style>
 </head>
 <body>
@@ -168,17 +184,19 @@
             de seguimiento del proyecto de encadenamiento de productores de caña de azúcar que Pantaleon lleva a cabo para ayudarles
             a mejorar en el cumplimiento de normas y regulaciones que la legislación nacional indica.</p>
 
-        <div class="image">
-            <h2>Fotos de la Revisión</h2>
-            <img src="@Model.revision.First().UrlFoto1" alt="Foto #1">
-            <img src="@Model.revision.First().UrlFoto2" alt="Foto #2">
+
+        <div class="observations">
+            <p><span class="section-title">Observacion:</span> @Model.generales.Observaciones</p>
+        </div>
+
+        <div class="image-container">
+            <div class="image">
+                <img src="@Model.generales.Urlfoto1" alt="Foto 1">
+                <img src="@Model.generales.Urlfoto2" alt="Foto 2">
+            </div>
         </div>
 
         <p>El cumplimiento global para su finca en esta etapa es de <strong>@((Model.revision.First().Cumplimiento ?? 0).ToString("F2")) %</strong> obtenido de la tabla que se adjunta al final. Se consideran las siguientes observaciones y actividades recomendadas apoyadas por las imágenes anteriores:</p>
-
-        <div class="observations">
-            <p><span class="section-title">Observacion:</span> @Model.revision.First().Comentarios</p>
-        </div>
 
         <div class="activities">
             <p><span class="section-title">Resultados obtenidos:</span></p>

@@ -4,5 +4,6 @@
     {
         public List<VMRevisiones>? revision {  get; set; }
         public VMNegocio? negocio { get; set; }
+        public VMRevisions? generales { get; set; }
     }
 }
