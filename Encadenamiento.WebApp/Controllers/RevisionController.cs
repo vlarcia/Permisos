@@ -71,6 +71,12 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, new { data = vmRevisionLista });
         }
         [HttpGet]
+        public async Task<IActionResult> ListaRevisions(int envio)
+        {
+            List<VMRevisions> vmRevisionLista = _mapper.Map<List<VMRevisions>>(await _revisionService.ListaRevisions(envio));
+            return StatusCode(StatusCodes.Status200OK, new { data = vmRevisionLista });
+        }
+        [HttpGet]
         public async Task<IActionResult> ObtenerRevision(int idFinca, string fecha)
         {
             List<VMRevisiones> vmRevisionfinca = _mapper.Map<List<VMRevisiones>>(await _revisionService.ObtenerRevision(idFinca, fecha));
@@ -243,37 +249,57 @@ namespace Encadenamiento.WebApp.Controllers
             };
         }
 
-        public async Task<IActionResult> EnviarRevisionPorCorreo(int idFinca, string fecha, string correoDestino)
+        public async Task<IActionResult> EnviarRevisionPorCorreo(int idFinca, string fecha, string correoDestino, int wasap)
         {
             try
             {
                 // Obtener el modelo del plan
                 VMPDFRevision modelo = await PDFRevModelo(idFinca, fecha);
-
+                Revision revision_modificar= await _revisionService.ObtenerRevisionGeneral(idFinca, fecha);
                 // Crear el PDF
                 var pdf = new ViewAsPdf("PDFRevision", modelo);
-
-                // Convertir el PDF a un byte array
-                byte[] archivoPDF = await pdf.BuildFile(ControllerContext);
-
-                // Asunto y mensaje del correo
-                string asunto = "Revision realizada en la finca - " + modelo.revision.First().NombreFinca;
-
-                // Obtener la plantilla del correo               
+               
+                byte[] archivoPDF = await pdf.BuildFile(ControllerContext);   // Convertir el PDF a un byte array
+                                
+                string asunto = "Revision realizada en la finca - " + modelo.revision.First().NombreFinca;  // Asunto y mensaje del correo
+                                
                 string htmlCorreo = await RenderViewAsString("EnviaRevision", modelo); // Generar HTML de la plantilla
-
-                // Enviar el correo
-                bool correoEnviado = await _correoService.EnviarCorreo(correoDestino, asunto, htmlCorreo, archivoPDF, "Revision_" 
+                if (wasap != 1)
+                {
+                    // Enviar el correo
+                    bool correoEnviado = await _correoService.EnviarCorreo(correoDestino, asunto, htmlCorreo, archivoPDF, "Revision_"
                                             + modelo.revision.First().CodFinca.ToString() + "_"
                                             + modelo.revision.First().NombreFinca.ToString() + ".pdf");
 
-                if (correoEnviado)
-                {
-                    return Ok(new { estado = true });
+                    if (correoEnviado)
+                    {
+                        revision_modificar.SentTo = 1;
+                        Revision revision_modificada = await _revisionService.EditarRevisions(revision_modificar);
+                        return Ok(new { estado = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { estado = false, mensaje = "Error al enviar el correo" });
+                    }
                 }
                 else
                 {
-                    return BadRequest(new { estado = false, mensaje = "Error al enviar el correo" });
+                    using var pdfStream = new MemoryStream(archivoPDF);  //  esto es para el WhatsApp
+                    asunto = $"Estimado {modelo.generales.Proveedor}, estamos adjuntando informe de visita que se realizó" +
+                             $" en su finca con codigo {modelo.generales.CodFinca}, esto es parte del programa de encadenamiento" +
+                             $" de productores de Pantaleon.  Le solicitamos revisar su contenido y si lo requiere, ponerse" +
+                             $" en contacto con el técnico supervisor de Negocios de caña.    Saludos";
+
+                    bool watsap_enviado = await _correoService.EnviarWhatsApp(correoDestino, asunto, pdfStream,
+                                "Revision_" + modelo.generales.IdReg.ToString() + "_" + modelo.generales.CodFinca.ToString() + ".pdf");
+                    if (watsap_enviado)
+                    {
+                        return Ok(new { estado = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { estado = false, mensaje = "Error al enviar el WhatsApp, revise numero de destinatario" });
+                    }
                 }
             }
             catch (Exception ex)

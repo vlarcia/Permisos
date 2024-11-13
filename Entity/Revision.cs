@@ -18,5 +18,8 @@ public partial class Revision
     public string? Urlfoto1 { get; set; }
     public string? Urlfoto2 { get; set; }
     public int? SentTo { get; set; }
+    public bool? Sincronizado { get; set; }
+    public bool? Aplicado { get; set; }
+    public string? Tipo { get; set; }
     public virtual MaestroFinca IdFincaNavigation { get; set; } = null!;
 }

@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="FirebaseAuthentication.net" Version="3.0.7" />
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
+    <PackageReference Include="Twilio.AspNet.Core" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -36,6 +36,8 @@ public partial class Visita
     public string? Nombrefoto1 { get; set; }
 
     public string? Nombrefoto2 { get; set; }
+    public bool? Sincronizado { get; set; }
+    public bool? Aplicado { get; set; }
 
     public virtual ICollection<DetalleVisita> DetalleVisita { get; set; } = new List<DetalleVisita>();
 

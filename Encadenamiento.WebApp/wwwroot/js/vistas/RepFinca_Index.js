@@ -102,7 +102,7 @@ function cargarDatos(idFinca) {
                     }
                 });
 
-                const elbackgroundColor = ['#4E73DF', '#4CAF50', '#F44336']
+                const elbackgroundColor = ['#4E73DF', '#4CAF50', '#F36F22']
                 // Gráfica de Tipos con porcentajes
                 const ctx2 = document.getElementById('graficoCumplimiento2').getContext('2d');
                 new Chart(ctx2, {

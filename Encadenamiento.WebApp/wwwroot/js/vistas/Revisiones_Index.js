@@ -215,14 +215,16 @@ $("#cboFinca").change(function () {
 });
 
 // Evento click para guardar la revisión
-$('#btnGuardarRev').on('click', function () {
+$('#btnGuardarRev').on('click', function (event) {
+    event.preventDefault(); // Previene la recarga de la página
     const idFinca = parseInt($('#txtIdFinca').val());
     const fecha = convertirFecha($('#txtFecha').val());
     const tipo = $('#cboTipo').val();
     const cumplimiento = parseFloat($('#txtCumplimiento').val());
 
     if (!idFinca || !fecha || !tipo || !cumplimiento) {
-        toastr.warning("Por favor, complete los campos generales (Finca, Fecha, Tipo, Cumplimiento)");
+        
+        toastr.warning("","Por favor, complete los campos generales : Finca, Fecha, Tipo, Cumplimiento");
         return;
     }
 
@@ -240,7 +242,9 @@ $('#btnGuardarRev').on('click', function () {
         cumplimiento: cumplimiento,
         nombrefoto1:lafoto1,
         nombrefoto2: lafoto2,        
-        sentTo:0
+        sentTo: 0,
+        sincronizado: false,
+        aplicado: false,
     }
     const filas = $('#tbRequisitos').DataTable().rows().data();
     const revisiones = [];
@@ -264,7 +268,8 @@ $('#btnGuardarRev').on('click', function () {
             Estado: estado,           
             Comentarios: comentarios,
             Tipo: tipo,
-            Cumplimiento: cumplimiento
+            Cumplimiento: cumplimiento,
+            
         });
     }
     // Agrega las fotos y modelo de data para mandar a Registrar

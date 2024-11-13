@@ -10,5 +10,6 @@ namespace Business.Interfaces
     public interface ICorreoService
     {
         Task<bool> EnviarCorreo(string CorreoDestino, string Asunto, string Mensaje, byte[] archivoAdjunto, string nombreArchivo);
+        Task<bool> EnviarWhatsApp(string Destino, string Mensaje, Stream archivoAdjunto = null, string nombreArchivo = "");
     }
 }

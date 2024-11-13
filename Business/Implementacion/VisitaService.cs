@@ -32,16 +32,28 @@ namespace Business.Implementacion
             _firebaseService = firebaseService;
         }
 
-        public async Task<List<Visita>> Lista()
+        public async Task<List<Visita>> Lista(int envio)
         {
-            IQueryable<Visita> query = await _repositorioVisita.Consultar();
-            return query.Include(f => f.IdFincaNavigation)
-                        .Include(p=> p.IdPlanNavigation)
-                        .Include(d => d.DetalleVisita)
-                        .ThenInclude(a=> a.IdActividadNavigation)
-                        .ToList();
+            if (envio != 1)
+            {
+                IQueryable<Visita> query = await _repositorioVisita.Consultar();
+                return query.Include(f => f.IdFincaNavigation)
+                            .Include(p => p.IdPlanNavigation)
+                            .Include(d => d.DetalleVisita)
+                            .ThenInclude(a => a.IdActividadNavigation)
+                            .ToList();
+            } else
+            {
+                IQueryable<Visita> query = await _repositorioVisita.Consultar();
+                return query.Include(f => f.IdFincaNavigation)
+                            .Include(p => p.IdPlanNavigation)
+                            .Include(d => d.DetalleVisita)
+                            .ThenInclude(a => a.IdActividadNavigation)
+                            .Where(s=> s.SentTo==0)
+                            .ToList();
+            }
+            
         }
-
         public async Task<List<DetalleVisita>> ListaDetalle()
         {
             IQueryable<DetalleVisita> query = await _repositorioDetVis.Consultar();
@@ -56,18 +68,7 @@ namespace Business.Implementacion
                 Visita visita_existe = await _repositorioVisita.Obtener(v => v.IdPlan == entidad.IdPlan && v.Fecha == entidad.Fecha);
                 if (visita_existe != null)
                     throw new TaskCanceledException("Ya existe una visita de revision del plan de trabajo  " + visita_existe.IdPlan.ToString() +
-                                                    " y con fecha " + visita_existe.Fecha.ToString());               
-
-                Visita visita_creada = await _repositorioVisita.Registrar(entidad);  //Registrar esta en su repsitorio propio
-                if (visita_creada.IdVisita == 0)
-                    throw new TaskCanceledException("No se puedo crear la Visita!");
-
-                IQueryable<Visita> query = await _repositorioVisita.Consultar(u => u.IdVisita == visita_creada.IdVisita);
-                visita_creada = query.Include(f => f.IdFincaNavigation)
-                                     .Include(p => p.IdPlanNavigation)
-                                     .Include(d=> d.DetalleVisita)
-                                     .ThenInclude(act=>act.IdActividadNavigation)
-                                     .First();
+                                                    " y con fecha " + visita_existe.Fecha.ToString());
                 //Agregamos la foto al repositorio luego de agregar el registro
                 if (foto1 != null)
                 {
@@ -79,6 +80,16 @@ namespace Business.Implementacion
                     string UrlFoto2 = await _firebaseService.SubirStorage(foto2, "carpeta_visita", NombreFoto2);
                     entidad.Urlfoto2 = UrlFoto2;
                 }
+                Visita visita_creada = await _repositorioVisita.Registrar(entidad);  //Registrar esta en su repsitorio propio
+                if (visita_creada.IdVisita == 0)
+                    throw new TaskCanceledException("No se puedo crear la Visita!");
+
+                IQueryable<Visita> query = await _repositorioVisita.Consultar(u => u.IdVisita == visita_creada.IdVisita);
+                visita_creada = query.Include(f => f.IdFincaNavigation)
+                                     .Include(p => p.IdPlanNavigation)
+                                     .Include(d=> d.DetalleVisita)
+                                     .ThenInclude(act=>act.IdActividadNavigation)
+                                     .First();
 
                 return visita_creada;
             }

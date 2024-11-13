@@ -15,7 +15,7 @@ namespace Business.Interfaces
         Task<Revisione> Editar(List<Revisione> entidad);        
         Task<bool> Eliminar(List<int> entidad, int entidad2=0);  
         Task<List<Revisione>> ObtenerRevision(int idfinca=0, string fecha="", int grupo=0);
-        Task<List<Revision>> ListaRevisions();
+        Task<List<Revision>> ListaRevisions(int envio=0);
         Task<Revision> CrearRevisions(Revision entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "");
         Task<Revision> EditarRevisions(Revision entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "");
         Task<Revision> ObtenerRevisionGeneral(int idfinca = 0, string fecha = "");

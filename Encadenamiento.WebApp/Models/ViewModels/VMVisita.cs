@@ -23,19 +23,20 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? Responsable { get; set; }
 
         public string? Mandador { get; set; }
-
         public string? Latitud { get; set; }
-
         public string? Longitud { get; set; }
         public string? NombreFinca { get; set; }
         public string? CodFinca { get; set; }
         public string? Proveedor { get; set; }
         public string? Email { get; set; }
+        public string? Telefono { get; set; }
         public string? DescripcionPlan { get; set; }
         public string? UrlFoto1 { get; set; }
         public string? UrlFoto2 { get; set; }
         public string? NombreFoto1 { get; set; }
         public string? NombreFoto2 { get; set; }
+        public bool? Sincronizado { get; set; }
+        public bool? Aplicado { get; set; }
         public virtual ICollection<VMDetalleVisita> DetalleVisita { get; set; } = new List<VMDetalleVisita>();
  
     }

@@ -589,7 +589,7 @@ $('#btnGuardar').on('click', function () {
     modeloGeneral.nombrefoto1 = lafoto1;
     modeloGeneral.nombrefoto2 = lafoto2;
     modeloGeneral.tipo = tipo;
-    modeloGeneral.cumplimiento = cumplimiento;        
+    modeloGeneral.cumplimiento = cumplimiento;            
     
     const filas = $('#tbRequisitos').DataTable().rows().data();
     const revisiones = [];

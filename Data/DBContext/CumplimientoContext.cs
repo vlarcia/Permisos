@@ -452,10 +452,13 @@ public partial class CumplimientoContext : DbContext
            
             entity.Property(e => e.Observaciones).HasColumnName("observaciones");
             entity.Property(e => e.Nombrefoto1).HasMaxLength(100).HasColumnName("nombrefoto1");
-            entity.Property(e => e.Nombrefoto2).HasMaxLength(100).HasColumnName("nombrefoto2");            
-            entity.Property(e => e.SentTo).HasColumnName("sent_to");
+            entity.Property(e => e.Nombrefoto2).HasMaxLength(100).HasColumnName("nombrefoto2");                        
             entity.Property(e => e.Urlfoto1).HasMaxLength(500).HasColumnName("urlfoto1");
             entity.Property(e => e.Urlfoto2).HasMaxLength(500).HasColumnName("urlfoto2");
+            entity.Property(e => e.SentTo).HasColumnName("sent_to");
+            entity.Property(e => e.Sincronizado).HasColumnName("sincronizado");
+            entity.Property(e => e.Aplicado).HasColumnName("aplicado");
+            entity.Property(e => e.Tipo).HasMaxLength(15).HasColumnName("tipo");
 
             entity.HasOne(d => d.IdFincaNavigation).WithMany(p=>p.Revision)
                 .HasForeignKey(d => d.IdFinca)
@@ -613,32 +616,19 @@ public partial class CumplimientoContext : DbContext
             entity.Property(e => e.Latitud)
                 .HasMaxLength(20)
                 .HasColumnName("latitud");
-            entity.Property(e => e.Longitud)
-                .HasMaxLength(20)
-                .HasColumnName("longitud");
-            entity.Property(e => e.Mandador)
-                .HasMaxLength(100)
-                .HasColumnName("mandador");
-            entity.Property(e => e.Nombrefoto1)
-                .HasMaxLength(100)
-                .HasColumnName("nombrefoto1");
-            entity.Property(e => e.Nombrefoto2)
-                .HasMaxLength(100)
-                .HasColumnName("nombrefoto2");
-            entity.Property(e => e.Observaciones)
-                .HasMaxLength(250)
-                .HasColumnName("observaciones");
-            entity.Property(e => e.Responsable)
-                .HasMaxLength(100)
-                .HasColumnName("responsable");
-            entity.Property(e => e.SentTo).HasColumnName("sent_to");
-            entity.Property(e => e.Urlfoto1)
-                .HasMaxLength(500)
-                .HasColumnName("urlfoto1");
-            entity.Property(e => e.Urlfoto2)
-                .HasMaxLength(500)
-                .HasColumnName("urlfoto2");
+            entity.Property(e => e.Longitud).HasMaxLength(20).HasColumnName("longitud");
+            entity.Property(e => e.Mandador).HasMaxLength(100).HasColumnName("mandador");
+            entity.Property(e => e.Nombrefoto1).HasMaxLength(100).HasColumnName("nombrefoto1");
+            entity.Property(e => e.Nombrefoto2).HasMaxLength(100).HasColumnName("nombrefoto2");
+            entity.Property(e => e.Observaciones).HasMaxLength(250).HasColumnName("observaciones");
+            entity.Property(e => e.Responsable).HasMaxLength(100).HasColumnName("responsable");
+            entity.Property(e => e.Urlfoto1).HasMaxLength(500).HasColumnName("urlfoto1");
+            entity.Property(e => e.Urlfoto2).HasMaxLength(500).HasColumnName("urlfoto2");
+
+            entity.Property(e => e.SentTo).HasColumnName("sent_to");            
             entity.Property(e => e.Zafra).HasColumnName("zafra");
+            entity.Property(e => e.Sincronizado).HasColumnName("sincronizado");
+            entity.Property(e => e.Aplicado).HasColumnName("aplicado");
 
             entity.HasOne(d => d.IdFincaNavigation).WithMany(p => p.Visita)
                 .HasForeignKey(d => d.IdFinca)

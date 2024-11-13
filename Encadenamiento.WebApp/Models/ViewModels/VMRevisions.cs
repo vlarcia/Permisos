@@ -12,7 +12,11 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? NombreFinca { get; set; }        
         public DateTime Fecha { get; set; }        
         public string? Observaciones { get; set; }        
-        public decimal? Cumplimiento { get; set; }                
+        public decimal? Cumplimiento { get; set; }        
+        public string? Tipo { get; set; }
+        public int? SentTo { get; set; }
+        public bool? Sincronizado { get; set; }
+        public bool? Aplicado { get; set; }
         public string? Nombrefoto1 { get; set; }
         public string? Nombrefoto2 { get; set; }
         public string? Urlfoto1 { get; set; }
@@ -21,6 +25,7 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public int? CodFinca { get; set; }
         public string? Email { get; set; }
         public int? Grupo { get; set; }
+        public string? Telefono { get; set; }
        
     }
 }

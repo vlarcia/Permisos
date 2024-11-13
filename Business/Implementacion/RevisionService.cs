@@ -247,14 +247,23 @@ namespace Business.Implementacion
                 throw ex; // Capturar el error, pero sería bueno manejarlo más adecuadamente (ej. log)
             }
         }
-        public async Task<List<Revision>> ListaRevisions()
+        public async Task<List<Revision>> ListaRevisions(int envio)
         {
             IQueryable<Revision> query = await _repositorioRev2.Consultar();
-
-            // Agrupar por IdFinca y Fecha, y tomar el primer registro de cada grupo
-            var resultado = query
-                .Include(f => f.IdFincaNavigation)                
-                .ToList();
+            List<Revision>  resultado= null;
+            if (envio != 1)
+            {
+                 resultado = query
+                    .Include(f => f.IdFincaNavigation)
+                    .ToList();
+            }
+            else
+            {
+                resultado = query
+                    .Include(f => f.IdFincaNavigation)
+                    .Where(s=>s.SentTo == 0)
+                    .ToList();
+            }
 
             return resultado;
         }

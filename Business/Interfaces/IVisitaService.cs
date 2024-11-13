@@ -10,7 +10,7 @@ namespace Business.Interfaces
     public interface IVisitaService
     {
         
-        Task<List<Visita>> Lista();        
+        Task<List<Visita>> Lista(int envio=0);        
         Task<Visita> Registrar(Visita entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "");
         Task<Visita> Editar(Visita entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "");        
         Task<bool> Eliminar(int idVisita);

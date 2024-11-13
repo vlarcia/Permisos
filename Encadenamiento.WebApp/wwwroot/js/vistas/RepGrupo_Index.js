@@ -73,7 +73,7 @@ function cargarDatos(idGrupo) {
                         },
                     }
                 });
-                const elbackgroundColor = ['#4E73DF', '#4CAF50', '#F44336', '#FFC107', '#9E9E9E']
+                const elbackgroundColor = ['#4E73DF', '#4CAF50', '#F36F22', '#FFC107', '#9E9E9E']
                 // Gráfica de Tipos con porcentajes
                 const ctx2 = document.getElementById('graficoCumplimiento2').getContext('2d');
                 new Chart(ctx2, {

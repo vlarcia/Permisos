@@ -8,15 +8,21 @@ using System.Net.Mail;
 using Business.Interfaces;
 using Data.Interfaces;
 using Entity;
+using Microsoft.Identity.Client;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace Business.Implementacion
 {
     public class CorreoService : ICorreoService
     {
         private readonly IGenericRepository<Configuracion> _repositorio;
-        public CorreoService(IGenericRepository<Configuracion> repositorio)
+        private readonly IFireBaseService _firebaseService;
+        public CorreoService(IGenericRepository<Configuracion> repositorio, IFireBaseService firebaseService)
         {
             _repositorio = repositorio;
+            _firebaseService = firebaseService;
         }
 
         public async Task<bool> EnviarCorreo(string CorreosDestino, string Asunto, string Mensaje, byte[] archivoAdjunto = null, string nombreArchivo = null)
@@ -75,6 +81,41 @@ namespace Business.Implementacion
                     correo.Attachments.Dispose();
                 }
 
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Opcionalmente puedes registrar el error
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+        public async Task<bool> EnviarWhatsApp(string Destino, string Mensaje, Stream archivoAdjunto, string nombreArchivo)
+        {
+            try
+            {
+                // Obtener la configuración desde la base de datos
+                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+
+                string UrlArchivo = await _firebaseService.SubirStorage(archivoAdjunto, "carpeta_pdf", nombreArchivo);
+                string telefono = Config["numerotelefono"];                
+
+
+                TwilioClient.Init(Config["accountSid"], Config["authToken"]);
+
+                var message = await MessageResource.CreateAsync(
+                    from: new PhoneNumber($"whatsapp:{telefono}"), // Número de Twilio
+                    to: new PhoneNumber($"whatsapp:{Destino}"),
+                    body: Mensaje,
+                    mediaUrl: new List<Uri> { new Uri(UrlArchivo) }
+                );
+
+
+                if (!string.IsNullOrEmpty(UrlArchivo))
+                {
+                    var respuesta = await _firebaseService.EliminarStorage("carptea_pdf", UrlArchivo);
+                }
                 return true;
             }
             catch (Exception ex)

@@ -1,6 +1,31 @@
-﻿
+﻿const modelo={
+    idVisita: 0,
+    idPlan: 0,
+    idFinca: 0,
+    fecha: "",
+    responsable: "",
+    mandador: "",
+    zafra: 0,
+    latitud: "",
+    longitud: "",
+    observaciones: "",
+    urlFoto1: "",
+    nombreFoto1: "",
+    urlFoto2: "",
+    nombreFoto2: "",
+    nombreFinca: "",
+    codFinca: "",
+    descripcionPlan: "",
+    senTo: 0,
+    aplicado: false,
+    sincronizado: false,
+    detalleVisita: [],
+};
+
 let filaseleccionada;
 let editar;
+let modeloCargado
+
 $(document).ready(function () {
 
     // Cargar la lista de fincas usando fetch
@@ -273,7 +298,8 @@ $(document).ready(function () {
             filaseleccionada = $(this).closest("tr");
         }
         editar = false;
-        const modelo = tablaVisitas.row(filaseleccionada).data();
+        
+        modeloCargado = tablaVisitas.row(filaseleccionada).data();
         
         $('#btnGuardar').hide();
         $('#linkImprimir').show();
@@ -281,7 +307,7 @@ $(document).ready(function () {
         $("#linkImprimir").attr("href", `/Visita/MostrarPDFVisita?idVisita=${modelo.idVisita}`)
 
         // Abrir el modal
-        mostrarModal(modelo, true)
+        mostrarModal(modeloCargado, true)
         
     })
     // Evento para el botón "Enviar por Correo"
@@ -323,14 +349,14 @@ $(document).ready(function () {
             filaseleccionada = $(this).closest("tr");
         }
         editar = true;
-        const data = tablaVisitas.row(filaseleccionada).data();
+        modeloCargado = tablaVisitas.row(filaseleccionada).data();
 
         $('#btnGuardar').text('Guardar Cambios');
         $('#btnGuardar').show();
         $('#linkImprimir').hide();
         $('#btnEnviarCorreo').hide();        
         
-        mostrarModal(data, false);   // Mostrar el modal
+        mostrarModal(modeloCargado, false);   // Mostrar el modal
     })
 
     // Evento para eliminar Visita    
@@ -390,27 +416,9 @@ $('#btnNuevo').on('click', function () {
     // inicializar modelo
     editar = true;
     $('#cboPlan').val('');
-    /// Se crea el modelo según el contenido el modal, en esta parte es x q es paa agregar
-    var modelo= {
-        idVisita: 0,
-        idPlan: 0,
-        idFinca: 0,
-        fecha: "",
-        responsable: "",
-        mandador: "",
-        zafra: 0,
-        latitud: "",
-        longitud: "",
-        observaciones: "",
-        urlFoto1: "",
-        nombreFoto1: "",
-        urlFoto2: "",
-        nombreFoto2: "",
-        nombreFinca: "",
-        codFinca: "",
-        descripcionPlan:"",
-        detalleVisita: [],
-    }
+    /// Se crea el modelo según el contenido el modal, en esta parte es x q es para agregar
+    modeloCargado = structuredClone(modelo);
+    
     $('#btnGuardar').text('Guardar Nueva Visita');    
     $('#btnGuardar').show();    
     $('#linkImprimir').hide();
@@ -418,7 +426,7 @@ $('#btnNuevo').on('click', function () {
     
 
     // Abrir el modal
-    mostrarModal(modelo, false)    
+    mostrarModal(modeloCargado, false)    
 });
 
 
@@ -440,6 +448,9 @@ $('#btnGuardar').on('click', function () {
     const inputFoto2 = document.getElementById("txtFoto2");
     const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
     const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
+    const sento = modeloCargado.sentTo ? modeloCargado.sentTo : 0;
+    const aplica = modeloCargado.aplicado ? modeloCargado.aplicado : false;
+    const sincroniza = modeloCargado.sincronizado ? modeloCargado.sincronizado : false;
     
     // Crear el objeto modelovisita a partir del formulario
     const modelovisita = {
@@ -455,7 +466,9 @@ $('#btnGuardar').on('click', function () {
         observaciones: $('#txtObservaciones').val(),                        
         nombreFoto1: lafoto1,
         nombreFoto2: lafoto2,
-        sentTo: 0,        
+        sentTo: sento,     
+        aplicado: aplica,
+        sincronizado:sincroniza,
         detalleVisita: [] // Aquí agregar el detalle de la visita        
     };
 
@@ -564,8 +577,9 @@ function mostrarModal(modelo, edita) {
     $("#txtObservaciones").val(modelo.observaciones)    
     $("#txtNombreFinca").val(modelo.nombreFinca)
     $("#txtCodFinca").val(modelo.codFinca)
-    $("#txtDescripcionPlan").val(modelo.descripcionPlan)
+    $("#txtDescripcionplan").val(modelo.descripcionPlan)
     $("#txtIdPlan").val(modelo.idPlan)
+    $("#cboPlan").val(modelo.idPlan)
     $("#txtIdFinca").val(modelo.idFinca)
     $("#txtIdVisita").val(modelo.idVisita ? modelo.idVisita :"0");
     

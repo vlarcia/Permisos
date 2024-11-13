@@ -14,6 +14,7 @@ using Rotativa.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+
 namespace Encadenamiento.WebApp.Controllers
 {
     public class VisitaController : Controller
@@ -57,9 +58,9 @@ namespace Encadenamiento.WebApp.Controllers
         //}
 
         [HttpGet]
-        public async Task<IActionResult> Lista()
+        public async Task<IActionResult> Lista(int envio)
         {
-            List<VMVisita> vmVisitaLista = _mapper.Map<List<VMVisita>>(await _visitaService.Lista());
+            List<VMVisita> vmVisitaLista = _mapper.Map<List<VMVisita>>(await _visitaService.Lista(envio));
             return StatusCode(StatusCodes.Status200OK, new { data = vmVisitaLista });
         }
 
@@ -206,31 +207,54 @@ namespace Encadenamiento.WebApp.Controllers
             };
         }
 
-        public async Task<IActionResult> EnviarVisitaPorCorreo(int idVisita, string correoDestino)
+        public async Task<IActionResult> EnviarVisitaPorCorreo(int idVisita, string correoDestino, int wasap)
         {
             try
             {                
                 VMPDFVisita modelo = await PDFVisitaModelo(idVisita);    // Obtener el modelo 
-
+                Visita visita_modificar = await _visitaService.Detalle(idVisita);  // modelo de visita 
                 var pdf = new ViewAsPdf("PDFVisita", modelo);   // Crear el PDF
                                 
-                byte[] archivoPDF = await pdf.BuildFile(ControllerContext);   // Convertir el PDF a un byte array
-                                
+                byte[] archivoPDF = await pdf.BuildFile(ControllerContext);   // Convertir el PDF a un byte array                
+
                 string asunto = "Informe de Visita a la finca - " + modelo.visita.NombreFinca;   // Asunto y mensaje del correo
 
                 string htmlCorreo = await RenderViewAsString("EnviaVisita", modelo); // Generar HTML de la plantilla
-
-                // Enviar el correo
-                bool correoEnviado = await _correoService.EnviarCorreo(correoDestino, asunto, htmlCorreo, archivoPDF,
-                                  "Visita_" + modelo.visita.IdVisita.ToString()+"_"+modelo.visita.CodFinca.ToString() + ".pdf");
-
-                if (correoEnviado)
+                if (wasap != 1)
                 {
-                    return Ok(new { estado = true });
+                    // Enviar el correo
+                    bool correoEnviado = await _correoService.EnviarCorreo(correoDestino, asunto, htmlCorreo, archivoPDF,
+                                      "Visita_" + modelo.visita.IdVisita.ToString() + "_" + modelo.visita.CodFinca.ToString() + ".pdf");
+
+                    if (correoEnviado)
+                    {
+                        visita_modificar.SentTo = 1;
+                        Visita visita_modificada = await _visitaService.Editar(visita_modificar);
+                        return Ok(new { estado = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { estado = false, mensaje = "Error al enviar el correo" });
+                    }
                 }
                 else
                 {
-                    return BadRequest(new { estado = false, mensaje = "Error al enviar el correo" });
+                    using var pdfStream = new MemoryStream(archivoPDF);  //  esto es para el WhatsApp
+                    asunto = $"Estimado {modelo.visita.Proveedor}, estamos adjuntando informe de visita que se realizó" +
+                             $" en su finca con codigo {modelo.visita.CodFinca}, esto es parte del programa de encadenamiento" +
+                             $" de productores de Pantaleon.  Le solicitamos revisar su contenido y si lo requiere, ponerse" +
+                             $" en contacto con el técnico supervisor de Negocios de caña.    Saludos";                             
+
+                    bool watsap_enviado=await _correoService.EnviarWhatsApp(correoDestino, asunto, pdfStream,
+                                "Visita_" + modelo.visita.IdVisita.ToString() + "_" + modelo.visita.CodFinca.ToString() + ".pdf");
+                    if (watsap_enviado)
+                    {
+                        return Ok(new { estado = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { estado = false, mensaje = "Error al enviar el WhatsApp, Revise el numero del destinatario" });
+                    }
                 }
             }
             catch (Exception ex)
@@ -273,14 +297,6 @@ namespace Encadenamiento.WebApp.Controllers
                 return sw.ToString();
             }
         }
-
+        
     }
 }
-
-
-//[HttpGet]
-//public async Task<IActionResult> Lista()   //  Esto era para cuando se recibia data Manual
-//{
-//    var visitaLista = await _visitaService.Lista();
-//    return StatusCode(StatusCodes.Status200OK, new { data = visitaLista });
-//}
