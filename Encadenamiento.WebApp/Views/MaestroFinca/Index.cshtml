@@ -88,7 +88,17 @@
                                     <div class="input-group-prepend">
                                         <label style="color:darkgreen; font-size:small" class="input-group-text mb-2" for="txtTelefono">Telefono</label>
                                     </div>
-                                    <input type="text" class="form-control  input-validar col-sm-2" style="text-align:right; font-size:small" id="txtTelefono" name="Telefono">
+                                    <input type="text"
+                                           class="form-control input-validar col-sm-2"
+                                           style="text-align:right; font-size:small"
+                                           id="txtTelefono"
+                                           name="Telefono"
+                                           placeholder="+99999999999"
+                                           maxlength="12"
+                                           pattern="^\+(\d{3})(\d{8})$"
+                                           title="Formato: +99999999999"
+                                           required>
+
                                   
                                     <div class="input-group-prepend pl-3">
                                         <label style="color:darkgreen; font-size:small" class="input-group-text mb-2" for="txtArea">Area</label>
