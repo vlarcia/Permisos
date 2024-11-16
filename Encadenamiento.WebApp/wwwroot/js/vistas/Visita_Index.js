@@ -136,8 +136,9 @@ $(document).ready(function () {
         ]
     });
 
-    // Inicializar el datepicker en los campos de fecha    
+    // Inicializar el datepicker en los campos de fecha
         
+
     $('#txtFecha').datepicker({
         format: "dd/mm/yyyy",   // Establecer el formato        
         todayHighlight: true,   // Resaltar la fecha de hoy
@@ -237,11 +238,12 @@ $(document).ready(function () {
 
     $('#tbDetalle').on('click', 'td', function () {
         if (editar) {
-            let contenidoActual = $(this).text();
-            let columnaIndex = $(this).index();
-            let fila = $(this).closest('tr');
-            let idActividad = fila.data('id'); // Obtener el ID de la actividad
-
+            
+            var contenidoActual = $(this).text();
+            var columnaIndex = $(this).index();
+            var fila = $(this).closest('tr');            
+            var idActividad = fila.data('id'); // Obtener el ID de la actividad
+            var data = tablaDetalle.row(fila).data();
             if (columnaIndex === 4 || columnaIndex === 5) {
                 // Insertar select con opciones
                 let select = $(`
@@ -264,6 +266,9 @@ $(document).ready(function () {
                 select.on('blur change', () => {
                     let nuevoContenido = select.val();
                     $(this).text(nuevoContenido);
+                    // Actualizar el modelo de datos de la tabla                    
+                    data[columnaIndex + 2] = nuevoContenido;    // Se suma 2 x q indice de tbDetalle no toma en cuenta columnas ocultas y
+                                                                // estamos accediendo al datatable que si toma en cuenta todas                    
                 });
             }
 
@@ -277,8 +282,9 @@ $(document).ready(function () {
                 input.on('blur', () => {
                     let nuevoContenido = input.val();
                     $(this).text(nuevoContenido);
+                    data[columnaIndex+2] = nuevoContenido;                    
                 });
-
+                                  
                 input.on('keypress', function (e) {
                     if (e.which == 13) {
                         input.blur();
@@ -472,28 +478,29 @@ $('#btnGuardar').on('click', function () {
         detalleVisita: [] // Aquí agregar el detalle de la visita        
     };
 
-        // Recorrer las filas de la tabla y agregar el detalle al modelo
-    $('#tbDetalle tbody tr').each(function () {
-        let fila = $(this);
-        let idRegistro = $('#tbDetalle').DataTable().cell(fila, 0).data();
-        let idActivity = $('#tbDetalle').DataTable().cell(fila, 1).data();
-        let detalle = {
-            idReg: parseInt(idRegistro),       // Columna oculta es 0 cuando es nueva
-            idActividad: parseInt(idActivity), // Columna oculta 
+     
+    const filas = $('#tbDetalle').DataTable().rows().data();
+        
+    
+    for (let index = 0; index < filas.length; index++) {
+        const rowData = filas[index];
+        const detalle = {
+            idReg: parseInt(rowData[0], 10) ? parseInt(rowData[0], 10) : 0,       // Columna oculta es 0 cuando es nueva
+            idActividad: parseInt(rowData[1], 10), // Columna oculta
             fecha: convertirFecha($('#txtFecha').val()),
-            avanceanterior: parseFloat(fila.find('td').eq(2).text()), // Avance anterior
-            avances: parseFloat(fila.find('td').eq(3).text()), // Avance actual
-            estadoanterior: fila.find('td').eq(4).text(), // Estado anterior
-            estado: fila.find('td').eq(5).text(), // Estado actual
-            comentarios: fila.find('td').eq(6).text(), // Comentarios
-            observaciones: fila.find('td').eq(7).text(), // Observaciones
+            avanceanterior: parseFloat(rowData[4]), // Avance anterior
+            avances: parseFloat(rowData[5]), // Avance actual
+            estadoanterior: rowData[6], // Estado anterior
+            estado: rowData[7], // Estado actual
+            comentarios: rowData[8], // Comentarios
+            observaciones: rowData[9], // Observaciones
             idFinca: parseInt($("#txtIdFinca").val(), 10),
         };
         modelovisita.detalleVisita.push(detalle);
-    });   
+    }
 
-    // Agrega las fotos y modelo de data para mandar a Registrar
-    const formData = new FormData();
+    console.log(modelovisita)    
+    const formData = new FormData();    // Agrega las fotos y modelo de data para mandar a Registrar
     
     formData.append("foto1", inputFoto1.files[0] ? inputFoto1.files[0] : null);
     formData.append("foto2", inputFoto2.files[0] ? inputFoto2.files[0] : null);
@@ -553,7 +560,7 @@ $('#btnGuardar').on('click', function () {
             });
     }
 });
-3
+
 
 //-------------------------- FUNCION MOSTRAR MODAL VISITAS-------------------------
 function mostrarModal(modelo, edita) {
@@ -684,20 +691,8 @@ function cargardesdePlan(modelo) {
     if ($('#tbDetalle').DataTable().rows().count() === 0) {
         Swal.fire({
             title: "El Plan no tiene Actividades con estatus en proceso, revise en el modulo de planes.",
-            showClass: {
-                popup: `
-      animate__animated
-      animate__fadeInUp
-      animate__faster
-    `
-            },
-            hideClass: {
-                popup: `
-      animate__animated
-      animate__fadeOutDown
-      animate__faster
-    `
-            },
+            showClass: { popup: ` animate__animated animate__fadeInUp animate__faster ` },
+            hideClass: { popup: ` animate__animated animate__fadeOutDown animate__faster ` },
             confirmButtonColor: "#3085d6",
         });        
     }

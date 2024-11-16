@@ -57,6 +57,8 @@ namespace Control
 
             services.AddScoped<IVisitaService, VisitaService>();
 
+            services.AddScoped<IParametroService, ParametroService>();
+
         }
     }
 }

@@ -99,7 +99,6 @@ $(document).ready(function () {
     });
 
     VISTA_BUSQUEDA["busquedaFecha"]()
-    
     $.datepicker.setDefaults($.datepicker.regional["es"])
     $("#txtFechaIni").datepicker({ dateFormat: "dd/mm/yy"})
     $("#txtFechaFin").datepicker({ dateFormat: "dd/mm/yy" })

@@ -152,9 +152,9 @@ public partial class CumplimientoContext : DbContext
 
         modelBuilder.Entity<Configuracion>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Configuracion");
+            entity.HasKey(e => e.IdReg);
+            entity.ToTable("Configuracion");
+            entity.Property(e => e.IdReg).HasColumnName("id_reg");
 
             entity.Property(e => e.Propiedad)
                 .HasMaxLength(50)

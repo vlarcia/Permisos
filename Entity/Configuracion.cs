@@ -5,6 +5,7 @@ namespace Entity;
 
 public partial class Configuracion
 {
+    public int IdReg { get; set; } 
     public string? Recurso { get; set; }
 
     public string? Propiedad { get; set; }

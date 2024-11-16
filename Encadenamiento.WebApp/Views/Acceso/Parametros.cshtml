@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Parámetros";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="~/css/animate.min.css" />
+}
+<div id="contenidoPrincipal" style="display: none;">
+    <!-- Contenido de la vista de mantenimiento -->
+    <h1>Mantenimiento de Parámetros</h1>
+    <table class="table" id="tbParametros">
+        <thead>
+            <tr>
+                <th hidden>IdReg</th>
+                <th>Recurso</th>
+                <th>Propiedad</th>
+                <th>Valor</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí irán las filas dinámicas -->
+        </tbody>
+    </table>
+    <div class="mt-3">
+        <button id="btnGuardarCambios" class="btn btn-success">Guardar Cambios</button>
+    </div>
+</div>
+
+<!-- Modal para Validar Acceso -->
+<div class="modal fade" id="modalValidarAcceso" tabindex="-1" aria-labelledby="modalValidarAccesoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalValidarAccesoLabel">Validar Acceso</h5>
+            </div>
+            <div class="modal-body">
+                <form id="formValidarAcceso">
+                    <div class="mb-3">
+                        <label for="clave" class="form-label">Ingrese la clave</label>
+                        <input type="password" class="form-control" id="clave" name="clave" required>
+                    </div>
+                    <div class="text-danger" id="mensajeError" style="display: none;"></div>
+                    <button type="submit" class="btn btn-primary w-100 mb-2">Validar</button>
+                    <!-- Botón Cancelar -->
+                    <button type="button" class="btn btn-secondary w-100" id="btnCancelarValidacion" data-bs-dismiss="modal">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <!-- ============================================================
+    =SCRIPTS PARA ESTA PAGINA
+    ===============================================================-->
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+    <script src="~/js/vistas/Common.js"></script>
+    <script src="~/js/vistas/Parametro_Index.js"></script>
+
+}

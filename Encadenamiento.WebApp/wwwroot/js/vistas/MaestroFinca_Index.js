@@ -55,6 +55,27 @@ $(document).ready(function () {
             url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
         },
     });
+    document.getElementById("txtTelefono").addEventListener("input", function (event) {
+        const input = event.target;
+        const value = input.value;
+
+        // Permitir solo el símbolo '+' al inicio y luego solo números
+        if (!/^\+?\d*$/.test(value)) {
+            input.value = value.slice(0, -1); // Elimina el último carácter si es inválido
+        }
+    });
+
+    document.getElementById("txtTelefono").addEventListener("blur", function (event) {
+        const input = event.target;
+        const value = input.value;
+
+        // Verificar si el formato coincide con +99999999999
+        const telefonoRegex = /^\+(\d{3})(\d{8})$/;
+        if (!telefonoRegex.test(value)) {
+            alert("El número debe tener el formato +99999999999");
+            input.focus(); // Vuelve a enfocar el campo si el formato es incorrecto
+        }
+    });
 })
 function mostrarModal(modelo = MODELO_BASE) {
     $("#txtId").val(modelo.idFinca)
@@ -204,24 +225,4 @@ $("#tbdatafinca tbody").on("click", ".btn-eliminar", function () {
         }
     })
 })
-document.getElementById("txtTelefono").addEventListener("input", function (event) {
-    const input = event.target;
-    const value = input.value;
 
-    // Permitir solo el símbolo '+' al inicio y luego solo números
-    if (!/^\+?\d*$/.test(value)) {
-        input.value = value.slice(0, -1); // Elimina el último carácter si es inválido
-    }
-});
-
-document.getElementById("txtTelefono").addEventListener("blur", function (event) {
-    const input = event.target;
-    const value = input.value;
-
-    // Verificar si el formato coincide con +99999999999
-    const telefonoRegex = /^\+(\d{3})(\d{8})$/;
-    if (!telefonoRegex.test(value)) {
-        alert("El número debe tener el formato +99999999999");
-        input.focus(); // Vuelve a enfocar el campo si el formato es incorrecto
-    }
-});
