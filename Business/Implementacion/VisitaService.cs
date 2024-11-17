@@ -80,7 +80,7 @@ namespace Business.Implementacion
                     string UrlFoto2 = await _firebaseService.SubirStorage(foto2, "carpeta_visita", NombreFoto2);
                     entidad.Urlfoto2 = UrlFoto2;
                 }
-                Visita visita_creada = await _repositorioVisita.Registrar(entidad);  //Registrar esta en su repsitorio propio
+                Visita visita_creada = await _repositorioVisita.Registrar(entidad);  //Registrar esta en su repositorio propio
                 if (visita_creada.IdVisita == 0)
                     throw new TaskCanceledException("No se puedo crear la Visita!");
 
@@ -132,8 +132,8 @@ namespace Business.Implementacion
                 visita_editar.Longitud = entidad.Longitud;
                 visita_editar.Latitud = entidad.Latitud;
                 visita_editar.Fecha = entidad.Fecha;
-                      
-                
+                visita_editar.Sincronizado= entidad.Sincronizado;
+                visita_editar.Aplicado = entidad.Aplicado;                
 
                 foreach (var detalle in entidad.DetalleVisita)
                 {

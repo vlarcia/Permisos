@@ -119,13 +119,16 @@ public partial class CumplimientoContext : DbContext
             entity.Property(e => e.Androidid1)
                 .HasMaxLength(40)
                 .HasColumnName("androidid");
-            entity.Property(e => e.Dispositvo)
+            entity.Property(e => e.Dispositivo)
                 .HasMaxLength(100)
                 .HasColumnName("dispositvo");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("(N'N/A')")
                 .HasColumnName("email");
+            entity.Property(e => e.Responsable)
+                .HasMaxLength(100)
+                .HasColumnName("responsable");
         });
 
         modelBuilder.Entity<CheckList>(entity =>

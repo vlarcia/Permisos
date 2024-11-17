@@ -32,7 +32,7 @@ namespace Business.Implementacion
         }
         public async Task<CheckList> Crear(CheckList entidad)
         {
-            CheckList req_existe = await _repositorio.Obtener(u => u.Descripcion == entidad.Descripcion);
+            CheckList req_existe = await _repositorio.Obtener(u => u.IdRequisito == entidad.IdRequisito );
             if (req_existe != null)
                 throw new TaskCanceledException("Ese Requerimiento ya existe");
             try
@@ -45,7 +45,6 @@ namespace Business.Implementacion
                 req_creada=query.First();
 
                 return req_creada;
-
             }
             catch(Exception ex) 
             {
@@ -55,13 +54,13 @@ namespace Business.Implementacion
 
         public async Task<CheckList> Editar(CheckList entidad)
         {
-            CheckList req_existe = await _repositorio.Obtener(u => u.Descripcion == entidad.Descripcion);
-            if (req_existe != null)
-                throw new TaskCanceledException("El codigo de finca ya existe en otro registro");
+            CheckList req_existe = await _repositorio.Obtener(u => u.IdRequisito == entidad.IdRequisito);
+            if (req_existe == null)
+                throw new TaskCanceledException("El codigo de Requerimiento no existe!");
             try
             {
-                IQueryable<CheckList> queryFinca = await _repositorio.Consultar(u => u.IdRequisito == entidad.IdRequisito);
-                CheckList req_editar = queryFinca.First();                
+                IQueryable<CheckList> queryReq = await _repositorio.Consultar(u => u.IdRequisito == entidad.IdRequisito);
+                CheckList req_editar = queryReq.First();                
                 req_editar.Descripcion = entidad.Descripcion;                
                 req_editar.Ambito = entidad.Ambito;                
                 req_editar.Norma = entidad.Norma;
@@ -71,7 +70,7 @@ namespace Business.Implementacion
                 bool respuesta = await _repositorio.Editar(req_editar);
                 if(!respuesta)
                     throw new TaskCanceledException("No se pudo actualizar el requisito.  Revise !");
-                CheckList req_editada=queryFinca.First();
+                CheckList req_editada=queryReq.First();
                 return req_editada;
             }
             catch 
@@ -86,7 +85,7 @@ namespace Business.Implementacion
             {
                 CheckList req_encontrada = await _repositorio.Obtener(u => u.IdRequisito == IdRequisito);
                 if (req_encontrada == null)
-                    throw new TaskCanceledException("La Finca no existe!");
+                    throw new TaskCanceledException("El requerimiento no existe!");
                 
                 bool respuesta = await _repositorio.Eliminar(req_encontrada);                    
                 return true;

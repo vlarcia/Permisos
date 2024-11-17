@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewData["Title"] = "Android";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/animate.min.css" />
+}
+
+<div class="container-fluid">
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-2 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Dispositivos Android Autorizados - Seguimiento de Campo</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <button class="btn btn-success" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo Dispositivo   <i class="fab fa-android"></i></button>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-12">
+
+                    <table class="table table-bordered bg-gray-200" id="tbAndroid" cellspacing="0" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>IdRegisto</th>
+                                <th>Android_Id</th>
+                                <th>Dispositivo</th>                                
+                                <th>Responsable</th>
+                                <th>Email</th>                                
+                                <th>Acciones_Android</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAndroid" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Dispositivo Android</h6>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-android">
+                        <!-- Android Id -->
+                        <div class="form row input-group input-group-sm mb-2 col-sm-12">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="txtAndroidId">Android ID </label>
+                            </div>                            
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputAndroidId" id="txtAndroidId" name="Android Id">
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputDispositivo">Dispositivo</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputDispositivo" id="txtDispositivo" name="Disositivo" >
+                            <input type="hidden" id="txtIdAndroid" name="idPlan">
+                        </div>
+
+                        
+                        <!-- Fecha, Mandador y Responsable en una fila -->
+                        <div class="form row input-group input-group-sm mb-2 col-sm-12">                                                    
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputResponsable">Responsable</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputResponsable" id="txtResponsable" name="Responsable" disabled>
+                            <div class="input-group-prepend pl-3">
+                                <span class="input-group-text" id="inputEmail">Email</span>
+                            </div>
+                            <input type="text" class="form-control input-validar" aria-label="Small" aria-describedby="inputEmail" id="txtEmail" name="Email" disabled>
+                        </div>                  
+
+                   
+                    </form>
+                </div>
+                <div class="modal-footer">                   
+                    <button class="btn btn-primary btn-sm" id="btnGuardar"><i class="fas fa-database"></i> Guardar Cambios</button>                    
+                    <button class="btn btn-danger btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts {
+    <!-- ============================================================
+    =SCRIPTS PARA ESTA PAGINA
+    ===============================================================-->
+
+    <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+    <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
+
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+    <script src="~/js/vistas/Android_Index.js"></script>
+    <script src="~/js/vistas/Common.js"></script>
+
+    <!-- SOLO ES DE EJEMPLO - IGNORAR -->
+    @*     <script src="js/vistas/datatables-demo.js"></script> *@
+}
+
+
+
+
+

@@ -1,0 +1,93 @@
+﻿
+@{
+    ViewData["Title"] = "SincronizaVisita";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/animate.min.css" />
+}
+<style>
+
+    .datepicker {
+        width: 150px;
+
+
+    }
+</style>
+<div class="container-fluid">
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-2 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Sincronizaciones de Visitas - Valida visitas de campo</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <button class="btn btn-success" id="btnNuevo"><i class="fas fa-plus"></i> <i class="fas fa-exchange"></i>  Nueva Visita</button>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-12">
+
+                    <table class="table table-bordered bg-gray-200" id="tbVisitas" cellspacing="0" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>IdVisita</th>
+                                <th>Plan_de_Trabajo</th>
+                                <th>Finca</th>
+                                <th>Fecha</th>
+                                <th>Responsable</th>
+                                <th>Mandador</th>
+                                <th>Observaciones</th>
+                                <th>Sincroniza</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <!-- ============================================================
+    =SCRIPTS PARA ESTA PAGINA
+    ===============================================================-->
+
+    <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+    <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
+
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+
+    <script src="~/vendor/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="~/vendor/datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+
+    <script src="~/js/vistas/SincronizaVisita_Index.js"></script>
+    <script src="~/js/vistas/Common.js"></script>
+
+    <!-- SOLO ES DE EJEMPLO - IGNORAR -->
+    @*     <script src="js/vistas/datatables-demo.js"></script> *@
+}
+
+
+
+

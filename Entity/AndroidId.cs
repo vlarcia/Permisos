@@ -11,5 +11,7 @@ public partial class AndroidId
 
     public string? Email { get; set; }
 
-    public string? Dispositvo { get; set; }
+    public string? Dispositivo { get; set; }
+
+    public string? Responsable { get; set; }
 }
