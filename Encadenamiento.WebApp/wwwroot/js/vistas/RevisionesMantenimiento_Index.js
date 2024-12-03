@@ -26,7 +26,6 @@ let modeloGeneral;
 $(document).ready(function () {
 
     tablaRevisiones = $('#tbRevisiones').DataTable({
-
         responsive: true,
         "ajax": {
             "url": '/Revision/Lista',
@@ -34,25 +33,14 @@ $(document).ready(function () {
             "datatype": "json"
         },
         "columns": [
-            { "data": "idFinca" },            
+            { "data": "idFinca" },
             { "data": "nombreFinca" },
 
-            // Formatear fecha
+            // Columna de fecha con ordenamiento correcto
             {
-                "data": "fecha",
-                "render": function (data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('es-NI', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
-                    }
-                    return ""; // Si no hay fecha, devolver vacío
-                }
+                "data": "fecha",                
             },
-            
+
             {
                 "data": "cumplimiento",
                 "render": function (data) {
@@ -68,23 +56,42 @@ $(document).ready(function () {
             { "data": "comentarios" },
 
             {
-                "defaultContent":   '<button class="btn btn-primary btn-editar btn-sm mr-1"><i class="fas fa-pencil-alt"></i></button>' +
-                                    '<button class="btn btn-info btn-mostrar btn-sm mr-1"><i class="fas fa-eye"></i></button>'+
-                                    '<button class="btn btn-danger btn-eliminar btn-sm"><i class="fas fa-trash-alt"></i></button>',
+                "defaultContent": '<button class="btn btn-primary btn-editar btn-sm mr-1"><i class="fas fa-pencil-alt"></i></button>' +
+                    '<button class="btn btn-info btn-mostrar btn-sm mr-1"><i class="fas fa-eye"></i></button>' +
+                    '<button class="btn btn-danger btn-eliminar btn-sm"><i class="fas fa-trash-alt"></i></button>',
                 "orderable": false,
                 "searchable": false,
                 "width": "20px"
             }
-
         ],
+        // Ordenar por la columna de fecha (índice 2) en orden descendente
         order: [[2, "desc"]],
+        columnDefs: [
+            {
+                // Configurar la columna de fecha (índice 2)
+                targets: 2,
+                render: function (data, type) {
+                    // Si el tipo es "display", mostramos la fecha formateada
+                    if (type === 'display' && data) {
+                        var date = new Date(data);
+                        return date.toLocaleDateString('es-NI', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+                    }
+                    // Para otros tipos (como ordenamiento), devolvemos la fecha sin formato
+                    return data || "";
+                }
+            }
+        ],
         dom: "Bfrtip",
         buttons: [
             {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte_Revisiones',            
+                filename: 'Reporte_Revisiones',
             },
             'pageLength',
             {
@@ -96,6 +103,9 @@ $(document).ready(function () {
             url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
         },
     });
+
+
+
 
     VISTA_BUSQUEDA["busquedaFecha"]()
     
@@ -759,6 +769,7 @@ function mostrarModal(modelo, edita, modeloGeneral) {
     $("#txtFecha").prop('disabled', true)    
     $("#txtCumplimiento").prop('disabled', edita)
     $("#cboTipo").prop('disabled', edita)
+    $("#txtObservaciones").prop('disabled', edita)
     $("#txtNombreFinca").prop('disabled', true)
     $("#txtCodFinca").prop('disabled', true)
     $("#txtFoto1").prop('disabled', edita);

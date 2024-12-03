@@ -40,18 +40,7 @@ $(document).ready(function () {
 
             // Formatear fechaIni
             {
-                "data": "fechaIni",
-                "render": function (data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('es-NI', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
-                    }
-                    return ""; // Si no hay fecha, devolver vacío
-                }
+                "data": "fechaIni",                
             },
 
             // Formatear fechaFin
@@ -83,7 +72,26 @@ $(document).ready(function () {
             }
 
         ],
-        order: [[0, "desc"]],
+        order: [[3, "desc"]],
+        columnDefs: [
+            {
+                // Configurar la columna de fecha (índice 2)
+                targets: 3,
+                render: function (data, type) {
+                    // Si el tipo es "display", mostramos la fecha formateada
+                    if (type === 'display' && data) {
+                        var date = new Date(data);
+                        return date.toLocaleDateString('es-NI', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+                    }
+                    // Para otros tipos (como ordenamiento), devolvemos la fecha sin formato
+                    return data || "";
+                }
+            }
+        ],
         dom: "Bfrtip",
         buttons: [
             {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AppRequisitos.Pages.ChecklistDetallePage"
+             xmlns:util="clr-namespace:AppRequisitos.Utilidades"
+             xmlns:vm="clr-namespace:AppRequisitos.ViewModels"
+             x:DataType="vm:ChecklistDetalleVM"
+             Title="{Binding TituloPagina}"
+             BackgroundColor="{StaticResource bgFondo}">
+    
+    
+    <Grid Padding="10">
+        <ScrollView>
+            <StackLayout Spacing="15">
+                <Label Text="Código:" FontAttributes="Bold" FontSize="Medium" />
+                <Label Text="{Binding IdRequisito}" FontSize="Medium" />
+
+                <Label Text="Descripción:" FontAttributes="Bold" FontSize="Medium" />
+                <Label Text="{Binding Descripcion}" FontSize="Medium" />
+
+                <Label Text="Ámbito:" FontAttributes="Bold" FontSize="Medium" />
+                <Label Text="{Binding Ambito}" FontSize="Medium" />
+
+                <Label Text="Norma:" FontAttributes="Bold" FontSize="Medium" />
+                <Label Text="{Binding Norma}" FontSize="Medium" />
+
+                <Label Text="Bonsucro:" FontAttributes="Bold" FontSize="Medium" />
+                <Label Text="{Binding Bonsucro}" FontSize="Medium" />
+
+                <Label Text="Observaciones:" FontAttributes="Bold" FontSize="Medium" />
+                <Label Text="{Binding Observaciones}" FontSize="Medium" />
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Indicador de carga -->
+        <ActivityIndicator IsRunning="{Binding LoadingEsVisible}" 
+                           IsVisible="{Binding LoadingEsVisible}" 
+                           VerticalOptions="Center" 
+                           HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

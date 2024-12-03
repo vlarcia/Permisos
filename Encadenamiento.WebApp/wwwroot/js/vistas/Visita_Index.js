@@ -79,18 +79,7 @@ $(document).ready(function () {
 
             // Formatear fechaIni
             {
-                "data": "fecha",
-                "render": function (data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('es-NI', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
-                    }
-                    return ""; // Si no hay fecha, devolver vacío
-                }
+                "data": "fecha",                
             },
 
             { "data": "responsable" },
@@ -107,7 +96,26 @@ $(document).ready(function () {
             }
 
         ],
-        order: [[0, "desc"]],
+        order: [[3, "desc"]],
+        columnDefs: [
+            {
+                // Configurar la columna de fecha (índice 2)
+                targets: 3,
+                render: function (data, type) {
+                    // Si el tipo es "display", mostramos la fecha formateada
+                    if (type === 'display' && data) {
+                        var date = new Date(data);
+                        return date.toLocaleDateString('es-NI', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+                    }
+                    // Para otros tipos (como ordenamiento), devolvemos la fecha sin formato
+                    return data || "";
+                }
+            }
+        ],
         dom: "Bfrtip",
         buttons: [
             {
@@ -310,7 +318,7 @@ $(document).ready(function () {
         $('#btnGuardar').hide();
         $('#linkImprimir').show();
         $('#btnEnviarCorreo').show();
-        $("#linkImprimir").attr("href", `/Visita/MostrarPDFVisita?idVisita=${modelo.idVisita}`)
+        $("#linkImprimir").attr("href", `/Visita/MostrarPDFVisita?idVisita=${modeloCargado.idVisita}`)
 
         // Abrir el modal
         mostrarModal(modeloCargado, true)
@@ -453,7 +461,7 @@ $('#btnGuardar').on('click', function () {
     const inputFoto1 = document.getElementById("txtFoto1");
     const inputFoto2 = document.getElementById("txtFoto2");
     const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
-    const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
+    const lafoto2 = inputFoto2.files[0] ? inputFoto.files[0].name : null;    
     const sento = modeloCargado.sentTo ? modeloCargado.sentTo : 0;
     const aplica = modeloCargado.aplicado ? modeloCargado.aplicado : false;
     const sincroniza = modeloCargado.sincronizado ? modeloCargado.sincronizado : false;

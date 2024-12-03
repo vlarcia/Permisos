@@ -21,29 +21,37 @@ namespace Business.Implementacion
         private readonly IGenericRepository<Actividad> _actividadRepositorio;
         private readonly IGenericRepository<Visita> _visitaRepositorio;
         private readonly IGenericRepository<Revisione> _revisionRepositorio;
+        private readonly IGenericRepository<Revision> _revision2Repositorio;    // esta tabla se incorporó despues al diseño
+        private readonly IGenericRepository<MaestroFinca> _fincasRepositorio;        
+
         private DateTime FechaInicial=DateTime.Now;
 
         public DashBoardService(IPlanesRepository planesRepositorio,
                                 IGenericRepository<Actividad> actividadRepositorio,
                                 IGenericRepository<Visita> visitaRepositorio,
-                                IGenericRepository<Revisione> revisionRepositorio)
+                                IGenericRepository<Revisione> revisionRepositorio,
+                                IGenericRepository<Revision> revision2Repositorio,
+                                IGenericRepository<MaestroFinca> fincasRepositorio)
         { 
             _planesRepositorio=planesRepositorio;
             _actividadRepositorio=actividadRepositorio;
             _visitaRepositorio=visitaRepositorio;
             _revisionRepositorio=revisionRepositorio;
+            _revision2Repositorio = revision2Repositorio;
+            _fincasRepositorio = fincasRepositorio;
             FechaInicial = FechaInicial.AddDays(-30);
-        
-
 
         }
         public async Task<string> TotalFincas()
         {
             try
             {
-                IQueryable<Revisione> query = await _revisionRepositorio.Consultar();
-                int total = query.Select(r => r.IdFinca).Distinct().Count();                
+                IQueryable<MaestroFinca> query = await _fincasRepositorio.Consultar();
+                int total = query
+                    .Where(f => f.Grupo != null && f.Grupo > 0) // Filtro por Grupo
+                    .Count(); // Cuenta solo las fincas que cumplen la condición
                 return Convert.ToString(total, new CultureInfo("es-NI"));
+
             }
             catch
             {
@@ -53,7 +61,7 @@ namespace Business.Implementacion
         public async Task<string> TotalPlanesActivos()
         {
             try {
-                IQueryable<PlanesTrabajo> query = await _planesRepositorio.Consultar(p => p.Estado.Trim() == "EN PROCESO" && p.FechaIni>= FechaInicial.Date);
+                IQueryable<PlanesTrabajo> query = await _planesRepositorio.Consultar(p => p.Estado.Trim() != "FINALIZADO");
                 int total = query.Count();
                 return Convert.ToString(total, new CultureInfo("es-NI"));
             }
@@ -67,7 +75,7 @@ namespace Business.Implementacion
         {
             try
             {
-                IQueryable<Actividad> query = await _actividadRepositorio.Consultar(a => a.Estado.Trim() == "EN PROCESO" && a.FechaIni >= FechaInicial.Date);
+                IQueryable<Actividad> query = await _actividadRepositorio.Consultar(a => a.Estado.Trim() != "FINALIZADO");
                 int total = query.Count();
                 return Convert.ToString(total, new CultureInfo("es-NI"));
             }
@@ -127,21 +135,56 @@ namespace Business.Implementacion
         {
             try
             {
-                IQueryable<Visita> query = await _visitaRepositorio
-                          .Consultar(v => v.Fecha >= FechaInicial.Date);
+                // Consulta de Visitas
+                IQueryable<Visita> visitasQuery = await _visitaRepositorio
+                    .Consultar(v => v.Fecha >= FechaInicial.Date);
 
-                Dictionary<string, int> resultado = query
-                    .GroupBy(a => a.Fecha.Value.Date).OrderByDescending(g => g.Key)
-                    .Select(da => new { fecha = da.Key.ToString("dd/MM/yyyy"), total = da.Count() })
-                    .ToDictionary(keySelector: r => r.fecha, elementSelector: r => r.total);
-                ;
-                return resultado;
+                Dictionary<string, int> visitasDict = visitasQuery
+                    .GroupBy(v => v.Fecha.Value.Date)
+                    .OrderByDescending(g => g.Key)
+                    .Select(g => new { fecha = g.Key.ToString("dd/MM/yyyy"), total = g.Count() })
+                    .ToDictionary(r => r.fecha, r => r.total);
+
+                // Consulta de Revisions
+                IQueryable<Revision> revisionsQuery = await _revision2Repositorio
+                    .Consultar(r => r.Fecha >= FechaInicial.Date);
+
+                Dictionary<string, int> revisionsDict = revisionsQuery
+                    .GroupBy(r => r.Fecha.Value.Date)
+                    .OrderByDescending(g => g.Key)
+                    .Select(g => new { fecha = g.Key.ToString("dd/MM/yyyy"), total = g.Count() })
+                    .ToDictionary(r => r.fecha, r => r.total);
+
+                // Combinar los resultados
+                Dictionary<string, int> combinedDict = new Dictionary<string, int>();
+
+                // Agregar datos de visitas
+                foreach (var visita in visitasDict)
+                {
+                    combinedDict[visita.Key] = visita.Value;
+                }
+
+                // Sumar datos de revisiones al diccionario combinado
+                foreach (var revision in revisionsDict)
+                {
+                    if (combinedDict.ContainsKey(revision.Key))
+                    {
+                        combinedDict[revision.Key] += revision.Value; // Sumar si la fecha ya existe
+                    }
+                    else
+                    {
+                        combinedDict[revision.Key] = revision.Value; // Agregar si es una nueva fecha
+                    }
+                }
+
+                return combinedDict;
             }
             catch
             {
                 throw;
             }
         }
+
 
         public async Task<List<CumplimientoDTO>> ObtenerFincasConCumplimiento()
         {

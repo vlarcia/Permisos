@@ -1,0 +1,35 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:AppRequisitos"
+             x:Class="AppRequisitos.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />                
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="FlyoutItemLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="TextColor" Value="DarkGreen"/>
+                <Setter Property="HorizontalOptions" Value="StartAndExpand"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+            </Style>
+            
+            <!-- Define flyout header style -->
+            <Style x:Key="FlyoutHeaderStyle" TargetType="Image">
+                <Setter Property="WidthRequest" Value="120"/>
+                <Setter Property="Margin" Value="10"/>
+            </Style>
+            <!-- Define a style for the FlyoutItem icons -->
+            <Style x:Key="FlyoutItemIconStyle" TargetType="Image">
+                <Setter Property="WidthRequest" Value="40"/>
+                <Setter Property="HeightRequest" Value="40"/>
+                <Setter Property="HorizontalOptions" Value="Start"/>
+                <Setter Property="Margin" Value="10,0"/>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

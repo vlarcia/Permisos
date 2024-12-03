@@ -342,6 +342,11 @@ namespace Business.Implementacion
                     // Validar si la revisión existe
                     if (fotosrevision_modificada != null)
                     {
+                        entidad.Urlfoto1 = fotosrevision_modificada.Urlfoto1;
+                        entidad.Nombrefoto1 = fotosrevision_modificada.Nombrefoto1;
+                        entidad.Urlfoto2 = fotosrevision_modificada.Urlfoto2;
+                        entidad.Nombrefoto2 = fotosrevision_modificada.Nombrefoto2;                        
+
                         if (foto1 != null && NombreFoto1 != fotosrevision_modificada.Nombrefoto1)
                         {
                             string UrlFoto1 = await _firebaseService.SubirStorage(foto1, "carpeta_revision", NombreFoto1);

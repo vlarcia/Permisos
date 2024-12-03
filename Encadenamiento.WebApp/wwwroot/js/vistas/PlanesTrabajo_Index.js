@@ -341,7 +341,7 @@ $('#btnGuardarPlan').on('click', function () {
         .then(responseJson => {            
 
             if (responseJson.estado) {
-                Swal.fire("Listo!", "Plan de Trabajo "+responseJson.Objeto.id +""+"creado con éxito!", "success");
+                Swal.fire("Listo!", "Plan de Trabajo creado con éxito!", "success");
                 limpiarFormularioYTabla();
             } else {
                 Swal.fire("Lo sentimos!", responseJson.mensaje, "error");

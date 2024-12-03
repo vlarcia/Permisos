@@ -33,26 +33,34 @@ namespace Business.Implementacion
         }
 
         public async Task<List<Visita>> Lista(int envio)
-        {
-            if (envio != 1)
+        {try
             {
-                IQueryable<Visita> query = await _repositorioVisita.Consultar();
-                return query.Include(f => f.IdFincaNavigation)
-                            .Include(p => p.IdPlanNavigation)
-                            .Include(d => d.DetalleVisita)
-                            .ThenInclude(a => a.IdActividadNavigation)
-                            .ToList();
-            } else
-            {
-                IQueryable<Visita> query = await _repositorioVisita.Consultar();
-                return query.Include(f => f.IdFincaNavigation)
-                            .Include(p => p.IdPlanNavigation)
-                            .Include(d => d.DetalleVisita)
-                            .ThenInclude(a => a.IdActividadNavigation)
-                            .Where(s=> s.SentTo==0)
-                            .ToList();
+                if (envio != 1)
+                {
+                    IQueryable<Visita> query = await _repositorioVisita.Consultar();
+                    return query.Include(f => f.IdFincaNavigation)
+                                .Include(p => p.IdPlanNavigation)
+                                .Include(d => d.DetalleVisita)
+                                .ThenInclude(a => a.IdActividadNavigation)
+                                .ToList();
+
+                }
+                else
+                {
+                    IQueryable<Visita> query = await _repositorioVisita.Consultar();
+                    return query.Include(f => f.IdFincaNavigation)
+                                .Include(p => p.IdPlanNavigation)
+                                .Include(d => d.DetalleVisita)
+                                .ThenInclude(a => a.IdActividadNavigation)
+                                .Where(s => s.SentTo == 0)
+                                .ToList();
+                }
             }
-            
+            catch (Exception ex)
+            {;
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
         public async Task<List<DetalleVisita>> ListaDetalle()
         {

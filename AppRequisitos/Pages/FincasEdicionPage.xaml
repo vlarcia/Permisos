@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:util="clr-namespace:AppRequisitos.Utilidades"
+             xmlns:vm="clr-namespace:AppRequisitos.ViewModels"
+             x:DataType="vm:FincasEdicionVM"
+             x:Class="AppRequisitos.Pages.FincasEdicionPage"
+             Title="Fincas Page">
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackLayout Grid.Row="0" BackgroundColor="{StaticResource Primary}" Orientation="Horizontal" Padding="10" Spacing="20">
+
+            <Button FontFamily="FaSolid" Text="{Static util:IconFont.Xmark}" FontSize="24" Padding="0" HeightRequest="30" WidthRequest="30"
+             BackgroundColor="green"
+             TextColor="White"
+             Command="{Binding VolverInventarioCommand}"></Button>
+
+
+            <Label Text="{Binding TituloPagina}" FontSize="Subtitle"  TextColor="White" VerticalOptions="Center" HorizontalOptions="FillAndExpand"/>
+            <Button FontFamily="FaSolid" Text="{Static util:IconFont.Check}" FontSize="24" Padding="0" HeightRequest="30" WidthRequest="30"
+             BackgroundColor="Green" HorizontalOptions="End"
+             TextColor="White"
+             Command="{Binding GuardarCommand}"></Button>
+
+        </StackLayout>
+
+        <ScrollView Grid.Row="1" >
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+         
+
+                <StackLayout Grid.Row="0" Orientation="Vertical" Spacing="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                    </Grid>
+                    
+                    <!--<Label Text="Codigo:"/>-->
+                    <!--<StackLayout Orientation="Horizontal" Spacing="10">
+                        <Entry  Placeholder="Codigo" HorizontalOptions="FillAndExpand" Text="{Binding CodigoBarras}"/>
+                        <Button FontFamily="FaSolid" Text="{Static util:IconFont.Barcode}" Padding="0" HeightRequest="34" FontSize="20" 
+                            BackgroundColor="{StaticResource Gray200}"
+                            TextColor="{StaticResource bgDark}"
+                            Command="{Binding MostrarScannerCommand}"></Button>
+                    </StackLayout>-->
+                </StackLayout>
+
+                <StackLayout Grid.Row="1" Orientation="Horizontal" Spacing="10">
+                    <Label Text="Finca:" VerticalOptions="Center" FontAttributes="Bold"/>
+                    <Entry Text="{Binding Descripcion}" HorizontalOptions="FillAndExpand"/>
+                </StackLayout>
+                <VerticalStackLayout Padding="15" Grid.Row="2">
+                    
+                    <StackLayout Orientation="Horizontal" Spacing="8" HorizontalOptions="FillAndExpand">
+                        <Label Text="Proveedor:" VerticalOptions="Center" FontAttributes="Bold"/>
+                        <Entry Placeholder="Proveedor" HorizontalOptions="FillAndExpand"  Text="{Binding Proveedor}"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" Spacing="8" HorizontalOptions="FillAndExpand">
+                        <Label Text="Area:" VerticalOptions="Center" FontAttributes="Bold"/>
+                        <Entry Placeholder="Area en Ha" HorizontalOptions="FillAndExpand"  Keyboard="Numeric" Text="{Binding Area}"  />
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" Spacing="8" HorizontalOptions="FillAndExpand">
+                        <Label Text="A Cargo:" VerticalOptions="Center" FontAttributes="Bold"/>
+                        <Entry Placeholder="Encargado" HorizontalOptions="FillAndExpand" Text="{Binding Encargado}"  />
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" Spacing="8" HorizontalOptions="FillAndExpand">
+                        <Label Text="Codigo:" VerticalOptions="Center" FontAttributes="Bold"/>
+                        <Entry Placeholder="Codigo Finca" HorizontalOptions="FillAndExpand"  Keyboard="Numeric" Text="{Binding CodFinca}"  />
+                    </StackLayout>
+                
+                
+                </VerticalStackLayout>
+
+                <StackLayout Grid.Row="0" Grid.RowSpan="4" IsVisible="{Binding LoadingEsVisible}" Opacity="0.2" BackgroundColor="{StaticResource bgDark}">
+           
+                </StackLayout>
+                <ActivityIndicator Grid.Row="0" Grid.RowSpan="4" IsRunning="{Binding LoadingEsVisible}" IsVisible="{Binding LoadingEsVisible}" Color="Blue" HeightRequest="30" 
+                    VerticalOptions="Center" HorizontalOptions="Center"/>
+                
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>

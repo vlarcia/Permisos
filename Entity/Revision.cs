@@ -10,7 +10,7 @@ public partial class Revision
 {
     public int IdReg { get; set; }
     public int IdFinca { get; set; }    
-    public DateTime Fecha { get; set; }    
+    public DateTime? Fecha { get; set; }    
     public string? Observaciones { get; set; }        
     public decimal? Cumplimiento { get; set; }
     public string? Nombrefoto1 { get; set; }

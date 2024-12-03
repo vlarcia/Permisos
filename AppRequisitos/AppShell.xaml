@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="AppRequisitos.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:AppRequisitos"
+    xmlns:pages="clr-namespace:AppRequisitos.Pages"
+    Shell.FlyoutBehavior="Flyout" >
+
+    <Shell.FlyoutHeader>
+        <Image Source="dotnet_bot.svg" WidthRequest="120" Margin="10"/>
+    </Shell.FlyoutHeader>
+
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid Padding="10" ColumnDefinitions="Auto, *">
+                <Image Source="{Binding Icon}" Style="{StaticResource FlyoutItemIconStyle}" Grid.Column="0"/>
+                <Label Text="{Binding Title}" Style="{StaticResource FlyoutItemLabelStyle}" Grid.Column="1"/>
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+
+    <FlyoutItem Title="Cumplimiento Proveedores MR" Icon="home.svg">
+        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Fincas" Icon="canaazucar2.svg">
+        <ShellContent ContentTemplate="{DataTemplate pages:FincasPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Catálogo Requisitos" Icon="legal.svg">
+        <ShellContent ContentTemplate="{DataTemplate pages:ChecklistPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Visitas/Actividades" Icon="visitas.svg">
+        <ShellContent ContentTemplate="{DataTemplate pages:InventarioPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Revisiones" Icon="clipb2.svg">
+        <ShellContent ContentTemplate="{DataTemplate pages:VentaPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Sincronizar" Icon="sync.svg">
+        <ShellContent ContentTemplate="{DataTemplate pages:SyncPage}" />
+    </FlyoutItem>
+
+    <MenuItem IconImageSource="off.svg" Text="Cerrar Sesión" Clicked="CerrarSesion_Clicked">
+    </MenuItem>
+</Shell>
