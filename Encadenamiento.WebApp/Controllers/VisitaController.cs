@@ -72,7 +72,7 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Registrar([FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] string modeloVisita)
+        public async Task<IActionResult> Registrar([FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] IFormFile foto3, [FromForm] IFormFile foto4, [FromForm] string modeloVisita)
         {
             GenericResponse<VMVisita> gResponse = new GenericResponse<VMVisita>();
             try
@@ -81,8 +81,12 @@ namespace Encadenamiento.WebApp.Controllers
                 VMVisita vmVisita = JsonConvert.DeserializeObject<VMVisita>(modeloVisita);
                 string nombrefoto1 = "";
                 string nombrefoto2 = "";
+                string nombrefoto3 = "";
+                string nombrefoto4 = "";
                 Stream fotoStream1 = null;
                 Stream fotoStream2 = null;
+                Stream fotoStream3 = null;
+                Stream fotoStream4 = null;
                 if (foto1 != null)
                 {
                     //string nombre_en_codigo = Guid.NewGuid().ToString("N");
@@ -97,9 +101,23 @@ namespace Encadenamiento.WebApp.Controllers
                     nombrefoto2 = string.Concat(vmVisita.IdPlan.ToString(), vmVisita.NombreFoto2, extension);
                     fotoStream2 = foto2.OpenReadStream();
                 }
-                
+                if (foto3 != null)
+                {
+                    //string nombre_en_codigo = Guid.NewGuid().ToString("N");
+                    string extension = Path.GetExtension(foto3.FileName);
+                    nombrefoto3 = string.Concat(vmVisita.IdPlan.ToString(), vmVisita.NombreFoto3, extension);
+                    fotoStream3 = foto3.OpenReadStream();
+                }
+                if (foto4 != null)
+                {
+                    //string nombre_en_codigo = Guid.NewGuid().ToString("N");
+                    string extension = Path.GetExtension(foto4.FileName);
+                    nombrefoto4 = string.Concat(vmVisita.IdPlan.ToString(), vmVisita.NombreFoto4, extension);
+                    fotoStream4 = foto4.OpenReadStream();
+                }
 
-                Visita visita_creada = await _visitaService.Registrar(_mapper.Map<Visita>(vmVisita), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2);
+
+                Visita visita_creada = await _visitaService.Registrar(_mapper.Map<Visita>(vmVisita), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2, fotoStream3, nombrefoto3, fotoStream4, nombrefoto4);
                 vmVisita = _mapper.Map<VMVisita>(visita_creada);                
                 gResponse.Estado = true;
                 gResponse.Objeto = vmVisita;
@@ -116,7 +134,7 @@ namespace Encadenamiento.WebApp.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Editar([FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] string modeloVisita)
+        public async Task<IActionResult> Editar([FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] IFormFile foto3, [FromForm] IFormFile foto4, [FromForm] string modeloVisita)
         {
             GenericResponse<VMVisita> gResponse = new GenericResponse<VMVisita>();
             try
@@ -124,8 +142,12 @@ namespace Encadenamiento.WebApp.Controllers
                 VMVisita vmVisita = JsonConvert.DeserializeObject<VMVisita>(modeloVisita);
                 string nombrefoto1 = "";
                 string nombrefoto2 = "";
+                string nombrefoto3 = "";
+                string nombrefoto4 = "";
                 Stream fotoStream1 = null;
                 Stream fotoStream2 = null;
+                Stream fotoStream3 = null;
+                Stream fotoStream4 = null;
                 if (foto1 != null)
                 {
                     //string nombre_en_codigo = Guid.NewGuid().ToString("N");
@@ -140,8 +162,22 @@ namespace Encadenamiento.WebApp.Controllers
                     nombrefoto2 = string.Concat(vmVisita.IdPlan.ToString(), vmVisita.NombreFoto2, extension);
                     fotoStream2 = foto2.OpenReadStream();
                 }
+                if (foto3 != null)
+                {
+                    //string nombre_en_codigo = Guid.NewGuid().ToString("N");
+                    string extension = Path.GetExtension(foto3.FileName);
+                    nombrefoto3 = string.Concat(vmVisita.IdPlan.ToString(), vmVisita.NombreFoto3, extension);
+                    fotoStream3 = foto3.OpenReadStream();
+                }
+                if (foto4 != null)
+                {
+                    //string nombre_en_codigo = Guid.NewGuid().ToString("N");
+                    string extension = Path.GetExtension(foto4.FileName);
+                    nombrefoto4 = string.Concat(vmVisita.IdPlan.ToString(), vmVisita.NombreFoto4, extension);
+                    fotoStream4 = foto4.OpenReadStream();
+                }
 
-                Visita visita_editada = await _visitaService.Editar(_mapper.Map<Visita>(vmVisita), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2);
+                Visita visita_editada = await _visitaService.Editar(_mapper.Map<Visita>(vmVisita), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2, fotoStream3, nombrefoto3, fotoStream4, nombrefoto4);
                 vmVisita = _mapper.Map<VMVisita>(visita_editada);
                 gResponse.Estado = true;
                 gResponse.Objeto = vmVisita;

@@ -158,6 +158,8 @@ namespace Business.Implementacion
             {
                 string nombrefoto1;
                 string nombrefoto2;
+                string nombrefoto3;
+                string nombrefoto4;
                 Revisione revision_eliminada = new Revisione();
                 Revision fotosrevision_eliminada = new Revision();
                 try
@@ -182,6 +184,8 @@ namespace Business.Implementacion
                     {
                         nombrefoto1 = fotosrevision_eliminada.Nombrefoto1;   //Para borrar las fotos de la visita
                         nombrefoto2 = fotosrevision_eliminada.Nombrefoto2;
+                        nombrefoto3 = fotosrevision_eliminada.Nombrefoto3;
+                        nombrefoto4 = fotosrevision_eliminada.Nombrefoto4;
                         _dbcontext.Revisions.Remove(fotosrevision_eliminada);
                     }
                     else
@@ -196,6 +200,8 @@ namespace Business.Implementacion
 
                     await _firebaseService.EliminarStorage("carpeta_revision", nombrefoto1);
                     await _firebaseService.EliminarStorage("carpeta_revision", nombrefoto2);
+                    await _firebaseService.EliminarStorage("carpeta_revision", nombrefoto3);
+                    await _firebaseService.EliminarStorage("carpeta_revision", nombrefoto4);
                 }
                 catch (Exception ex)
                 {
@@ -261,14 +267,14 @@ namespace Business.Implementacion
             {
                 resultado = query
                     .Include(f => f.IdFincaNavigation)
-                    .Where(s=>s.SentTo == 0)
+                    .Where(s=>s.SentTo != 1)
                     .ToList();
             }
 
             return resultado;
         }
 
-        public async Task<Revision> CrearRevisions(Revision entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "")
+        public async Task<Revision> CrearRevisions(Revision entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "", Stream foto3 = null, string NombreFoto3 = "", Stream foto4 = null, string NombreFoto4 = "")
         {
             using (var transaction = await _dbcontext.Database.BeginTransactionAsync())
             {
@@ -294,7 +300,16 @@ namespace Business.Implementacion
                             string UrlFoto2 = await _firebaseService.SubirStorage(foto2, "carpeta_revision", NombreFoto2);
                             entidad.Urlfoto2 = UrlFoto2;
                         }
-
+                        if (foto3 != null)
+                        {
+                            string UrlFoto3 = await _firebaseService.SubirStorage(foto3, "carpeta_revision", NombreFoto3);
+                            entidad.Urlfoto3 = UrlFoto3;
+                        }
+                        if (foto4 != null)
+                        {
+                            string UrlFoto4 = await _firebaseService.SubirStorage(foto4, "carpeta_revision", NombreFoto4);
+                            entidad.Urlfoto4 = UrlFoto4;
+                        }
 
                         _dbcontext.Revisions.Add(entidad);
                         fotosrevision_creada = entidad;
@@ -329,7 +344,7 @@ namespace Business.Implementacion
             }
         }
 
-        public async Task<Revision> EditarRevisions(Revision entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "")
+        public async Task<Revision> EditarRevisions(Revision entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "", Stream foto3 = null, string NombreFoto3 = "", Stream foto4 = null, string NombreFoto4 = "")
         {
             using (var transaction = await _dbcontext.Database.BeginTransactionAsync())
             {
@@ -345,7 +360,11 @@ namespace Business.Implementacion
                         entidad.Urlfoto1 = fotosrevision_modificada.Urlfoto1;
                         entidad.Nombrefoto1 = fotosrevision_modificada.Nombrefoto1;
                         entidad.Urlfoto2 = fotosrevision_modificada.Urlfoto2;
-                        entidad.Nombrefoto2 = fotosrevision_modificada.Nombrefoto2;                        
+                        entidad.Nombrefoto2 = fotosrevision_modificada.Nombrefoto2;
+                        entidad.Urlfoto3 = fotosrevision_modificada.Urlfoto3;
+                        entidad.Nombrefoto3 = fotosrevision_modificada.Nombrefoto3;
+                        entidad.Urlfoto4 = fotosrevision_modificada.Urlfoto4;
+                        entidad.Nombrefoto4 = fotosrevision_modificada.Nombrefoto4;
 
                         if (foto1 != null && NombreFoto1 != fotosrevision_modificada.Nombrefoto1)
                         {
@@ -358,6 +377,18 @@ namespace Business.Implementacion
                             string UrlFoto2 = await _firebaseService.SubirStorage(foto2, "carpeta_revision", NombreFoto2);
                             entidad.Urlfoto2 = UrlFoto2;
                             entidad.Nombrefoto2 = NombreFoto2;
+                        }
+                        if (foto3 != null && NombreFoto3 != fotosrevision_modificada.Nombrefoto3)
+                        {
+                            string UrlFoto3 = await _firebaseService.SubirStorage(foto3, "carpeta_revision", NombreFoto3);
+                            entidad.Urlfoto3 = UrlFoto3;
+                            entidad.Nombrefoto3 = NombreFoto3;
+                        }
+                        if (foto4 != null && NombreFoto4 != fotosrevision_modificada.Nombrefoto4)
+                        {
+                            string UrlFoto4 = await _firebaseService.SubirStorage(foto4, "carpeta_revision", NombreFoto4);
+                            entidad.Urlfoto4 = UrlFoto4;
+                            entidad.Nombrefoto4 = NombreFoto4;
                         }
                         // Mapea los valores de la nueva entidad a la existente
                         _dbcontext.Entry(fotosrevision_modificada).CurrentValues.SetValues(entidad);

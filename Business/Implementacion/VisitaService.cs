@@ -69,7 +69,7 @@ namespace Business.Implementacion
             return query.Include(p => p.IdActividadNavigation)                        
                         .ToList();
         }
-        public async Task<Visita> Registrar(Visita entidad, Stream foto1=null, string NombreFoto1="", Stream foto2=null, string NombreFoto2="")
+        public async Task<Visita> Registrar(Visita entidad, Stream foto1=null, string NombreFoto1="", Stream foto2=null, string NombreFoto2="", Stream foto3 = null, string NombreFoto3 = "", Stream foto4 = null, string NombreFoto4 = "")
         {
             try
             {
@@ -87,6 +87,16 @@ namespace Business.Implementacion
                 {
                     string UrlFoto2 = await _firebaseService.SubirStorage(foto2, "carpeta_visita", NombreFoto2);
                     entidad.Urlfoto2 = UrlFoto2;
+                }
+                if (foto3 != null)
+                {
+                    string UrlFoto3 = await _firebaseService.SubirStorage(foto3, "carpeta_visita", NombreFoto3);
+                    entidad.Urlfoto3 = UrlFoto3;
+                }
+                if (foto4 != null)
+                {
+                    string UrlFoto4 = await _firebaseService.SubirStorage(foto4, "carpeta_visita", NombreFoto4);
+                    entidad.Urlfoto4 = UrlFoto4;
                 }
                 Visita visita_creada = await _repositorioVisita.Registrar(entidad);  //Registrar esta en su repositorio propio
                 if (visita_creada.IdVisita == 0)
@@ -107,7 +117,7 @@ namespace Business.Implementacion
             }
         }
 
-        public async Task<Visita> Editar(Visita entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "")
+        public async Task<Visita> Editar(Visita entidad, Stream foto1 = null, string NombreFoto1 = "", Stream foto2 = null, string NombreFoto2 = "", Stream foto3 = null, string NombreFoto3 = "", Stream foto4 = null, string NombreFoto4 = "")
         {            
             try
             {                                
@@ -129,7 +139,17 @@ namespace Business.Implementacion
                     visita_editar.Urlfoto2 = UrlFoto2;
                     visita_editar.Nombrefoto2 = NombreFoto2;
                 }
-                
+                if (foto3 != null && NombreFoto3 != visita_editar.Nombrefoto3)
+                {
+                    string UrlFoto3 = await _firebaseService.SubirStorage(foto3, "carpeta_visita", NombreFoto3);
+                    visita_editar.Urlfoto3 = UrlFoto3;
+                    visita_editar.Nombrefoto3 = NombreFoto3;
+                }
+                if (foto4 != null)
+                {
+                    string UrlFoto4 = await _firebaseService.SubirStorage(foto4, "carpeta_visita", NombreFoto4);
+                    entidad.Urlfoto4 = UrlFoto4;
+                }
                 visita_editar.Observaciones = entidad.Observaciones;
                 visita_editar.IdFinca = entidad.IdFinca;
                 visita_editar.IdPlan = entidad.IdPlan;
@@ -201,7 +221,8 @@ namespace Business.Implementacion
 
                     string nombreFoto1 = visita_encontrada.Nombrefoto1;   //Para borrar las fotos de la visita
                     string nombreFoto2 = visita_encontrada.Nombrefoto2;
-
+                    string nombreFoto3 = visita_encontrada.Nombrefoto3;
+                    string nombreFoto4 = visita_encontrada.Nombrefoto4;
                     _dbContext.Visitas.Remove(visita_encontrada);
                         
                     await _dbContext.SaveChangesAsync();
@@ -209,6 +230,8 @@ namespace Business.Implementacion
 
                     await _firebaseService.EliminarStorage("carpeta_visita", nombreFoto1);
                     await _firebaseService.EliminarStorage("carpeta_visita", nombreFoto2);
+                    await _firebaseService.EliminarStorage("carpeta_visita", nombreFoto3);
+                    await _firebaseService.EliminarStorage("carpeta_visita", nombreFoto4);
                     return true;
                 }
                 catch

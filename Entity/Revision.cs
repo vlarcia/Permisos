@@ -15,8 +15,12 @@ public partial class Revision
     public decimal? Cumplimiento { get; set; }
     public string? Nombrefoto1 { get; set; }
     public string? Nombrefoto2 { get; set; }
+    public string? Nombrefoto3 { get; set; }
+    public string? Nombrefoto4 { get; set; }
     public string? Urlfoto1 { get; set; }
     public string? Urlfoto2 { get; set; }
+    public string? Urlfoto3 { get; set; }
+    public string? Urlfoto4 { get; set; }
     public int? SentTo { get; set; }
     public bool? Sincronizado { get; set; }
     public bool? Aplicado { get; set; }

@@ -158,6 +158,47 @@ document.getElementById("txtFoto2").addEventListener("change", function (event) 
     }
 });
 
+document.getElementById("txtFoto3").addEventListener("change", function (event) {
+    const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+    const imgElement = document.getElementById("imgFoto3");
+
+    if (file) {
+        const reader = new FileReader(); // Crear un objeto FileReader
+
+        // Definir la función a ejecutar cuando se carga el archivo
+        reader.onload = function (e) {
+            imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+            imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+        };
+
+        reader.readAsDataURL(file); // Leer el archivo como URL de datos
+    } else {
+        // Si no hay archivo, puedes asignar la imagen predeterminada
+        imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+        imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+    }
+});
+
+document.getElementById("txtFoto4").addEventListener("change", function (event) {
+    const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+    const imgElement = document.getElementById("imgFoto4");
+
+    if (file) {
+        const reader = new FileReader(); // Crear un objeto FileReader
+
+        // Definir la función a ejecutar cuando se carga el archivo
+        reader.onload = function (e) {
+            imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+            imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+        };
+
+        reader.readAsDataURL(file); // Leer el archivo como URL de datos
+    } else {
+        // Si no hay archivo, puedes asignar la imagen predeterminada
+        imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+        imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+    }
+});
 
 $("#cboBuscarPor").val('');
 $("#cboBuscarPor").change(function () {
@@ -592,12 +633,19 @@ $('#btnGuardar').on('click', function () {
     // Cargar Fotos y FormData
     const inputFoto1 = document.getElementById("txtFoto1");
     const inputFoto2 = document.getElementById("txtFoto2");
+    const inputFoto3 = document.getElementById("txtFoto3");
+    const inputFoto4 = document.getElementById("txtFoto4");
+
     const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
     const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
+    const lafoto3 = inputFoto3.files[0] ? inputFoto3.files[0].name : null;    
+    const lafoto4 = inputFoto4.files[0] ? inputFoto4.files[0].name : null;    
 
     modeloGeneral.observaciones = $("#txtObservaciones").val();
     modeloGeneral.nombrefoto1 = lafoto1;
     modeloGeneral.nombrefoto2 = lafoto2;
+    modeloGeneral.nombrefoto3 = lafoto3;
+    modeloGeneral.nombrefoto4 = lafoto4;
     modeloGeneral.tipo = tipo;
     modeloGeneral.cumplimiento = cumplimiento;            
     
@@ -634,6 +682,8 @@ $('#btnGuardar').on('click', function () {
     formData.append("revisiones", JSON.stringify(revisiones));
     formData.append("foto1", inputFoto1.files[0] ? inputFoto1.files[0] : null);
     formData.append("foto2", inputFoto2.files[0] ? inputFoto2.files[0] : null);
+    formData.append("foto3", inputFoto3.files[0] ? inputFoto3.files[0] : null);
+    formData.append("foto4", inputFoto4.files[0] ? inputFoto4.files[0] : null);
     formData.append("modeloGeneral", JSON.stringify(modeloGeneral));
 
     $(".card-body").LoadingOverlay("show");
@@ -689,7 +739,7 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
         success: function (data) {
             if (data) {
                 filasmodeloGeneral = data;
-                const id_general = filasmodeloGeneral.data[0].idReg
+                const id_general = filasmodeloGeneral.data.idReg
                 rev_general=parseInt(id_general)                
             } else {
                 console.log("No se recibió ningún dato.");
@@ -774,6 +824,8 @@ function mostrarModal(modelo, edita, modeloGeneral) {
     $("#txtCodFinca").prop('disabled', true)
     $("#txtFoto1").prop('disabled', edita);
     $("#txtFoto2").prop('disabled', edita);
+    $("#txtFoto3").prop('disabled', edita);
+    $("#txtFoto4").prop('disabled', edita);
 
     $("#txtIdFinca").val(parseInt(modelo.idFinca))
     $("#txtNombreFinca").val(modelo.nombreFinca)
@@ -786,8 +838,10 @@ function mostrarModal(modelo, edita, modeloGeneral) {
 
     const imgElement1 = document.getElementById("imgFoto1");
     const imgElement2 = document.getElementById("imgFoto2");
+    const imgElement3 = document.getElementById("imgFoto3");
+    const imgElement4 = document.getElementById("imgFoto4");
 
-    // Validar y asignar imágenes para imgFoto1 e imgFoto2
+    // Validar y asignar imágenes para imgFoto 1, 2 y 3
     if (modeloGeneral.nombrefoto1 && modeloGeneral.urlfoto1) {
         imgElement1.src = modeloGeneral.urlfoto1; // Cargar la imagen desde la URL
         imgElement1.style.opacity = 0.9;
@@ -801,6 +855,20 @@ function mostrarModal(modelo, edita, modeloGeneral) {
     } else {
         imgElement2.src = "/images/eog-image-photo-svgrepo-com.svg";
         imgElement2.style.opacity = 0.3; // Opacidad predeterminada
+    }
+    if (modeloGeneral.nombrefoto3 && modeloGeneral.urlfoto3) {
+        imgElement3.src = modeloGeneral.urlfoto3;
+        imgElement3.style.opacity = 0.9; // Opacidad predeterminada
+    } else {
+        imgElement3.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement3.style.opacity = 0.3; // Opacidad predeterminada
+    }
+    if (modeloGeneral.nombrefoto4 && modeloGeneral.urlfoto4) {
+        imgElement4.src = modeloGeneral.urlfoto4;
+        imgElement4.style.opacity = 0.9; // Opacidad predeterminada
+    } else {
+        imgElement4.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement4.style.opacity = 0.3; // Opacidad predeterminada
     }
 
 

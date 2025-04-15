@@ -1,4 +1,5 @@
 ﻿let tablaRequisitos;
+
 $(document).ready(function () {
 
     // Cargar la lista de fincas usando fetch
@@ -29,6 +30,7 @@ $(document).ready(function () {
         });
 
     // Inicializar DataTable
+
     tablaRequisitos = $('#tbRequisitos').DataTable({
         responsive: true,
         "ajax": {
@@ -90,12 +92,9 @@ $(document).ready(function () {
     });
 
     // Inicializar el datepicker
-    $('#txtFecha').datepicker({
-        format: "dd/mm/yyyy",
-        todayHighlight: true,
-        autoclose: true,
-        language: "es"
-    });
+    $.datepicker.setDefaults($.datepicker.regional["es"])
+    $("#txtFecha").datepicker({ dateFormat: "dd/mm/yy" })
+
     document.getElementById("txtFoto1").addEventListener("change", function (event) {
         const file = event.target.files[0]; // Obtener el primer archivo seleccionado
         const imgElement = document.getElementById("imgFoto1");
@@ -137,6 +136,47 @@ $(document).ready(function () {
             imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
         }
     });
+    document.getElementById("txtFoto3").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto3");
+
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
+
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+        }
+    });
+    document.getElementById("txtFoto4").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto4");
+
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
+
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+        }
+    });
+
 });
 
 // Evento de cambio en la columna de "estado"
@@ -231,8 +271,12 @@ $('#btnGuardarRev').on('click', function (event) {
     // Cargar Fotos y FormData
     const inputFoto1 = document.getElementById("txtFoto1");
     const inputFoto2 = document.getElementById("txtFoto2");
+    const inputFoto3 = document.getElementById("txtFoto3");
+    const inputFoto4 = document.getElementById("txtFoto4");
     const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
     const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
+    const lafoto3 = inputFoto3.files[0] ? inputFoto3.files[0].name : null;    
+    const lafoto4 = inputFoto4.files[0] ? inputFoto4.files[0].name : null;    
 
     const modeloGeneral={
         idFinca:    idFinca,
@@ -242,6 +286,8 @@ $('#btnGuardarRev').on('click', function (event) {
         cumplimiento: cumplimiento,
         nombrefoto1:lafoto1,
         nombrefoto2: lafoto2,        
+        nombrefoto3: lafoto3,        
+        nombrefoto4: lafoto4,        
         sentTo: 0,
         sincronizado: false,
         aplicado: false,
@@ -278,6 +324,8 @@ $('#btnGuardarRev').on('click', function (event) {
     formData.append("revisiones", JSON.stringify(revisiones));    
     formData.append("foto1", inputFoto1.files[0] ? inputFoto1.files[0] : null);
     formData.append("foto2", inputFoto2.files[0] ? inputFoto2.files[0] : null);
+    formData.append("foto3", inputFoto3.files[0] ? inputFoto3.files[0] : null);
+    formData.append("foto4", inputFoto4.files[0] ? inputFoto4.files[0] : null);
     formData.append("modeloGeneral", JSON.stringify(modeloGeneral));    
    $(".card-body").LoadingOverlay("show");
 

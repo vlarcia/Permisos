@@ -19,8 +19,12 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public bool? Aplicado { get; set; }
         public string? Nombrefoto1 { get; set; }
         public string? Nombrefoto2 { get; set; }
+        public string? Nombrefoto3 { get; set; }
+        public string? Nombrefoto4 { get; set; }
         public string? Urlfoto1 { get; set; }
         public string? Urlfoto2 { get; set; }
+        public string? Urlfoto3 { get; set; }
+        public string? Urlfoto4 { get; set; }
         public string? Proveedor { get; set; }        
         public int? CodFinca { get; set; }
         public string? Email { get; set; }

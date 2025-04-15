@@ -7,8 +7,9 @@
 @section Estilos {
     <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css"> 
-    <link rel="stylesheet" href="~/vendor/datepicker/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <style>
         /* Estilo general para las celdas que se editarán */
@@ -54,6 +55,12 @@
                 min-width: 100px; /* Ancho mínimo */
                 max-width: 150px; /* Ajusta el máximo a un valor razonable */
             }
+
+        .ui-datepicker {
+            font-family: Arial;
+            background: #f5e2d7;
+            border: 1px solid #f36f22;
+        }
     </style>
 }
 <div class="container-fluid">
@@ -156,15 +163,25 @@
     </div>
     <!-- Fotos en la misma línea -->
     <div class="form-row mb-2">
-        <div class="form-group col-sm-6">
+        <div class="form-group col-sm-3">
             <label for="txtFoto1" class="col-form-label">Foto 1</label>
             <input class="form-control-file" type="file" id="txtFoto1" />
             <img id="imgFoto1" style="max-height:110px; max-width:140 ;opacity: 0.25;" src="~/images/eog-image-photo-svgrepo-com.svg" class="rounded mx-auto d-block" alt="Foto1">
         </div>
-        <div class="form-group col-sm-6">
+        <div class="form-group col-sm-3">
             <label for="txtFoto2" class="col-form-label">Foto 2</label>
             <input class="form-control-file" type="file" id="txtFoto2" />
             <img id="imgFoto2" style="max-height:110px; max-width:140; opacity: 0.25;" src="~/Images/eog-image-photo-svgrepo-com.svg" class="rounded mx-auto d-block" alt="Foto2">
+        </div>
+        <div class="form-group col-sm-3">
+            <label for="txtFoto3" class="col-form-label">Foto 3</label>
+            <input class="form-control-file" type="file" id="txtFoto3" />
+            <img id="imgFoto3" style="max-height:110px; max-width:140; opacity: 0.25;" src="~/Images/eog-image-photo-svgrepo-com.svg" class="rounded mx-auto d-block" alt="Foto3">
+        </div>
+        <div class="form-group col-sm-3">
+            <label for="txtFoto4" class="col-form-label">Foto 4</label>
+            <input class="form-control-file" type="file" id="txtFoto4" />
+            <img id="imgFoto4" style="max-height:110px; max-width:140; opacity: 0.25;" src="~/Images/eog-image-photo-svgrepo-com.svg" class="rounded mx-auto d-block" alt="Foto4">
         </div>
         <div class="col-sm-4">
         </div>
@@ -183,9 +200,11 @@
     =SCRIPTS PARA ESTA PAGINA
     ===============================================================-->
 
+    <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+    <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
      <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
+    
     <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
     
     <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
@@ -197,12 +216,7 @@
     <script src="~/js/vistas/Revisiones_Index.js"></script>
     <script src="~/js/vistas/Common.js"></script>
    
-    <script src="~/vendor/select2/es.min.js"></script>
-
-
-
-    <script src="~/vendor/datepicker/bootstrap-datepicker.min.js"></script>
-    <script src="~/vendor/datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+   
 
 
     <!-- SOLO ES DE EJEMPLO - IGNORAR -->

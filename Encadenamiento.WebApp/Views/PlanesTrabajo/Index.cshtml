@@ -7,8 +7,15 @@
     <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
-    <link rel="stylesheet" href="~/vendor/datepicker/bootstrap-datepicker.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
 }
+<style>
+    .ui-datepicker {
+        font-family: Arial;
+        background: #f5e2d7;
+        border: 1px solid #f36f22;
+    }
+</style>
 <div class="container-fluid">
 
     <div class="row">
@@ -232,6 +239,8 @@
         =SCRIPTS PARA ESTA PAGINA
         ===============================================================-->
 
+        <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+        <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
         <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
         <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
@@ -245,14 +254,6 @@
 
         <script src="~/js/vistas/PlanesTrabajo_Index.js"></script>
         <script src="~/js/vistas/Common.js"></script>
-
-        <script src="~/vendor/select2/select2.min.js"></script>
-        <script src="~/vendor/select2/es.min.js"></script>
-
-
-
-        <script src="~/vendor/datepicker/bootstrap-datepicker.min.js"></script>
-        <script src="~/vendor/datepicker/locales/bootstrap-datepicker.es.min.js"></script>
 
 
         <!-- SOLO ES DE EJEMPLO - IGNORAR -->

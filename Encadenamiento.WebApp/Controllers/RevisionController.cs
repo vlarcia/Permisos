@@ -90,7 +90,7 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear([FromForm] string revisiones, [FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] string modeloGeneral)
+        public async Task<IActionResult> Crear([FromForm] string revisiones, [FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] IFormFile foto3, [FromForm] IFormFile foto4, [FromForm] string modeloGeneral)
         {
             GenericResponse<VMRevisiones> gResponse = new GenericResponse<VMRevisiones>();            
             
@@ -100,8 +100,12 @@ namespace Encadenamiento.WebApp.Controllers
                 VMRevisions registroGeneral = JsonConvert.DeserializeObject<VMRevisions>(modeloGeneral);
                 string nombrefoto1 = "";
                 string nombrefoto2 = "";
+                string nombrefoto3 = "";
+                string nombrefoto4 = "";
                 Stream fotoStream1 = null;
                 Stream fotoStream2 = null;
+                Stream fotoStream3 = null;
+                Stream fotoStream4 = null;
 
                 if (listaRevisione == null || !listaRevisione.Any())
                 {
@@ -122,11 +126,21 @@ namespace Encadenamiento.WebApp.Controllers
                         nombrefoto2 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto2, extension);
                         fotoStream2 = foto2.OpenReadStream();
                     }
-
-
+                    if (foto3 != null)
+                    {
+                        string extension = Path.GetExtension(foto3.FileName);
+                        nombrefoto3 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto3, extension);
+                        fotoStream3 = foto3.OpenReadStream();
+                    }
+                    if (foto4 != null)
+                    {
+                        string extension = Path.GetExtension(foto4.FileName);
+                        nombrefoto4 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto4, extension);
+                        fotoStream4 = foto4.OpenReadStream();
+                    }
                     Revisione revision_creada = await _revisionService.Crear(_mapper.Map<List<Revisione>>(listaRevisione));
                     VMRevisiones vmRevision = _mapper.Map<VMRevisiones>(revision_creada); //Tendré el ultimo registro de la revision
-                    Revision fotosrevision_creada = await _revisionService.CrearRevisions(_mapper.Map<Revision>(registroGeneral), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2);
+                    Revision fotosrevision_creada = await _revisionService.CrearRevisions(_mapper.Map<Revision>(registroGeneral), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2, fotoStream3, nombrefoto3, fotoStream4, nombrefoto4);
                     gResponse.Estado = true;
                     gResponse.Objeto = vmRevision;
                 }
@@ -141,7 +155,7 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Editar([FromForm] string revisiones, [FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] string modeloGeneral)
+        public async Task<IActionResult> Editar([FromForm] string revisiones, [FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] IFormFile foto3, [FromForm] IFormFile foto4, [FromForm] string modeloGeneral)
         {
             GenericResponse<VMRevisiones> gResponse = new GenericResponse<VMRevisiones>();
 
@@ -151,8 +165,12 @@ namespace Encadenamiento.WebApp.Controllers
                 Revision registroGeneral = JsonConvert.DeserializeObject<Revision>(modeloGeneral);
                 string nombrefoto1 = "";
                 string nombrefoto2 = "";
+                string nombrefoto3 = "";
+                string nombrefoto4 = "";
                 Stream fotoStream1 = null;
                 Stream fotoStream2 = null;
+                Stream fotoStream3 = null;
+                Stream fotoStream4 = null;
 
                 if (listaRevisione == null || !listaRevisione.Any())
                 {
@@ -173,10 +191,21 @@ namespace Encadenamiento.WebApp.Controllers
                         nombrefoto2 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto2, extension);
                         fotoStream2 = foto2.OpenReadStream();
                     }
-                    
+                    if (foto3 != null)
+                    {
+                        string extension = Path.GetExtension(foto3.FileName);
+                        nombrefoto3 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto3, extension);
+                        fotoStream3 = foto3.OpenReadStream();
+                    }
+                    if (foto4 != null)
+                    {
+                        string extension = Path.GetExtension(foto4.FileName);
+                        nombrefoto4 = string.Concat(registroGeneral.IdFinca.ToString(), registroGeneral.Nombrefoto4, extension);
+                        fotoStream4 = foto4.OpenReadStream();
+                    }
                     Revisione revision_editada = await _revisionService.Editar(_mapper.Map<List<Revisione>>(listaRevisione));
                     VMRevisiones vmRevision = _mapper.Map<VMRevisiones>(revision_editada);
-                    Revision fotosrevision_modificada = await _revisionService.EditarRevisions((registroGeneral), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2);
+                    Revision fotosrevision_modificada = await _revisionService.EditarRevisions((registroGeneral), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2, fotoStream3, nombrefoto3, fotoStream4, nombrefoto4);
                     gResponse.Estado = true;
                     gResponse.Objeto = vmRevision;
                 }

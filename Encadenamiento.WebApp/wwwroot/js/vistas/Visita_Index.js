@@ -13,6 +13,10 @@
     nombreFoto1: "",
     urlFoto2: "",
     nombreFoto2: "",
+    urlFoto3: "",
+    nombreFoto3: "",
+    urlFoto4: "",
+    nombreFoto4: "",
     nombreFinca: "",
     codFinca: "",
     descripcionPlan: "",
@@ -146,14 +150,10 @@ $(document).ready(function () {
 
     // Inicializar el datepicker en los campos de fecha
         
-
-    $('#txtFecha').datepicker({
-        format: "dd/mm/yyyy",   // Establecer el formato        
-        todayHighlight: true,   // Resaltar la fecha de hoy
-        autoclose: true,        // Cerrar automáticamente el calendario al seleccionar
-        language: "es",          // Idioma español para los textos  
+    $.datepicker.setDefaults($.datepicker.regional["es"])
         
-    });
+    $("#txtFecha").datepicker({ dateFormat: "dd/mm/yy" })
+    
     
     // Evento change para cuando seleccionen un valor en el combo de fincas
     $("#cboPlan").change(function () {
@@ -175,6 +175,8 @@ $(document).ready(function () {
         $("#tbDetalle").LoadingOverlay("show");
         $("#imgFoto1").LoadingOverlay("show");
         $("#imgFoto2").LoadingOverlay("show");
+        $("#imgFoto3").LoadingOverlay("show");
+        $("#imgFoto4").LoadingOverlay("show");
 
         // AJAX para obtener las actividades del plan
         $.ajax({
@@ -197,6 +199,8 @@ $(document).ready(function () {
                 $("#tbDetalle").LoadingOverlay("hide");
                 $("#imgFoto1").LoadingOverlay("hide");
                 $("#imgFoto2").LoadingOverlay("hide");
+                $("#imgFoto3").LoadingOverlay("hide");
+                $("#imgFoto4").LoadingOverlay("hide");
             }
         });
     });
@@ -226,6 +230,46 @@ $(document).ready(function () {
     document.getElementById("txtFoto2").addEventListener("change", function (event) {
         const file = event.target.files[0]; // Obtener el primer archivo seleccionado
         const imgElement = document.getElementById("imgFoto2");
+
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
+
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+        }
+    });
+    document.getElementById("txtFoto3").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto3");
+
+        if (file) {
+            const reader = new FileReader(); // Crear un objeto FileReader
+
+            // Definir la función a ejecutar cuando se carga el archivo
+            reader.onload = function (e) {
+                imgElement.src = e.target.result; // Asignar la URL del archivo a la imagen
+                imgElement.style.opacity = 1; // Cambiar la opacidad si es necesario
+            };
+
+            reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+            // Si no hay archivo, puedes asignar la imagen predeterminada
+            imgElement.src = "/images/eog-image-photo-svgrepo-com.svg"; // Ruta de la imagen predeterminada
+            imgElement.style.opacity = 0.25; // Establecer opacidad predeterminada
+        }
+    });
+    document.getElementById("txtFoto4").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const imgElement = document.getElementById("imgFoto4");
 
         if (file) {
             const reader = new FileReader(); // Crear un objeto FileReader
@@ -460,8 +504,12 @@ $('#btnGuardar').on('click', function () {
     // Cargar Fotos y FormData
     const inputFoto1 = document.getElementById("txtFoto1");
     const inputFoto2 = document.getElementById("txtFoto2");
+    const inputFoto3 = document.getElementById("txtFoto3");
+    const inputFoto4 = document.getElementById("txtFoto4");
     const lafoto1 = inputFoto1.files[0] ? inputFoto1.files[0].name : null;
-    const lafoto2 = inputFoto2.files[0] ? inputFoto.files[0].name : null;    
+    const lafoto2 = inputFoto2.files[0] ? inputFoto2.files[0].name : null;    
+    const lafoto3 = inputFoto3.files[0] ? inputFoto3.files[0].name : null;    
+    const lafoto4 = inputFoto4.files[0] ? inputFoto4.files[0].name : null;    
     const sento = modeloCargado.sentTo ? modeloCargado.sentTo : 0;
     const aplica = modeloCargado.aplicado ? modeloCargado.aplicado : false;
     const sincroniza = modeloCargado.sincronizado ? modeloCargado.sincronizado : false;
@@ -480,6 +528,8 @@ $('#btnGuardar').on('click', function () {
         observaciones: $('#txtObservaciones').val(),                        
         nombreFoto1: lafoto1,
         nombreFoto2: lafoto2,
+        nombreFoto3: lafoto3,
+        nombreFoto4: lafoto4,
         sentTo: sento,     
         aplicado: aplica,
         sincronizado:sincroniza,
@@ -512,6 +562,8 @@ $('#btnGuardar').on('click', function () {
     
     formData.append("foto1", inputFoto1.files[0] ? inputFoto1.files[0] : null);
     formData.append("foto2", inputFoto2.files[0] ? inputFoto2.files[0] : null);
+    formData.append("foto3", inputFoto3.files[0] ? inputFoto3.files[0] : null);
+    formData.append("foto4", inputFoto4.files[0] ? inputFoto4.files[0] : null);
     formData.append("modelovisita", JSON.stringify(modelovisita));
 
     // Mostrar overlay
@@ -582,7 +634,9 @@ function mostrarModal(modelo, edita) {
     $("#txtObservaciones").prop('disabled', edita);
     $("#txtFoto1").prop('disabled', edita);
     $("#txtFoto2").prop('disabled', edita);
-    
+    $("#txtFoto3").prop('disabled', edita);
+    $("#txtFoto4").prop('disabled', edita);
+
     $("#txtFecha").val(modelo.fecha != "" ? formatearFecha(modelo.fecha) : "");
     $("#txtResponsable").val(modelo.responsable)
     $("#txtMandador").val(modelo.mandador)
@@ -606,8 +660,10 @@ function mostrarModal(modelo, edita) {
     // Referencias a los elementos img
     const imgElement1 = document.getElementById("imgFoto1");
     const imgElement2 = document.getElementById("imgFoto2");
+    const imgElement3 = document.getElementById("imgFoto3");
+    const imgElement4 = document.getElementById("imgFoto4");
 
-    // Validar y asignar imágenes para imgFoto1 e imgFoto2
+    // Validar y asignar imágenes para imgFoto 1, 2 y 3
     if (modelo.nombreFoto1 && modelo.urlFoto1) {
         imgElement1.src = modelo.urlFoto1; // Cargar la imagen desde la URL
         imgElement1.style.opacity = 0.9;
@@ -622,7 +678,20 @@ function mostrarModal(modelo, edita) {
         imgElement2.src = "/images/eog-image-photo-svgrepo-com.svg";
         imgElement2.style.opacity = 0.25; // Opacidad predeterminada
     }
-
+    if (modelo.nombreFoto3 && modelo.urlFoto3) {
+        imgElement3.src = modelo.urlFoto3;
+        imgElement3.style.opacity = 0.9; // Opacidad predeterminada
+    } else {
+        imgElement3.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement3.style.opacity = 0.25; // Opacidad predeterminada
+    }
+    if (modelo.nombreFoto4 && modelo.urlFoto4) {
+        imgElement4.src = modelo.urlFoto4;
+        imgElement4.style.opacity = 0.9; // Opacidad predeterminada
+    } else {
+        imgElement4.src = "/images/eog-image-photo-svgrepo-com.svg";
+        imgElement4.style.opacity = 0.25; // Opacidad predeterminada
+    }
     $("#modalVisitas").modal("show")
 
 } 
@@ -645,7 +714,8 @@ function limpiarFormularioYTabla() {
     $('#txtLatitud').val('');
     $('#txtFoto1').val('');
     $('#txtFoto2').val('');
-
+    $('#txtFoto3').val('');
+    $('#txtFoto4').val('');
     
     const tabla = $('#tbDetalle').DataTable();  // Limpiar la tabla de detalles Asumiendo que usas DataTables
     tabla.clear().draw();                      // Eliminar todas las filas de la tabla

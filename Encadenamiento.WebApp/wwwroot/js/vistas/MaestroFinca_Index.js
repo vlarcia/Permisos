@@ -67,13 +67,14 @@ $(document).ready(function () {
 
     document.getElementById("txtTelefono").addEventListener("blur", function (event) {
         const input = event.target;
-        const value = input.value;
+        const errorElement = document.getElementById("telefonoError");
+        const value = input.value.trim();
 
-        // Verificar si el formato coincide con +99999999999
-        const telefonoRegex = /^\+(\d{3})(\d{8})$/;
-        if (!telefonoRegex.test(value)) {
-            alert("El número debe tener el formato +99999999999");
-            input.focus(); // Vuelve a enfocar el campo si el formato es incorrecto
+        if (value && !/^\+\d{11}$/.test(value)) {
+            errorElement.style.display = "block";
+            setTimeout(() => input.focus(), 10);
+        } else {
+            errorElement.style.display = "none";
         }
     });
 })

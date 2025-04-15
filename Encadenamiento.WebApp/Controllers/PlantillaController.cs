@@ -28,17 +28,9 @@ namespace Encadenamiento.WebApp.Controllers
             ViewData["Url"] = $"{this.Request.Scheme}://{this.Request.Host}";
             return View();
         }
-        //public async Task<IActionResult> PDFPlan(int idPlan)
-        //{
-        //    VMPlanesTrabajo vmPlan= _mapper.Map<VMPlanesTrabajo>(await _planService.Detalle(idPlan));
-        //    VMNegocio vmNegocio = _mapper.Map<VMNegocio>(await _negocioService.Obtener());
-            
-        //    VMPDFPlanesTrabajo modelo=new VMPDFPlanesTrabajo();
-        //    modelo.negocio = vmNegocio;
-        //    modelo.plan = vmPlan;   
-            
-        //    return View(modelo);
-        //}
+        
+
+        [AllowAnonymous]
         public IActionResult RestablecerClave(string clave   )
         {
             ViewData["Clave"] = clave;
