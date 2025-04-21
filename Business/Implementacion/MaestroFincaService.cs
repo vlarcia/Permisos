@@ -27,8 +27,10 @@ namespace Business.Implementacion
         }
         public async Task<List<MaestroFinca>> Lista()
         {
-            IQueryable<MaestroFinca> query = await _repositorio.Consultar();
-            return query.ToList();    
+            //IQueryable<MaestroFinca> query = await _repositorio.Consultar();
+            //return query.OrderBy(o=> o.CodFinca).ToList();
+            var query = await _repositorio.Consultar();
+            return await query.OrderBy(o => o.CodFinca).ToListAsync();
         }
         public async Task<MaestroFinca> Crear(MaestroFinca entidad)
         {

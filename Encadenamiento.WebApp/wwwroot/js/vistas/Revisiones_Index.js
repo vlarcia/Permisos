@@ -314,8 +314,7 @@ $('#btnGuardarRev').on('click', function (event) {
             Estado: estado,           
             Comentarios: comentarios,
             Tipo: tipo,
-            Cumplimiento: cumplimiento,
-            
+            Cumplimiento: cumplimiento,            
         });
     }
     // Agrega las fotos y modelo de data para mandar a Registrar

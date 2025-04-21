@@ -28,7 +28,16 @@ namespace Encadenamiento.WebApp.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            try
+            {
+                // Lógica de la acción
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         public IActionResult Privacy()

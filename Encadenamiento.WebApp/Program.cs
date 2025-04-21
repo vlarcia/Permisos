@@ -18,6 +18,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.InyectarDependencia(builder.Configuration);
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 

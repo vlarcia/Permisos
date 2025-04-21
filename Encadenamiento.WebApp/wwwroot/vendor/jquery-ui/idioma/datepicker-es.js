@@ -33,7 +33,7 @@ datepicker.regional.es = {
 	isRTL: false,
 	showMonthAfterYear: false,
 	yearSuffix: "" };
-datepicker.setDefaults( datepicker.regional.es );
+datepicker.setDefaults(datepicker.regional.es);
 
 return datepicker.regional.es;
 
