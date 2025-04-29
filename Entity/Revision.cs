@@ -21,6 +21,8 @@ public partial class Revision
     public string? Urlfoto2 { get; set; }
     public string? Urlfoto3 { get; set; }
     public string? Urlfoto4 { get; set; }
+    public string? Latitud { get; set; }
+    public string? Longitud { get; set; }
     public int? SentTo { get; set; }
     public bool? Sincronizado { get; set; }
     public bool? Aplicado { get; set; }

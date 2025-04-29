@@ -32,6 +32,7 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? NombreFoto4 { get; set; }
         public bool? Sincronizado { get; set; }
         public bool? Aplicado { get; set; }
+        public string? MapaBase64 { get; set; }
         public virtual ICollection<VMDetalleVisita> DetalleVisita { get; set; } = new List<VMDetalleVisita>();
  
     }

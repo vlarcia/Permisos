@@ -206,10 +206,20 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);     
         }
 
-        public async Task<VMPDFVisita> PDFVisitaModelo(int idVisita)
+        public async Task<VMPDFVisita> PDFVisitaModelo(int idVisita, [FromServices] GoogleMapsService mapsService)
         {
             VMVisita vmVisita = _mapper.Map<VMVisita>(await _visitaService.Detalle(idVisita));
             VMNegocio vmNegocio = _mapper.Map<VMNegocio>(await _negocioService.Obtener());
+
+            // Obtener imagen del mapa si hay coordenadas
+            if (!string.IsNullOrEmpty(vmVisita.Latitud) && !string.IsNullOrEmpty(vmVisita.Longitud))
+            {
+                var mapImageBytes = await mapsService.GetMapImageBytes(vmVisita.Latitud, vmVisita.Longitud);
+                if (mapImageBytes != null)
+                {
+                    vmVisita.MapaBase64 = Convert.ToBase64String(mapImageBytes);
+                }
+            }
 
             VMPDFVisita modelo = new VMPDFVisita();
             modelo.negocio = vmNegocio;
@@ -229,10 +239,10 @@ namespace Encadenamiento.WebApp.Controllers
 
             return View(modelo);
         }
-        public async Task<IActionResult> MostrarPDFVisita(int idVisita)
+        public async Task<IActionResult> MostrarPDFVisita(int idVisita, [FromServices] GoogleMapsService mapsService)
         {
             // Llamar al método para obtener el modelo
-            var modelo = await PDFVisitaModelo(idVisita);
+            var modelo = await PDFVisitaModelo(idVisita, mapsService);
 
             // Convertir y devolver el PDF
             return new ViewAsPdf("PDFVisita", modelo)
@@ -243,11 +253,11 @@ namespace Encadenamiento.WebApp.Controllers
             };
         }
 
-        public async Task<IActionResult> EnviarVisitaPorCorreo(int idVisita, string correoDestino, int wasap)
+        public async Task<IActionResult> EnviarVisitaPorCorreo(int idVisita, string correoDestino, int wasap, [FromServices] GoogleMapsService mapsService)
         {
             try
             {                
-                VMPDFVisita modelo = await PDFVisitaModelo(idVisita);    // Obtener el modelo 
+                VMPDFVisita modelo = await PDFVisitaModelo(idVisita, mapsService);    // Obtener el modelo 
                 Visita visita_modificar = await _visitaService.Detalle(idVisita);  // modelo de visita 
                 var pdf = new ViewAsPdf("PDFVisita", modelo);   // Crear el PDF
                                 

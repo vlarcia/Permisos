@@ -25,6 +25,8 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? Urlfoto2 { get; set; }
         public string? Urlfoto3 { get; set; }
         public string? Urlfoto4 { get; set; }
+        public string? Latitud { get; set; }
+        public string? Longitud { get; set; }
         public string? Proveedor { get; set; }        
         public int? CodFinca { get; set; }
         public string? Email { get; set; }

@@ -60,6 +60,10 @@ namespace Control
             services.AddScoped<IParametroService, ParametroService>();
 
             services.AddScoped<ISincronizaService, SincronizaService>();
+
+            services.AddHttpClient();
+
+            services.AddScoped<GoogleMapsService>();
         }
     }
 }
