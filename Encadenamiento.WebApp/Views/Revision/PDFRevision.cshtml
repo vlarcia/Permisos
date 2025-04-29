@@ -277,7 +277,24 @@
                     <p>No se encontraron revisiones.</p>
                 }            
         </div>
-
+        @if (!string.IsNullOrEmpty(Model.generales.MapaBase64))
+        {
+            <div style="margin: 20px 0; text-align: center; page-break-inside: avoid;">
+                <h4 style="color:#004DAF; margin-bottom: 10px;">Ubicación de la Visita</h4>
+                <img src="data:image/png;base64,@Model.generales.MapaBase64"
+                     style="width: 100%; max-width: 600px; border: 1px solid #ddd; border-radius: 4px;"
+                     alt="Mapa de ubicación" />
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                    Coordenadas: Lat @Model.generales.Latitud, Long @Model.generales.Longitud
+                </p>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.generales.Latitud) && !string.IsNullOrEmpty(Model.generales.Longitud))
+        {
+            <div style="margin: 20px 0; color: #ff0000; font-style: italic;">
+                No se pudo generar el mapa de ubicación (coordenadas disponibles: @Model.generales.Latitud, @Model.generales.Longitud)
+            </div>
+        }
 
         <div class="signature">
             <p>Quedamos atentos a sus comentarios u observaciones al respecto.</p>

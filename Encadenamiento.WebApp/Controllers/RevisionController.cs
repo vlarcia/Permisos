@@ -246,11 +246,21 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-        public async Task<VMPDFRevision> PDFRevModelo(int idFinca, string fecha)
+        public async Task<VMPDFRevision> PDFRevModelo(int idFinca, string fecha, [FromServices] GoogleMapsService mapsService)
         {
             List<VMRevisiones> vmRevision = _mapper.Map<List<VMRevisiones>>(await _revisionService.ObtenerRevision(idFinca,fecha));
             VMNegocio vmNegocio = _mapper.Map<VMNegocio>(await _negocioService.Obtener());
             VMRevisions vmGenerales = _mapper.Map<VMRevisions>(await _revisionService.ObtenerRevisionGeneral(idFinca, fecha));
+            // Obtener imagen del mapa si hay coordenadas
+            if (!string.IsNullOrEmpty(vmGenerales.Latitud) && !string.IsNullOrEmpty(vmGenerales.Longitud))
+            {
+                var mapImageBytes = await mapsService.GetMapImageBytes(vmGenerales.Latitud, vmGenerales.Longitud);
+                if (mapImageBytes != null)
+                {
+                    vmGenerales.MapaBase64 = Convert.ToBase64String(mapImageBytes);
+                }
+            }
+
             VMPDFRevision modelo = new VMPDFRevision();
             modelo.negocio = vmNegocio;
             modelo.revision = vmRevision;
@@ -260,10 +270,10 @@ namespace Encadenamiento.WebApp.Controllers
 
         }
        
-        public async Task<IActionResult> MostrarPDFRevision(int idFinca, string fecha)
+        public async Task<IActionResult> MostrarPDFRevision(int idFinca, string fecha, [FromServices] GoogleMapsService mapsService)
         {
             // Llamar al método para obtener el modelo
-            var modelo = await PDFRevModelo(idFinca, fecha);
+            var modelo = await PDFRevModelo(idFinca, fecha, mapsService);
 
             // Convertir y devolver el PDF
             return new ViewAsPdf("PDFRevision", modelo)
@@ -278,12 +288,12 @@ namespace Encadenamiento.WebApp.Controllers
             };
         }
 
-        public async Task<IActionResult> EnviarRevisionPorCorreo(int idFinca, string fecha, string correoDestino, int wasap)
+        public async Task<IActionResult> EnviarRevisionPorCorreo(int idFinca, string fecha, string correoDestino, int wasap, [FromServices] GoogleMapsService mapsService)
         {
             try
             {
                 // Obtener el modelo del plan
-                VMPDFRevision modelo = await PDFRevModelo(idFinca, fecha);
+                VMPDFRevision modelo = await PDFRevModelo(idFinca, fecha, mapsService);
                 Revision revision_modificar= await _revisionService.ObtenerRevisionGeneral(idFinca, fecha);
                 // Crear el PDF
                 var pdf = new ViewAsPdf("PDFRevision", modelo);
