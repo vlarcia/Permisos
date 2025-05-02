@@ -191,13 +191,25 @@
 
         <div class="image-container">
             <div class="image">
-                <img src="@Model.generales.Urlfoto1" alt="Foto 1">
-                <img src="@Model.generales.Urlfoto2" alt="Foto 2">                
+                @if (!string.IsNullOrEmpty(Model.generales.Urlfoto1))
+                {
+                    <img src="@Model.generales.Urlfoto1" alt="Foto 1">
+                }
+                @if (!string.IsNullOrEmpty(Model.generales.Urlfoto2))
+                {
+                    <img src="@Model.generales.Urlfoto2" alt="Foto 2">
+                }
             </div>
             <div class="image">
-                <img src="@Model.generales.Urlfoto3" alt="Foto 3">
-                <img src="@Model.generales.Urlfoto4" alt="Foto 4">
-            </div>
+                @if (!string.IsNullOrEmpty(Model.generales.Urlfoto3))
+                {
+                    <img src="@Model.generales.Urlfoto3" alt="Foto 3">
+                }
+                @if (!string.IsNullOrEmpty(Model.generales.Urlfoto4))
+                {
+                    <img src="@Model.generales.Urlfoto4" alt="Foto 4">
+                }
+            </div>            
         </div>
 
         <p>El cumplimiento global para su finca en esta etapa es de <strong>@((Model.revision.First().Cumplimiento ?? 0).ToString("F2")) %</strong> obtenido de la tabla que se adjunta al final. Se consideran las siguientes observaciones y actividades recomendadas apoyadas por las imágenes anteriores:</p>
@@ -280,7 +292,7 @@
         @if (!string.IsNullOrEmpty(Model.generales.MapaBase64))
         {
             <div style="margin: 20px 0; text-align: center; page-break-inside: avoid;">
-                <h4 style="color:#004DAF; margin-bottom: 10px;">Ubicación de la Visita</h4>
+                <h4 style="color:#004DAF; margin-bottom: 10px;">Ubicación de la Revisión</h4>
                 <img src="data:image/png;base64,@Model.generales.MapaBase64"
                      style="width: 100%; max-width: 600px; border: 1px solid #ddd; border-radius: 4px;"
                      alt="Mapa de ubicación" />

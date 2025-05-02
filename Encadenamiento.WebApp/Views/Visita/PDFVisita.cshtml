@@ -195,8 +195,8 @@
             @(fechaMasReciente?.ToString("dd/MM/yyyy") ?? "(aun no se actualiza)").            
         </p>
         
-        <p>La visita se realiza para revisar avances del plan de trabajo para su finca correspondiente a la zafra <strong>@((Model.visita.Zafra ?? 0).ToString("F2")) %</strong>
-            luego de actualizar las tareas y actividades que corresponden adicho plan.
+        <p>La visita se realiza para revisar avances del plan de trabajo para su finca correspondiente a la zafra <strong>@((Model.visita.Zafra ?? 0).ToString())</strong>
+            luego de actualizar las tareas y actividades que corresponden a dicho plan.
         </p>
         <br />
 
@@ -222,7 +222,6 @@
                 </tr>
             </table>
         </div>
-
 
         <div class="activities">
             <p><span class="section-title">Resultados obtenidos:</span></p>
@@ -272,12 +271,24 @@
 
         <div class="image-container">
             <div class="image">
-                <img src="@Model.visita.UrlFoto1" alt="Foto 1">
-                <img src="@Model.visita.UrlFoto2" alt="Foto 2">                
+                @if (!string.IsNullOrEmpty(Model.visita.UrlFoto1))
+                {
+                    <img src="@Model.visita.UrlFoto1" alt="Foto 1">
+                }
+                @if (!string.IsNullOrEmpty(Model.visita.UrlFoto2))
+                {
+                    <img src="@Model.visita.UrlFoto2" alt="Foto 2">
+                }
             </div>
-            <div class="image">                                
-                <img src="@Model.visita.UrlFoto3" alt="Foto 3">
-                <img src="@Model.visita.UrlFoto4" alt="Foto 4">
+            <div class="image">
+                @if (!string.IsNullOrEmpty(Model.visita.UrlFoto3))
+                {
+                    <img src="@Model.visita.UrlFoto3" alt="Foto 3">
+                }
+                @if (!string.IsNullOrEmpty(Model.visita.UrlFoto4))
+                {
+                    <img src="@Model.visita.UrlFoto4" alt="Foto 4">
+                }
             </div>
             @if (!string.IsNullOrEmpty(Model.visita.MapaBase64))
             {
