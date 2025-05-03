@@ -1,0 +1,3 @@
+[Environment]::SetEnvironmentVariable("ConnectionStrings__Cadena_Conexion", "", "Machine")
+[Environment]::SetEnvironmentVariable("GoogleMaps__ApiKey", "", "Machine")
+[Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production", "Machine")

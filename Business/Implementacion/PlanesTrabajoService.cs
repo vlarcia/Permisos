@@ -86,6 +86,7 @@ namespace Business.Implementacion
                     actividadeditada.IdFinca = actividad.IdFinca;
                     actividadeditada.FechaIni = actividad.FechaIni;
                     actividadeditada.FechaFin = actividad.FechaFin;
+                    actividadeditada.Estado = actividad.Estado;
                     actividadeditada.Comentarios = actividad.Comentarios;
                     actividadeditada.IdRequisito = actividad.IdRequisito;
 

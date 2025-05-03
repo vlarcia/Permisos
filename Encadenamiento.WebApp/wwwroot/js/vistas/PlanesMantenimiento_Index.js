@@ -322,7 +322,7 @@ $('#btnGuardar').on('click', function () {
         fechaIni: convertirFecha($('#txtFechaIniPlan').val()),
         fechaFin: convertirFecha($('#txtFechaFinPlan').val()),
         avance: parseFloat($('#txtAvance').val()),
-        estado: $('#cboestado').val(),
+        estado: $('#cboEstado').val(),
         observaciones: $('#txtObservaciones').val(),
         idFinca: parseInt(lafinca,10),
         actividades: [] // Aquí irán las actividades
@@ -439,7 +439,7 @@ function mostrarModal(modelo, edita) {
     $("#txtFechaFinPlan").prop('disabled', edita)
     $("#txtObservaciones").prop('disabled', edita)
     $("#txtAvance").prop('disabled', edita)
-    $("#cboestado").prop('disabled', edita)
+    $("#cboEstado").prop('disabled', edita)
   
   
     $("#txtId").val(modelo.idPlan)
@@ -448,7 +448,7 @@ function mostrarModal(modelo, edita) {
     $("#txtFechaFinPlan").val(formatearFecha(modelo.fechaFin))
     $("#txtObservaciones").val(modelo.observaciones)
     $("#txtAvance").val(parseFloat(modelo.avance))
-    $("#cboestado").val(modelo.estado)
+    $("#cboEstado").val(modelo.estado)
     $("#txtNombreFinca").val(modelo.nombreFinca)
     $("#txtCodFinca").val(modelo.codFinca)
     
