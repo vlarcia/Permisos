@@ -346,7 +346,7 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                             var fecha = $('#txtFecha').val();
                             var tipoRevision = $('#cboTipo').val();
                             var cumplimiento = $('#txtCumplimiento').val();
-
+                            var observaciones = $('#txtObservaciones').val();
                             // Crear una nueva fila con las celdas de cabecera en dos columnas: Descripción y Valor
                             var newRows = `
                                 <row r="2">
@@ -417,6 +417,8 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                             var fecha = $('#txtFecha').val();
                             var tipoRevision = $('#cboTipo').val();
                             var cumplimiento = $('#txtCumplimiento').val();
+                            var latitud = $('#txtLatitud').val();
+                            var longitud = $('#txtLongitud').val();
                             var observaciones = $('#txtObservaciones').val();
 
                             // Crear el encabezado con los datos del formulario
@@ -428,6 +430,8 @@ $('#tbRevisiones tbody').on('click', '.btn-mostrar', function () {
                         <p>Fecha: ${fecha}</p>
                         <p>Tipo Revisión: ${tipoRevision}</p>
                         <p>Cumplimiento: ${cumplimiento}</p>
+                        <p>Latitud: ${latitud}</p>
+                        <p>Longitud: ${longitud}</p>
                         <p>Observaciones: ${observaciones}</p>
                     </div>
                     <br />
@@ -641,6 +645,8 @@ $('#btnGuardar').on('click', function () {
     const lafoto3 = inputFoto3.files[0] ? inputFoto3.files[0].name : null;    
     const lafoto4 = inputFoto4.files[0] ? inputFoto4.files[0].name : null;    
 
+    modeloGeneral.latitud = $("#txtLatitud").val();
+    modeloGeneral.longitud = $("#txtLongitud").val();
     modeloGeneral.observaciones = $("#txtObservaciones").val();
     modeloGeneral.nombrefoto1 = lafoto1;
     modeloGeneral.nombrefoto2 = lafoto2;
@@ -819,6 +825,8 @@ function mostrarModal(modelo, edita, modeloGeneral) {
     $("#txtFecha").prop('disabled', true)    
     $("#txtCumplimiento").prop('disabled', edita)
     $("#cboTipo").prop('disabled', edita)
+    $("#txtLatitud").prop('disabled', edita)
+    $("#txtLongitud").prop('disabled', edita)
     $("#txtObservaciones").prop('disabled', edita)
     $("#txtNombreFinca").prop('disabled', true)
     $("#txtCodFinca").prop('disabled', true)
@@ -834,6 +842,8 @@ function mostrarModal(modelo, edita, modeloGeneral) {
     $("#cboTipo").val(modelo.tipo)
     $("#txtNombreFinca").val(modelo.nombreFinca)
     $("#txtCodFinca").val(modelo.codFinca) 
+    $("#txtLatitud").val(modeloGeneral.latitud) 
+    $("#txtLongitud").val(modeloGeneral.longitud) 
     $("#txtObservaciones").val(modeloGeneral.observaciones) 
 
     const imgElement1 = document.getElementById("imgFoto1");

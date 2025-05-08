@@ -261,6 +261,7 @@ $('#btnGuardarRev').on('click', function (event) {
     const fecha = convertirFecha($('#txtFecha').val());
     const tipo = $('#cboTipo').val();
     const cumplimiento = parseFloat($('#txtCumplimiento').val());
+   
 
     if (!idFinca || !fecha || !tipo || !cumplimiento) {
         
@@ -282,6 +283,8 @@ $('#btnGuardarRev').on('click', function (event) {
         idFinca:    idFinca,
         fecha:      fecha,
         tipo: tipo,
+        latitud:  $('#txtLatitud').val(),
+        longitud: $('#txtLongitud').val(),        
         observaciones: $("#txtObservaciones").val(),
         cumplimiento: cumplimiento,
         nombrefoto1:lafoto1,
@@ -352,7 +355,7 @@ $('#btnGuardarRev').on('click', function (event) {
 })
 
 function limpiarFormularioYTabla() {
-    // Limpiar los campos del formulario del Plan de Trabajo
+    // Limpiar los campos del formulario de la Revision
     $('#cboFinca').val('');
     $('#txtNombreFinca').val('');
     $('#txtIdFinca').val('');
@@ -360,6 +363,8 @@ function limpiarFormularioYTabla() {
     $('#cboTipo').val('');
     $('#txtCumplimiento').val('');    
     $('#txtObservaciones').val('');    
+    $('#txtLatitud').val('');    
+    $('#txtLongitud').val('');    
     // Limpiar la tabla de actividades
     tablaRequisitos.ajax.reload();
     
