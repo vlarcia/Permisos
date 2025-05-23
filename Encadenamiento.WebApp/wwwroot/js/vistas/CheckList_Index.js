@@ -115,7 +115,7 @@ $("#btnGuardar").click(function () {
             })
     } else {
         fetch("/CheckList/Editar", {
-            method: "PUT",
+            method: "POST",
             body: formData
         })
             .then(response => {
@@ -180,7 +180,7 @@ $("#tbdata tbody").on("click", ".btn-eliminar", function () {
     if (result.isConfirmed) { // Si el usuario confirma la acción
         $(".showSweetAlert").LoadingOverlay("show");
            fetch(`/CheckList/Eliminar?IdRequisito=${data.idRequisito}`, {
-                method: "DELETE",
+                method: "POST",
            })
            .then(response => {
                $(".showSweetAlert").LoadingOverlay("hide");

@@ -443,24 +443,26 @@ $(document).ready(function () {
             reverseButtons: true // Cambia el orden de los botones
         }).then((result) => {
             if (result.isConfirmed) { // Si el usuario confirma la acción
-                $(".showSweetAlert").LoadingOverlay("show");
+                $("#tbVisitas").LoadingOverlay("show");
                 fetch(`/Visita/Eliminar?IdVisita=${data.idVisita}`, {
-                    method: "DELETE",
+                    method: "POST",
                 })
                     .then(response => {
-                        $(".showSweetAlert").LoadingOverlay("hide");
+                       
                         return response.ok ? response.json() : Promise.reject(response);
                     })
                     .then(responseJson => {
                         if (responseJson.estado) {
                             tablaVisitas.row(fila).remove().draw(false);
+                        
                             Swal.fire("Listo!", "Visita " + data.idVisita + " en la finca: " + data.nombreFinca + " y su detalle fue eliminada!", "success")
                         } else {
                             Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
                         }
+                        $("#tbVisitas").LoadingOverlay("hide");
                     })
                     .catch(error => {
-                        $(".showSweetAlert").LoadingOverlay("hide");
+                        $("#tbVisitas").LoadingOverlay("hide");
                         Swal.fire("¡Error!", "Hubo un problema al eliminar la visita. "+error , "error");
                     });
             }
@@ -597,7 +599,7 @@ $('#btnGuardar').on('click', function () {
     } else {
         // Enviar datos al servidor para editar una visita existente
         fetch("/Visita/Editar", {
-            method: "PUT",
+            method: "POST",
             body: formData // No establecer 'Content-Type', FormData lo maneja
         })
             .then(response => response.ok ? response.json() : Promise.reject(response))

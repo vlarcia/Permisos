@@ -117,7 +117,7 @@ namespace Business.Implementacion
             try
             {
                 IQueryable<Actividad> query = await _actividadRepositorio
-                          .Consultar(a => a.FechaUltimarevision >= FechaInicial.Date && a.Estado == "FINALIZADA");
+                          .Consultar(a => a.FechaUltimarevision >= FechaInicial.Date && a.Estado.Trim() == "FINALIZADO");
                 Dictionary<string, int> resultado = query
                     .GroupBy(a=> a.FechaUltimarevision.Value.Date).OrderByDescending(g=> g.Key)
                     .Select(da=> new {fecha=da.Key.ToString("dd/MM/yyyy"), total=da.Count()})

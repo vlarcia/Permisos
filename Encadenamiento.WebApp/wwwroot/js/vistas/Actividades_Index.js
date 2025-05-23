@@ -193,7 +193,7 @@ $('#tbActividades tbody').on('click', '.btn-editar', function () {
     } else {
         filaseleccionada = $(this).closest("tr");
     }
-
+    $('#txtRequisito').val('');
     const data = tablaActividades.row(filaseleccionada).data();
     lafinca = data.idFinca    //esto es para tener la finca que no cambiará en la edicion
 
@@ -226,7 +226,7 @@ $('#btnGuardar').on('click', function () {   //Boton de Guardar Cambios
             
     // Hacer la petición al servidor para actualizar
     fetch("/PlanesTrabajo/EditarActividad", {
-        method: "PUT",
+        method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
@@ -353,7 +353,7 @@ $("#tbActividades tbody").on("click", ".btn-eliminar", function () {
         if (result.isConfirmed) { // Si el usuario confirma la acción
             $(".showSweetAlert").LoadingOverlay("show");
             fetch(`/PlanesTrabajo/EliminarActividad?IdActividad=${data.idActividad}`, {
-                method: "DELETE",
+                method: "POST",
             })
                 .then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide");
@@ -439,6 +439,7 @@ function mostrarModal(modelo, edita) {
     $("#txtRecursos").val(modelo.recursos)
     $("#cboTipo").val(modelo.tipo)
     $("#txtIdRequisito").val(modelo.idRequisito)
+    $("#txtRequisito").val(modelo.vdescrequisito)
     $("#cboRequisito").val(modelo.idRequisito)
     $("#txtAvanceAnt").val(modelo.avanceanterior)
 

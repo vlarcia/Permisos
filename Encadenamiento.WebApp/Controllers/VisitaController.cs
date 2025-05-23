@@ -49,6 +49,10 @@ namespace Encadenamiento.WebApp.Controllers
         {
             return View();
         }
+        public IActionResult MensajeriaWhatsapp()
+        {
+            return View();
+        }
 
         //[HttpGet]  
         //public async Task<IActionResult> Lista()   // Este era con mapeo
@@ -115,7 +119,7 @@ namespace Encadenamiento.WebApp.Controllers
                     nombrefoto4 = string.Concat(vmVisita.IdPlan.ToString(), vmVisita.NombreFoto4, extension);
                     fotoStream4 = foto4.OpenReadStream();
                 }
-
+                vmVisita.SentTo = 0;
 
                 Visita visita_creada = await _visitaService.Registrar(_mapper.Map<Visita>(vmVisita), fotoStream1, nombrefoto1, fotoStream2, nombrefoto2, fotoStream3, nombrefoto3, fotoStream4, nombrefoto4);
                 vmVisita = _mapper.Map<VMVisita>(visita_creada);                
@@ -133,7 +137,7 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Editar([FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] IFormFile foto3, [FromForm] IFormFile foto4, [FromForm] string modeloVisita)
         {
             GenericResponse<VMVisita> gResponse = new GenericResponse<VMVisita>();
@@ -190,7 +194,7 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> Eliminar(int idVisita)
         {
             GenericResponse<string> gResponse = new GenericResponse<string>();
@@ -286,10 +290,9 @@ namespace Encadenamiento.WebApp.Controllers
                 else
                 {
                     using var pdfStream = new MemoryStream(archivoPDF);  //  esto es para el WhatsApp
-                    asunto = $"Estimado {modelo.visita.Proveedor}, estamos adjuntando informe de visita que se realizó" +
+                    asunto = $"{modelo.visita.Proveedor}, estamos adjuntando informe de visita que se realizó" +
                              $" en su finca con codigo {modelo.visita.CodFinca}, esto es parte del programa de encadenamiento" +
-                             $" de productores de Pantaleon.  Le solicitamos revisar su contenido y si lo requiere, ponerse" +
-                             $" en contacto con el técnico supervisor de Negocios de caña.    Saludos";                             
+                             $" de productores de Pantaleon.  Le solicitamos revisar su contenido.";       
 
                     bool watsap_enviado=await _correoService.EnviarWhatsApp(correoDestino, asunto, pdfStream,
                                 "Visita_" + modelo.visita.IdVisita.ToString() + "_" + modelo.visita.CodFinca.ToString() + ".pdf");
@@ -343,8 +346,36 @@ namespace Encadenamiento.WebApp.Controllers
                 return sw.ToString();
             }
         }
-     
 
+        [HttpGet]
+        public async Task<IActionResult> ConsultarMensajes()
+        {
+            try
+            {
+                var mensajes = await _correoService.ConsultarMensajesRecibidos();
+                return Json(mensajes);
+            }
+            catch (Exception ex)
+            {
+                // Registrar error si es necesario
+                return StatusCode(500, "Error al consultar mensajes: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResponderMensajeSimple([FromForm] string destino, [FromForm] string textoVariable)
+        {
+            try
+            {
+                // Enviar usando solo una variable de template (la segunda puede quedar vacía o ser una constante)
+                var resultado = await _correoService.EnviarRespuestaWhatsApp(destino, textoVariable);
+                return Json(new { ok = resultado });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ok = false, error = ex.Message });
+            }
+        }
 
 
     }

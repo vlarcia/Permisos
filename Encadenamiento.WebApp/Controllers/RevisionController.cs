@@ -154,7 +154,7 @@ namespace Encadenamiento.WebApp.Controllers
 
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Editar([FromForm] string revisiones, [FromForm] IFormFile foto1, [FromForm] IFormFile foto2, [FromForm] IFormFile foto3, [FromForm] IFormFile foto4, [FromForm] string modeloGeneral)
         {
             GenericResponse<VMRevisiones> gResponse = new GenericResponse<VMRevisiones>();
@@ -218,7 +218,7 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> Eliminar([FromForm] string rev_eliminar, [FromForm] int rev_general)
         {
             GenericResponse<string> gResponse = new GenericResponse<string>();
@@ -324,10 +324,9 @@ namespace Encadenamiento.WebApp.Controllers
                 else
                 {
                     using var pdfStream = new MemoryStream(archivoPDF);  //  esto es para el WhatsApp
-                    asunto = $"Estimado {modelo.generales.Proveedor}, estamos adjuntando informe de visita que se realizó" +
+                    asunto = $"{modelo.generales.Proveedor}, estamos adjuntando informe de visita que se realizó" +
                              $" en su finca con codigo {modelo.generales.CodFinca}, esto es parte del programa de encadenamiento" +
-                             $" de productores de Pantaleon.  Le solicitamos revisar su contenido y si lo requiere, ponerse" +
-                             $" en contacto con el técnico supervisor de Negocios de caña.    Saludos";
+                             $" de productores de Pantaleon.  Le solicitamos revisar su contenido.";
 
                     bool watsap_enviado = await _correoService.EnviarWhatsApp(correoDestino, asunto, pdfStream,
                                 "Revision_" + modelo.generales.IdReg.ToString() + "_" + modelo.generales.CodFinca.ToString() + ".pdf");

@@ -120,7 +120,7 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> EditarPlan([FromBody] VMPlanesTrabajo modelo)
         {
             GenericResponse<VMPlanesTrabajo> gResponse = new GenericResponse<VMPlanesTrabajo>();
@@ -141,7 +141,7 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> EditarActividad([FromBody] VMActividad modelo)
         {
             GenericResponse<VMActividad> gResponse = new GenericResponse<VMActividad>();
@@ -170,7 +170,7 @@ namespace Encadenamiento.WebApp.Controllers
         }
 
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> Eliminar(int idPlan)
         {
             GenericResponse<string> gResponse = new GenericResponse<string>();
@@ -186,7 +186,7 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> EliminarActividad(int idActividad)
         {
             GenericResponse<string> gResponse = new GenericResponse<string>();

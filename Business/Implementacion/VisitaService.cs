@@ -52,7 +52,7 @@ namespace Business.Implementacion
                                 .Include(p => p.IdPlanNavigation)
                                 .Include(d => d.DetalleVisita)
                                 .ThenInclude(a => a.IdActividadNavigation)
-                                .Where(s => s.SentTo == 0)
+                                .Where(s => s.SentTo != 1)
                                 .ToList();
                 }
             }

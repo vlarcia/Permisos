@@ -141,7 +141,7 @@ $("#btnGuardar").click(function () {
             })
     } else {
         fetch("/MaestroFinca/Editar", {
-            method: "PUT",
+            method: "POST",
             body: formData
         })
             .then(response => {
@@ -203,7 +203,7 @@ $("#tbdatafinca tbody").on("click", ".btn-eliminar", function () {
         if (result.isConfirmed) { // Si el usuario confirma la acción
             $(".showSweetAlert").LoadingOverlay("show");
             fetch(`/MaestroFinca/Eliminar?IdFinca=${data.idFinca}`, {
-                    method: "DELETE",
+                    method: "POST",
 
             })
                 .then(response => {

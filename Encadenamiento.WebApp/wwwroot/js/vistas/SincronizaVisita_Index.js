@@ -393,7 +393,7 @@ $(document).ready(function () {
             if (result.isConfirmed) { // Si el usuario confirma la acción
                 $(".showSweetAlert").LoadingOverlay("show");
                 fetch(`/Visita/Eliminar?IdVisita=${data.idVisita}`, {
-                    method: "DELETE",
+                    method: "POST",
                 })
                     .then(response => {
                         $(".showSweetAlert").LoadingOverlay("hide");
@@ -537,7 +537,7 @@ $('#btnGuardar').on('click', function () {
     } else {
         // Enviar datos al servidor para editar una visita existente
         fetch("/Visita/Editar", {
-            method: "PUT",
+            method: "POST",
             body: formData // No establecer 'Content-Type', FormData lo maneja
         })
             .then(response => response.ok ? response.json() : Promise.reject(response))

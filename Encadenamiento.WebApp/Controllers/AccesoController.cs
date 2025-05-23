@@ -128,7 +128,7 @@ namespace Encadenamiento.WebApp.Controllers
             string día = DateTime.Now.Day.ToString("00");
             return $"{año}4850{día}!";
         }
-        [HttpPut]
+        [HttpPost]
 
         public async Task<IActionResult> GuardarCambios([FromForm] string parametros)        
         {

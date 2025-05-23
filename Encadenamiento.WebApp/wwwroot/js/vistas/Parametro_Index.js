@@ -142,7 +142,7 @@
 
         // Enviar datos al servidor
         fetch('/Acceso/GuardarCambios', {
-            method: 'PUT',
+            method: 'POST',
             body: formData,
         })
             .then(response => response.json())

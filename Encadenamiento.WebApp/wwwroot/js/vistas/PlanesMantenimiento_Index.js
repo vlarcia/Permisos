@@ -353,7 +353,7 @@ $('#btnGuardar').on('click', function () {
       
         // Hacer la petición al servidor para actualizar
         fetch("/PlanesTrabajo/EditarPlan", {
-            method: "PUT",
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -409,7 +409,7 @@ $('#tbPlanes tbody').on('click', '.btn-eliminar', function () {
         if (result.isConfirmed) { // Si el usuario confirma la acción
             $(".showSweetAlert").LoadingOverlay("show");
             fetch(`/PlanesTrabajo/Eliminar?IdPlan=${data.idPlan}`, {
-                method: "DELETE",
+                method: "POST",
             })
                 .then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide");

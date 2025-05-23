@@ -1,0 +1,157 @@
+﻿
+@{
+    ViewData["Title"] = "MensajeriaWhatsapp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/animate.min.css" />
+}
+
+<style>
+    .btn-custom {
+        background-color: #54e86d;
+        border: 1px solid #54e86d;
+        color: #fff;
+        font-size: 23px;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btn-custom:hover {
+            background-color: #33BB4A;
+            border-color: #33BB4A;
+        }
+</style>
+
+<div class="container-fluid">
+    <h5 class="text-center mb-4 bg-second-primary text-white card">Responder a mensajes de WhatsApp</h5>
+
+    <div class="row">
+        <div class="col-md-12 mb-4 card shadow">
+            <h6 class="text-center font-weight-bold card-header py-2 bg-second-primary text-white">Mensajes Recibidos</h6>
+            <table class="table table-bordered" id="tbMensajes">
+                <thead>
+                    <tr class="text-center">
+                        <th>Fecha</th>
+                        <th>Remitente</th>
+                        <th>Mensaje</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Se llenará dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para enviar respuesta -->
+<div class="modal fade" id="modalResponder" tabindex="-1" role="dialog" aria-labelledby="modalResponderLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content border border-success">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalResponderLabel">Responder Mensaje</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formRespuesta">
+                    <input type="hidden" id="txtTelefono" />
+                    <div class="form-group">
+                        <label for="txtMensaje">Mensaje:</label>
+                        <textarea id="txtMensaje" class="form-control" rows="3" placeholder="Escribe tu respuesta..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnEnviarRespuesta" class="btn btn-success">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            cargarMensajes();
+
+            $('#btnEnviarRespuesta').click(function () {
+                let telefono = $('#txtTelefono').val();
+                let mensaje = $('#txtMensaje').val();
+
+                if (mensaje.trim() === '') {
+                    alert('El mensaje no puede estar vacío.');
+                    return;
+                }
+                  $("#tbMensajes").LoadingOverlay("show");
+                $.ajax({
+                    url: '/Visita/ResponderMensajeSimple',
+                    method: 'POST',
+                    data: {
+                        destino: telefono,
+                        textoVariable: mensaje
+                    },
+                    success: function (res) {
+                        if (res.ok) {
+                            Swal.fire("Listo!", "Mensaje enviado con éxito!", "success");                            
+                            $('#modalResponder').modal('hide');
+                            $('#txtMensaje').val('');
+                        } else {
+                            alert('No se pudo enviar el mensaje.');
+                        }
+                        $("#tbMensajes").LoadingOverlay("hide");
+                    },
+                    
+                    error: function (err) {
+                        Swal.fire("Error", "No se pudo enviar el mensaje. " + err.responseText, "error");                        
+                        $("#tbMensajes").LoadingOverlay("hide");
+                    }
+                });
+            });
+        });
+
+        function cargarMensajes() {
+            $.get('/Visita/ConsultarMensajes', function (data) {
+                let tbody = $('#tbMensajes tbody');
+                tbody.empty();
+                data.forEach((msg, i) => {
+                    let row = `<tr class="text-center">
+                        <td>${msg.fecha}</td>
+                        <td>${msg.numero}</td>
+                        <td>${msg.mensaje}</td>
+                        <td>
+                            <button class="btn btn-custom" onclick="mostrarModal('${msg.numero}')">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                    tbody.append(row);
+                });
+            });
+        }
+
+        function mostrarModal(numero) {
+            $('#txtTelefono').val(numero);
+            $('#txtMensaje').val('');
+            $('#modalResponder').modal('show');
+        }
+    </script>
+}

@@ -70,7 +70,7 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
 
         }
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Editar([FromForm] string modelo)
         {
             GenericResponse<VMMaestroFinca> gResponse = new GenericResponse<VMMaestroFinca>();
@@ -93,7 +93,7 @@ namespace Encadenamiento.WebApp.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> Eliminar(int idFinca)
         {
             GenericResponse<string> gResponse = new GenericResponse<string>();

@@ -19,6 +19,9 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Twilio.TwiML.Messaging;
+using Newtonsoft.Json;
+using Twilio.Jwt.AccessToken;
+using Entity.DTOs;
 
 
 
@@ -109,23 +112,40 @@ namespace Business.Implementacion
                 IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
                 Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
 
-                string UrlArchivo = await _firebaseService.SubirStorage(archivoAdjunto, "carpeta_pdf", nombreArchivo);
-                string telefono = Config["numerotelefono"];                
+                string UrlArchivo = await _firebaseService.SubirStorage(archivoAdjunto, "carpeta_pdf", nombreArchivo);               
+                
+                // Buscar la posición de "googleapis.com/"
+                int indice = UrlArchivo.IndexOf("googleapis.com/");
+                string subcadena = string.Empty; // Inicializar subcadena
+                if (indice != -1)
+                {                    
+                    subcadena = UrlArchivo.Substring(indice+ "googleapis.com/".Length).Trim();                   
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró 'googleapis.com/' en la URL.");
+                }
 
+                string telefono = Config["numerotelefono"];                
+                string contenido= Config["templatesid"];
+                string msg=Mensaje.Trim();
 
                 TwilioClient.Init(Config["accountSid"], Config["authToken"]);
 
                 var message = await MessageResource.CreateAsync(
+                    contentSid: contenido,
                     from: new PhoneNumber($"whatsapp:{telefono}"), // Número de Twilio
                     to: new PhoneNumber($"whatsapp:{Destino}"),
-                    body: Mensaje,
-                    mediaUrl: new List<Uri> { new Uri(UrlArchivo) }
-                );
-
+                    contentVariables: JsonConvert.SerializeObject(
+                    new Dictionary<string, Object>() {
+                        { "1", msg },
+                        { "2", subcadena },
+                    },
+                    Formatting.Indented));
 
                 if (!string.IsNullOrEmpty(UrlArchivo))
                 {
-                    var respuesta = await _firebaseService.EliminarStorage("carptea_pdf", UrlArchivo);
+                    var respuesta = await _firebaseService.EliminarStorage("carpeta_pdf", nombreArchivo);
                 }
                 return true;
             }
@@ -224,6 +244,79 @@ namespace Business.Implementacion
             Console.WriteLine("No se detectó sesión activa de WhatsApp Web. Asegúrate de que WhatsApp Web esté abierto.");
         }
     }
+
+
+        //Modulos para responder
+
+        public async Task<List<MensajeTwilioDTO>> ConsultarMensajesRecibidos()
+        {
+            var mensajes = new List<MensajeTwilioDTO>();
+
+            try
+            {
+                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                var config = query.ToDictionary(c => c.Propiedad, c => c.Valor);
+
+                TwilioClient.Init(config["accountSid"], config["authToken"]);
+
+                var lista = MessageResource.Read(
+                    to: new PhoneNumber($"whatsapp:{config["numerotelefono"]}"),
+                    dateSentAfter: DateTime.Now.AddDays(-30), // Mensajes de los últimos 30 días
+                    limit: 50);
+                    
+
+                foreach (var mensaje in lista)
+                {
+                    if (mensaje.Direction == MessageResource.DirectionEnum.Inbound)
+                    {
+                        mensajes.Add(new MensajeTwilioDTO
+                        {
+                            Sid = mensaje.Sid,
+                            Fecha = mensaje.DateSent?.ToString("dd/MM/yyyy HH:mm"),
+                            Numero = mensaje.From?.ToString()?.Replace("whatsapp:", ""),
+                            Mensaje = mensaje.Body,
+                            Estado = mensaje.Status?.ToString()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return mensajes;
+        }
+        public async Task<bool> EnviarRespuestaWhatsApp(string destino, string textoVariable)
+        {
+            try
+            {
+                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                var config = query.ToDictionary(c => c.Propiedad, c => c.Valor);
+
+                TwilioClient.Init(config["accountSid"], config["authToken"]);
+
+                var mensaje = await MessageResource.CreateAsync(
+                    contentSid: config["templaterespuesta"],
+                    from: new PhoneNumber($"whatsapp:{config["numerotelefono"]}"),
+                    to: new PhoneNumber($"whatsapp:{destino}"),
+                    contentVariables: JsonConvert.SerializeObject(
+                        new Dictionary<string, object>
+                        {
+                    { "1", textoVariable.Trim() },
+
+                        }
+                    )
+                );
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
 
 
     }

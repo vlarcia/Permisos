@@ -695,7 +695,7 @@ $('#btnGuardar').on('click', function () {
     $(".card-body").LoadingOverlay("show");
 
     fetch("/Revision/Editar", {
-        method: "PUT",                
+        method: "POST",                
         body: formData    // No establezco 'Content-Type', FormData lo maneja
     })
         .then(response => {
@@ -736,7 +736,7 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
 
     const formData = new FormData();
     // Declarar la variable afuera del bloque AJAX
-    
+
     // AJAX para obtener el registro general de revisiones
     $.ajax({
         url: `/Revision/ObtenerRevisionGeneral`,
@@ -787,17 +787,16 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
                 reverseButtons: true // Cambia el orden de los botones
             }).then((result) => {
                 if (result.isConfirmed) { // Si el usuario confirma la acción
-                    $(".showSweetAlert").LoadingOverlay("show");
-
+                    $(".card-body").LoadingOverlay("show");
                     formData.append("rev_eliminar", JSON.stringify(rev_eliminar))
                     formData.append("rev_general", rev_general)
 
                     fetch(`/Revision/Eliminar`, {
-                        method: "DELETE",                        
+                        method: "POST",                        
                         body: formData
                     })
-                        .then(response => {
-                            $(".showSweetAlert").LoadingOverlay("hide");
+                        .then(response => {                            
+                            $(".card-body").LoadingOverlay("hide");
                             return response.ok ? response.json() : Promise.reject(response);
                         })
                         .then(responseJson => {
@@ -810,7 +809,7 @@ $('#tbRevisiones tbody').on('click', '.btn-eliminar', function () {
                             }
                         })
                         .catch(error => {
-                            $(".showSweetAlert").LoadingOverlay("hide");
+                            $(".card-body").LoadingOverlay("hide");
                             Swal.fire("¡Error!", "Hubo un problema al eliminar la revision.", "error");
                         });
                 }

@@ -16,6 +16,7 @@ const MODELO_ACTIVIDAD = {
 }
 
 let filaeditada = null;
+let tablaActividades;
 $(document).ready(function () {
     
     // Cargar la lista de fincas usando fetch
@@ -70,7 +71,7 @@ $(document).ready(function () {
         });
     // Inicializar tabla y pone en modo responsive
 
-        var tablaActividades = $('#tbActividad').DataTable({
+        tablaActividades = $('#tbActividad').DataTable({
             responsive: true, // Hacer que la tabla sea responsive
             columnDefs: [
                 {
@@ -226,10 +227,10 @@ $(document).ready(function () {
 
         }).then((result) => {
             if (result.isConfirmed) { // Si el usuario confirma la acción
-                $(".showSweetAlert").LoadingOverlay("show");
+                $(".card-body").LoadingOverlay("show");
                 var fila = tablaActividades.row($(this).parents('tr'));
                 fila.remove().draw(false); // Eliminar la fila y actualizar la tabla sin recargar
-                $(".showSweetAlert").LoadingOverlay("hide");
+                $(".card-body").LoadingOverlay("hide");
             }
             
         })
@@ -268,6 +269,7 @@ $('#btnNuevo').on('click', function () {
     $('#txtComentarios').val('');
     $('#cboRequisito').val('');
     $('#txtRequisito').val('');
+    $('#txtIdRequisito').val('');
 
     // Abrir el modal
     $('#modalActividad').modal('show');
@@ -305,21 +307,24 @@ $('#btnGuardarPlan').on('click', function () {
 
     // Recorrer las filas de la tabla y agregar las actividades al modelo
     $('#tbActividad tbody tr').each(function () {
-        let fila = $(this);
+        //Obtener los datos de la fila directamente desde DataTables
+        const rowData = tablaActividades.row(this).data();
+
+        // Armar la actividad con rowData[x] en vez de .find('td').eq(x)
         let actividad = {
-            descripcion: fila.find('td').eq(0).text(),
-            tipo: fila.find('td').eq(1).text(),
-            fechaIni: convertirFecha(fila.find('td').eq(2).text()),   // Convertir a Date
-            fechaFin: convertirFecha(fila.find('td').eq(3).text()),   // Convertir a Date
-            responsable: fila.find('td').eq(4).text(),
-            recursos: fila.find('td').eq(5).text(),
-            estado: fila.find('td').eq(6).text(),
-            avances: parseFloat(fila.find('td').eq(7).text()),  // Convertir a decimal
-            comentarios: fila.find('td').eq(8).text(),
-            idFinca: parseInt($("#txtIdFinca").val(), 10), // Convertir a entero
+            descripcion: rowData[0],
+            tipo: rowData[1],
+            fechaIni: convertirFecha(rowData[2]),
+            fechaFin: convertirFecha(rowData[3]),
+            responsable: rowData[4],
+            recursos: rowData[5],
+            estado: rowData[6],
+            avances: parseFloat(rowData[7]),
+            comentarios: rowData[8],
+            idFinca: parseInt($('#txtIdFinca').val(), 10),
             fechaUltimarevision: obtenerFechaActual(),
-            idRequisito: parseInt($("#txtIdRequisito").val(), 10),
-            avanceanterior:0.0
+            idRequisito: parseInt(rowData[9]),   // 👈🏽 ahora sí llega
+            avanceanterior: 0.0
         };
 
         modeloplan.actividades.push(actividad);
@@ -327,7 +332,7 @@ $('#btnGuardarPlan').on('click', function () {
     
     
     // Enviar el modelo completo al servidor como JSON
-    $(".showSweetAlert").LoadingOverlay("show");
+    $(".card-body").LoadingOverlay("show");
     fetch("/PlanesTrabajo/RegistrarPlan", {
         method: "POST",
         headers: { "Content-Type": "application/json;charset=utf-8" }, // Enviar como JSON        
@@ -343,15 +348,17 @@ $('#btnGuardarPlan').on('click', function () {
             if (responseJson.estado) {
                 Swal.fire("Listo!", "Plan de Trabajo creado con éxito!", "success");
                 limpiarFormularioYTabla();
+                $(".card-body").LoadingOverlay("hide");
             } else {
                 Swal.fire("Lo sentimos!", responseJson.mensaje, "error");
             }          
         })
         .catch(error => {
-            $(".showSweetAlert").LoadingOverlay("hide");
+            $(".card-body").LoadingOverlay("hide");
             Swal.fire("¡Error!", "Hubo un problema al tratar de agregar el Plan.", "error");
+            $(".card-body").LoadingOverlay("hide");
         })
-    $(".showSweetAlert").LoadingOverlay("hide");
+  
 });
 
 function limpiarFormularioYTabla() {

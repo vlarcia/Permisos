@@ -146,7 +146,7 @@ $("#btnGuardar").click(function () {
             })
     } else {
         fetch("/Usuario/Editar", {
-            method: "PUT",
+            method: "POST",
             body: formData
         })
         .then(response => {
@@ -213,7 +213,7 @@ $("#tbdata tbody").on("click", ".btn-eliminar", function () {
             $(".showSweetAlert").LoadingOverlay("show");
 
             fetch(`/Usuario/Eliminar?IdUsuario=${data.idUsuario}`, {
-                method: "DELETE",
+                method: "POST",
             })
                 .then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide");

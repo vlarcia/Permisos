@@ -23,35 +23,49 @@ function cargarDatos(idGrupo) {
                 const datasetsCumplimiento = []; // Valores absolutos para la gráfica
                 const datasetsTipo = [];
                 const datasetsCumplimientoPorcentajes = []; // Porcentajes para la tabla
-                const cumplimientoGeneralValues = []; // Array para Cumplimiento General
+                const cumplimientoGeneralValues = []; // Array para Cumplimiento General                
 
-                seriesDeCumplimiento.forEach((serie, index) => {
-                    tipos.push(serie.tipo);
+                const ordenDeseado = ["INICIAL", "INTERMEDIO", "FINAL"];
 
-                    // Valores absolutos para la gráfica de cumplimiento
-                    datasetsCumplimiento.push([
-                        serie.cumple,
-                        serie.parcial,
-                        serie.noCumple,
-                        serie.noAplica
-                    ]);
-
-                    // Porcentajes para la tabla de cumplimiento
-                    datasetsCumplimientoPorcentajes.push([
-                        serie.porcCumple,
-                        serie.porcParcial,
-                        serie.porcNoCumple,
-                        serie.porcNoAplica
-                    ]);
-
-                    datasetsTipo.push([
-                        serie.porcLaboral,
-                        serie.porcOcupacional,
-                        serie.porcAmbiental,
-                        serie.porcRse
-                    ]);
-                    cumplimientoGeneralValues.push(serie.cumplimientoGeneral); // Guardamos Cumplimiento General
+                const mapaSeries = {};
+                seriesDeCumplimiento.forEach(serie => {
+                    mapaSeries[serie.tipo] = {
+                        tipo: serie.tipo,
+                        cumplimiento: [
+                            serie.cumple,
+                            serie.parcial,
+                            serie.noCumple,
+                            serie.noAplica
+                        ],
+                        cumplimientoPorcentajes: [
+                            serie.porcCumple,
+                            serie.porcParcial,
+                            serie.porcNoCumple,
+                            serie.porcNoAplica
+                        ],
+                        tipoValores: [
+                            serie.porcLaboral,
+                            serie.porcOcupacional,
+                            serie.porcAmbiental,
+                            serie.porcRse
+                        ],
+                        cumplimientoGeneral: serie.cumplimientoGeneral
+                    };
                 });
+
+                // Reordenar los arrays según el orden deseado
+                ordenDeseado.forEach(tipo => {
+                    const datos = mapaSeries[tipo];
+                    if (datos) {
+                        tipos.push(tipo);
+                        datasetsCumplimiento.push(datos.cumplimiento);
+                        datasetsCumplimientoPorcentajes.push(datos.cumplimientoPorcentajes);
+                        datasetsTipo.push(datos.tipoValores);
+                        cumplimientoGeneralValues.push(datos.cumplimientoGeneral);
+                    }
+                });
+
+
 
                 // Gráfica de Cumplimiento con valores absolutos
                 const ctx = document.getElementById('graficoCumplimiento1').getContext('2d');

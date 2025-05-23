@@ -77,7 +77,7 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Editar([FromForm] string modeloAndroid)
         {
             GenericResponse<AndroidId> gResponse = new GenericResponse<AndroidId>();
@@ -95,7 +95,7 @@ namespace Encadenamiento.WebApp.Controllers
             }
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> AplicarVisita([FromForm] string modelovisita) 
         {
             GenericResponse<VMVisita> gResponse = new GenericResponse<VMVisita>();
@@ -116,7 +116,7 @@ namespace Encadenamiento.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> Eliminar(int idAndroid)
         {
             GenericResponse<string> gResponse = new GenericResponse<string>();
