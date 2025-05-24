@@ -318,6 +318,91 @@ namespace Business.Implementacion
             }
         }
 
+        public async Task<bool> EnviarWhatsAppAbierto(string destino, string mensaje, Stream archivoAdjunto = null, string nombreArchivo = null)
+        {
+            try
+            {
+                // Obtener configuración desde la base de datos
+                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+
+                string telefonoOrigen = Config["numerotelefono"];
+                string accountSid = Config["accountSid"];
+                string authToken = Config["authToken"];
+                string templateSinArchivo = Config["templaterespuesta"];
+                string templatePdf = "HX79be818831636d9ff3660c97a8ebaf3f";          // con PDF
+                string templateImagen = "HX9b4444cf0d863a76741df243d3567218";    //  con imagen
+
+                
+
+                TwilioClient.Init(accountSid, authToken);
+
+                string urlArchivo = null;
+                string subcadena = null;
+                string extension = null;
+
+                if (archivoAdjunto != null && !string.IsNullOrEmpty(nombreArchivo))
+                {
+                    extension = Path.GetExtension(nombreArchivo).ToLower();
+                    if (extension != ".pdf" && extension != ".jpg" && extension != ".jpeg" && extension != ".png")
+                        throw new Exception("Solo se permiten archivos PDF o imágenes (JPG, PNG)");
+
+                    // Subir archivo a Firebase
+                    urlArchivo = await _firebaseService.SubirStorage(archivoAdjunto, "carpeta_pdf", nombreArchivo);
+
+                    // Extraer subcadena a partir de "googleapis.com/"
+                    int indice = urlArchivo.IndexOf("googleapis.com/");
+                    if (indice != -1)
+                        subcadena = urlArchivo.Substring(indice + "googleapis.com/".Length).Trim();
+                }
+
+                // Elegir la plantilla
+                string templateSid;
+                if (string.IsNullOrEmpty(extension))
+                {
+                    templateSid = templateSinArchivo;
+                }
+                else if (extension == ".pdf")
+                {
+                    templateSid = templatePdf;
+                }
+                else // imagen: .jpg, .jpeg, .png
+                {
+                    templateSid = templateImagen;
+                }
+
+                var contentVariables = new Dictionary<string, object>  {
+                    { "1", mensaje.Trim() }
+                };
+
+                if (!string.IsNullOrEmpty(subcadena))
+                {
+                    contentVariables.Add("2", subcadena.Trim());
+                }
+
+                var message = await MessageResource.CreateAsync(
+                    contentSid: templateSid,
+                    from: new PhoneNumber($"whatsapp:{telefonoOrigen}"),
+                    to: new PhoneNumber($"whatsapp:{destino}"),
+                    contentVariables: JsonConvert.SerializeObject(contentVariables, Formatting.Indented)
+                );
+
+                // Limpieza del archivo
+                if (!string.IsNullOrEmpty(urlArchivo))
+                {
+                    await _firebaseService.EliminarStorage("carpeta_pdf", nombreArchivo);
+                }
+
+                return message.ErrorCode == null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al enviar WhatsApp con plantilla: " + ex.Message);
+                return false;
+            }
+        }
 
     }
+
 }
+

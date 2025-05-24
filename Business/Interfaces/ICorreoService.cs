@@ -18,6 +18,8 @@ namespace Business.Interfaces
         Task<bool> MensajeWhatsApp(string Destino, string Mensaje, Stream archivoAdjunto = null, string nombreArchivo = "");
         Task<List<MensajeTwilioDTO>> ConsultarMensajesRecibidos();
         Task<bool> EnviarRespuestaWhatsApp(string destino, string textoVariable);
-        
+        Task<bool> EnviarWhatsAppAbierto(string destino, string mensaje, Stream archivoAdjunto = null, string nombreArchivo = null);
+
+
     }
 }

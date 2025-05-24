@@ -53,7 +53,10 @@ namespace Encadenamiento.WebApp.Controllers
         {
             return View();
         }
-
+        public IActionResult Whatsapp()
+        {
+            return View();
+        }
         //[HttpGet]  
         //public async Task<IActionResult> Lista()   // Este era con mapeo
         //{
@@ -377,6 +380,28 @@ namespace Encadenamiento.WebApp.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EnviarWhatsAppAbierto(IFormFile archivo, string destino, string mensaje)
+        {
+            try
+            {
+                Stream streamArchivo = null;
+                string nombreArchivo = null;
+
+                if (archivo != null && archivo.Length > 0)
+                {
+                    streamArchivo = archivo.OpenReadStream();
+                    nombreArchivo = archivo.FileName;
+                }
+
+                bool exito = await _correoService.EnviarWhatsAppAbierto(destino, mensaje, streamArchivo, nombreArchivo);
+                return Json(new { exito });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { exito = false, mensaje = ex.Message });
+            }
+        }
 
     }
 }
