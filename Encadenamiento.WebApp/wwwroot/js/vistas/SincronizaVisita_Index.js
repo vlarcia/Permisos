@@ -107,8 +107,8 @@ $(document).ready(function () {
             }
 
         ],
-        order: [[0, "desc"]],
-        dom: "Bfrtip",
+        order: [[0, "desc"]],        
+        dom: "Bflrtip",
         buttons: [
             {
                 text: 'Exportar Excel',

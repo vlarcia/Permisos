@@ -39,7 +39,7 @@ namespace Business.Implementacion
             _revisionRepositorio=revisionRepositorio;
             _revision2Repositorio = revision2Repositorio;
             _fincasRepositorio = fincasRepositorio;
-            FechaInicial = FechaInicial.AddDays(-30);
+            FechaInicial = FechaInicial.AddDays(-180);
 
         }
         public async Task<string> TotalFincas()

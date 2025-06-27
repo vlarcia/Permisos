@@ -41,7 +41,7 @@ $(document).ready(function () {
         ],      
        
         order: [[1, "asc"]],
-        dom: "lrti",
+        dom: "lrtip",
 
         language: {
             url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
@@ -86,7 +86,7 @@ $(document).ready(function () {
 
         ],
         order: [[1, "asc"]],
-        dom: "lrti",
+        dom: "lrtip",
         
         language: {
             url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"

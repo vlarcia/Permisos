@@ -21,6 +21,8 @@ namespace Encadenamiento.WebApp.Controllers
             _planService = planService;
 
         }
+
+        [AllowAnonymous]
         public IActionResult EnviarClave(string correo, string clave)
         {
             ViewData["Correo"]=correo;
