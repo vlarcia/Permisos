@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewData["Title"] = "Alertas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <style>
+        .ui-datepicker {
+            z-index: 9999 !important;
+        }
+
+        .input-group {
+            overflow: visible !important;
+        }
+
+        .card-header {
+            background-color: #4e73df !important;
+        }
+
+        .badge-enviado {
+            background-color: #28a745;
+        }
+
+        .badge-fallido {
+            background-color: #dc3545;
+        }
+
+        .badge-pendiente {
+            background-color: #ffc107;
+            color: #212529;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-2 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Historial de Alertas</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-striped table-bordered" id="tbAlertas" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Permiso</th>
+                                <th>Destinatario</th>
+                                <th>Fecha Envío</th>
+                                <th>Medio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Ver Detalles -->
+    <div class="modal fade" id="modalAlerta" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Detalles de la Alerta</h6>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAlerta">
+                        <input type="hidden" id="txtIdAlerta" name="IdAlerta">
+
+                        <div class="form-row mb-2">
+                            <div class="col-sm-6">
+                                <label>Permiso</label>
+                                <input type="text" class="form-control" id="txtPermiso" name="Permiso" disabled>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Destinatario</label>
+                                <input type="text" class="form-control" id="txtDestinatario" name="Destinatario" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-2">
+                            <div class="col-sm-4">
+                                <label>Fecha Envío</label>
+                                <input type="text" class="form-control" id="txtFechaEnvio" name="FechaEnvio" disabled>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Medio de Envío</label>
+                                <input type="text" class="form-control" id="txtMedioEnvio" name="MedioEnvio" disabled>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Estado</label>
+                                <input type="text" class="form-control" id="txtResultado" name="Resultado" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-2">
+                            <div class="col-sm-12">
+                                <label>Mensaje</label>
+                                <textarea class="form-control" id="txtMensaje" name="Mensaje" rows="3" disabled></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger btn-sm" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+    <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
+
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+    <script src="~/js/vistas/Destinatario_Index.js"></script>
+    <script src="~/js/vistas/Alerta_Index.js"></script>
+    <script src="~/js/vistas/Common.js"></script>
+
+
+}

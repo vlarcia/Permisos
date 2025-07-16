@@ -1,164 +1,163 @@
-﻿let tablaRevisiones;
+﻿let tablaPermisos;
+
 $(document).ready(function () {
-    $(".table").LoadingOverlay("show");
-    tablaVisitas = $('#tbVisitas').DataTable({
-
+    tablaPermisos = $('#tbPermisosVencimiento').DataTable({
         responsive: true,
-        "ajax": {
-            "url": '/Visita/Lista',
-            "type": "GET",
-            data: { envio: 1 },
-            "datatype": "json"
+        ajax: {
+            url: '/Permiso/ListaPermisos',
+            type: "GET",
+            dataSrc: "",
+            dataType: "json",
+            error: function (xhr, error) {
+                console.error("Error al cargar datos:", error);
+                Swal.fire("Error", "No se pudieron cargar los permisos", "error");
+            }
         },
-        "columns": [
-            { "data": "idFinca" },
-            { "data": "nombreFinca" },
-
-            // Formatear fecha
+        columns: [
+            { "data": "idPermiso", className: "text-center" },
             {
-                "data": "fecha",
-                "render": function (data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('es-NI', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
-                    }
-                    return ""; // Si no hay fecha, devolver vacío
+                "data": "nombre",
+                render: data => data ? data.replace(/\r\n/g, '<br>') : "N/A"
+            },
+            { "data": "institucion" },
+            {
+                "data": "encargado",
+                render: data => data ? data.replace(/\n/g, '<br>') : "N/A"
+            },
+            {
+                "data": "fechaVencimiento",
+                className: "text-center",
+                render: {
+                    display: data => {
+                        if (!data) return "N/A";
+                        const date = new Date(data);
+                        return date.toLocaleDateString('es-NI');
+                    },
+                    sort: data => new Date(data).getTime()
                 }
             },
-
             {
-                "defaultContent": '<button class="btn btn-primary btn-correo1 btn-sm mr-1"><i class="fas fa-envelope"></i></button>' +
-                    '<button class="btn btn-custom btn-watsap1 btn-sm"><i class="fab fa-whatsapp"></i></button>',
-                "orderable": false,
-                "searchable": false,
-                "width": "20px"
-            }
+                data: "fechaVencimiento",
+                className: "text-center",
+                render: {
+                    display: (data, type, row) => {
+                        if (!data) return "N/A";
 
-        ],      
-       
-        order: [[1, "asc"]],
-        dom: "lrtip",
+                        const hoy = new Date();
+                        const vencimiento = new Date(data);
+                        const diasGestion = row.diasGestion || 0;
 
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
-        },
-    });
-    tablaRevisiones = $('#tbRevisiones').DataTable({
+                        // Mostrar "Vencido" si ya pasó la fecha de vencimiento
+                        if (vencimiento <= hoy) {
+                            return '<span class="badge badge-danger">Vencido</span>';
+                        }
 
-        responsive: true,
-        "ajax": {
-            "url": '/Revision/ListaRevisions',
-            "type": "GET",
-            data: { envio: 1},  // el 1 es para que obtenga solo las revisiones que no se han enviado por correo
-            "datatype": "json"
-        },
-        "columns": [
-            { "data": "idFinca" },
-            { "data": "nombreFinca" },
+                        // Calcular cuándo debería iniciar la gestión
+                        const fechaAlerta = new Date(vencimiento);
+                        fechaAlerta.setDate(vencimiento.getDate() - diasGestion);
 
-            // Formatear fecha
-            {
-                "data": "fecha",
-                "render": function (data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('es-NI', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
+                        const diffDays = Math.ceil((fechaAlerta - hoy) / (1000 * 60 * 60 * 24));
+
+                        if (diffDays <= 0) {
+                            return `<span class="badge badge-danger">${diffDays} días</span>`;
+                        } else if (diffDays <= 30) {
+                            return `<span class="badge badge-warning">${diffDays} días</span>`;
+                        } else {
+                            return `<span class="badge badge-success">${diffDays} días</span>`;
+                        }
                     }
-                    return ""; // Si no hay fecha, devolver vacío
                 }
-            },            
-
-            {               
-                "defaultContent": '<button class="btn btn-primary btn-correo2 btn-sm mr-1"><i class="fas fa-envelope"></i></button>' +
-                    '<button class="btn btn-custom btn-watsap2 btn-sm"><i class="fab fa-whatsapp"></i></button>' ,                   
-                "orderable": false,
-                "searchable": false,
-                "width": "20px"
+            },
+            {
+                // Nueva columna oculta para ordenamiento numérico
+                "data": "fechaVencimiento",
+                visible: false, // Oculta esta columna
+                render: data => {
+                    const hoy = new Date();
+                    const vencimiento = new Date(data);
+                    return Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+                }
+            },
+            {
+                "defaultContent":
+                    '<button class="btn btn-primary btn-correo btn-sm mr-1"><i class="fas fa-envelope"></i></button>' +
+                    '<button class="btn btn-whatsapp btn-sm"><i class="fab fa-whatsapp"></i></button>',
+                orderable: false,
+                searchable: false,
+                width: "90px",
+                className: "text-center"
             }
-
         ],
-        order: [[1, "asc"]],
-        dom: "lrtip",
-        
+        order: [[6, "asc"]], // Ordenamos por la columna oculta de días restantes
+        createdRow: function (row, data) {
+            if (!data.fechaVencimiento) return;
+
+            const hoy = new Date();
+            const vencimiento = new Date(data.fechaVencimiento);
+            const diffDays = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 30) {
+                $(row).addClass('vencimiento-proximo');
+            }
+            if (diffDays <= 7) {
+                $(row).addClass('vencimiento-critico');
+            }
+        },
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Vencimientos',
+            }, 'pageLength'
+        ],
         language: {
             url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
-        },
+        }
     });
-   
- 
-    $(".table").LoadingOverlay("hide");
-});
 
-$('#tbVisitas tbody').on('click', '.btn-correo1', function () {
-    let filaseleccionada;
-    if ($(this).closest("tr").hasClass("child")) {
-        filaseleccionada = $(this).closest("tr").prev();
-    }
-    else {
-        filaseleccionada = $(this).closest("tr");
-    }
+    // Envío por correo
+    $('#tbPermisosVencimiento tbody').on('click', '.btn-correo', function () {
+        let fila = $(this).closest("tr").hasClass("child") ? $(this).closest("tr").prev() : $(this).closest("tr");
+        const data = tablaPermisos.row(fila).data();
 
-    const data = tablaVisitas.row(filaseleccionada).data();
-    const correoDestino = data.email;  // Obtenemos el email desde la fila seleccionada
-
-    if (correoDestino) {
-        $("#tbVisitas").LoadingOverlay("show");
+        $("#tbPermisosVencimiento").LoadingOverlay("show");
         $.ajax({
-            url: `/Visita/EnviarVisitaPorCorreo?idVisita=${data.idVisita}&correoDestino=${correoDestino}`,
-            type: 'GET', // O POST si prefieres
-            success: function (response) {
-                if (response.estado) {
+            url: `/Alerta/EnviarAlerta?idPermiso=${data.idPermiso}`,
+            type: 'GET',
+            success: function (res) {
+                if (res.estado) {
                     Swal.fire("Listo!", "Correo enviado con éxito!", "success");
-                    tablaVisitas.row(filaseleccionada).remove().draw(false);
+                    tablaPermisos.row(fila).remove().draw(false);
                 } else {
-                    Swal.fire("Error", response.mensaje, "error");
+                    Swal.fire("Error", res.mensaje, "error");
                 }
             },
-            error: function (error) {
-                Swal.fire("Error", "No se pudo enviar el correo. " + response.mensaje, "error");
-            },
-            complete: function () {
-                // Esto se ejecuta después de que la llamada AJAX haya terminado, sin importar si fue exitosa o no.
-                $("#tbVisitas").LoadingOverlay("hide");
-            }
+            error: () => Swal.fire("Error", "No se pudo enviar el correo", "error"),
+            complete: () => $("#tbPermisosVencimiento").LoadingOverlay("hide")
         });
-    }
-});
-$('#tbVisitas tbody').on('click', '.btn-watsap1', function () {
-    let filaseleccionada;
-    if ($(this).closest("tr").hasClass("child")) {
-        filaseleccionada = $(this).closest("tr").prev();
-    }
-    else {
-        filaseleccionada = $(this).closest("tr");
-    }
+    });
 
-    const data = tablaVisitas.row(filaseleccionada).data();
-    const idvisita = data.idVisita
-    const finca = data.nombreFinca;
-    const correodestino = data.telefono;  // Obtenemos el telefono  y utilizamos el parametro de la funcion enviaCorreo.
+    // Envío por WhatsApp
+    $('#tbPermisosVencimiento tbody').on('click', '.btn-whatsapp', function () {
+        let fila = $(this).closest("tr").hasClass("child") ? $(this).closest("tr").prev() : $(this).closest("tr");
+        const data = tablaPermisos.row(fila).data();
 
-    if (correodestino) {
-        $("#tbVisitas").LoadingOverlay("show");
+        $("#tbPermisosVencimiento").LoadingOverlay("show");
         $.ajax({
-            url: `/Visita/EnviarVisitaPorCorreo`,
-            type: 'GET', // O POST si prefieres
-            data: { idVisita : idvisita, correoDestino : correodestino, wasap: 1},
-            success: function (response) {
-                if (response.estado) {
+            url: `/Alerta/EnviarAlerta`,
+            type: 'GET',
+            data: {
+                idPermiso: data.idPermiso,
+                wasap: 1
+            },
+            success: function (res) {
+                if (res.estado) {
                     Swal.fire({
                         title: "WhatsApp Enviado",
-                        text: "Se ha enviado por medio de WhatsApp el informe de la visita de la finca" + finca,
+                        text: `Se ha enviado la alerta sobre el permiso: ${data.nombre}`,
                         icon: "success",
-
                         showClass: {
                             popup: `animate__animated animate__fadeInLeft animate__faster`
                         },
@@ -166,108 +165,17 @@ $('#tbVisitas tbody').on('click', '.btn-watsap1', function () {
                             popup: `animate__animated animate__fadeOutUp animate__faster`
                         },
                         confirmButtonColor: "#3085d6",
-                    });                
-
-                    tablaVisitas.row(filaseleccionada).remove().draw(false);
-                } else {
-                    Swal.fire("Error", response.mensaje, "error");
-                }
-            },
-            error: function (error) {
-                const mensajeError = error.responseJSON && error.responseJSON.mensaje
-                    ? error.responseJSON.mensaje
-                    : "No se pudo enviar el WhatsApp.";
-                Swal.fire("Error", mensajeError, "error");
-            },
-            complete: function () {
-                // Esto se ejecuta después de que la llamada AJAX haya terminado, sin importar si fue exitosa o no.
-                $("#tbVisitas").LoadingOverlay("hide");
-            }
-        });
-    }    
-});
-
-$('#tbRevisiones tbody').on('click', '.btn-correo2', function () {
-    let filaseleccionada;
-    if ($(this).closest("tr").hasClass("child")) {
-        filaseleccionada = $(this).closest("tr").prev();
-    }
-    else {
-        filaseleccionada = $(this).closest("tr");
-    }
-
-    const data = tablaRevisiones.row(filaseleccionada).data();
-    const correoDestino = data.email;  // Obtenemos el email desde la fila seleccionada
-    const fecha = formatearFecha(data.fecha)
-    if (correoDestino) {
-        $("#tbRevisiones").LoadingOverlay("show");
-        $.ajax({
-            url: `/Revision/EnviarRevisionPorCorreo?idFinca=${data.idFinca}&fecha=${fecha}&correoDestino=${correoDestino}`,
-            type: 'GET', // O POST si prefieres
-            success: function (response) {
-                if (response.estado) {
-                    Swal.fire("Listo!", "Correo enviado con éxito!", "success");
-                    tablaRevisiones.row(filaseleccionada).remove().draw(false);
-                } else {
-                    Swal.fire("Error", response.mensaje, "error");
-                }
-            },
-            error: function (error) {
-                Swal.fire("Error", "No se pudo enviar el correo. " + response.mensaje, "error");
-            },
-            complete: function () {
-                // Esto se ejecuta después de que la llamada AJAX haya terminado, sin importar si fue exitosa o no.
-                $("#tbRevisiones").LoadingOverlay("hide");
-            }
-        });
-    }
-});
-
-$('#tbRevisiones tbody').on('click', '.btn-watsap2', function () {
-    let filaseleccionada;
-    if ($(this).closest("tr").hasClass("child")) {
-        filaseleccionada = $(this).closest("tr").prev();
-    } else {
-        filaseleccionada = $(this).closest("tr");
-    }
-
-    const data = tablaRevisiones.row(filaseleccionada).data();
-    const idfinca = data.idFinca;
-    const finca = data.nombreFinca;
-    const correodestino = data.telefono;
-    const lafecha = formatearFecha(data.fecha);
-
-    if (correodestino) {
-        $("#tbRevisiones").LoadingOverlay("show");
-        $.ajax({
-            url: `/Revision/EnviarRevisionPorCorreo`,
-            type: 'GET',
-            data: { idFinca: idfinca, fecha: lafecha, correoDestino: correodestino, wasap: 1 },
-            success: function (response) {
-                if (response.estado) {
-                    Swal.fire({
-                        title: "WhatsApp Enviado",
-                        text: "Se ha enviado por medio de WhatsApp la revisión de la finca " + finca,
-                        icon: "success",
-                        showClass: { popup: `animate__animated animate__fadeInLeft animate__faster` },
-                        hideClass: { popup: `animate__animated animate__fadeOutUp animate__faster` },
-                        confirmButtonColor: "#3085d6",
                     });
-
-                    tablaRevisiones.row(filaseleccionada).remove().draw(false);
+                    tablaPermisos.row(fila).remove().draw(false);
                 } else {
-                    Swal.fire("Error", response.mensaje, "error");
+                    Swal.fire("Error", res.mensaje, "error");
                 }
             },
-            error: function (error) {
-                const mensajeError = error.responseJSON && error.responseJSON.mensaje
-                    ? error.responseJSON.mensaje
-                    : "No se pudo enviar el WhatsApp.";
-                Swal.fire("Error", mensajeError, "error");
+            error: err => {
+                const msg = err.responseJSON?.mensaje ?? "No se pudo enviar el WhatsApp.";
+                Swal.fire("Error", msg, "error");
             },
-            complete: function () {
-                $("#tbRevisiones").LoadingOverlay("hide");
-            }
+            complete: () => $("#tbPermisosVencimiento").LoadingOverlay("hide")
         });
-    }
+    });
 });

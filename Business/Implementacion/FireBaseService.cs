@@ -8,15 +8,16 @@ using Firebase.Auth;
 using Firebase.Storage;
 using Entity;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Business.Implementacion
 {
     public class FireBaseService : IFireBaseService
     {
-        private readonly IGenericRepository<Configuracion> _repositorio;
+        private readonly IGenericRepository<TbConfiguracion> _repositorio;
 
-        public FireBaseService(IGenericRepository<Configuracion> repositorio)
+        public FireBaseService(IGenericRepository<TbConfiguracion> repositorio)
         {
             _repositorio = repositorio;
         }
@@ -26,8 +27,8 @@ namespace Business.Implementacion
 
             try
             {
-                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Firebase_Storage"));
-                Dictionary<String, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+                IQueryable<TbConfiguracion> query = _repositorio.Consultar(c => c.Recurso.Equals("Firebase_Storage"));
+                Dictionary<String, string> Config = await query.ToDictionaryAsync(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
 
                 var auth = new FirebaseAuthProvider(new FirebaseConfig(Config["api_key"]));
                 var a = await auth.SignInWithEmailAndPasswordAsync(Config["email"], Config["clave"]);
@@ -57,8 +58,8 @@ namespace Business.Implementacion
         {
             try
             {
-                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Firebase_Storage"));
-                Dictionary<String, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+                IQueryable<TbConfiguracion> query = _repositorio.Consultar(c => c.Recurso.Equals("Firebase_Storage"));
+                Dictionary<String, string> Config = await query.ToDictionaryAsync(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
 
                 var auth = new FirebaseAuthProvider(new FirebaseConfig(Config["api_key"]));
                 var a = await auth.SignInWithEmailAndPasswordAsync(Config["email"], Config["clave"]);

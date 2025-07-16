@@ -1,4 +1,5 @@
-﻿using Entity.DTOs;
+﻿using Entity;
+using Entity.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,15 @@ namespace Business.Interfaces
 {
     public interface IDashBoardService
     {
-        Task<string> TotalFincas();
-        Task<string> TotalPlanesActivos();
-        Task<string> TotalActividadesActivas();
-        Task<string> RevisionesUltimoMes();
-        Task<string> VisitasUltimoMes();
-        Task<Dictionary<string, int>> ActividadesCompletadasUltimoMes();
-        Task<Dictionary<string,int>> FincasVisitadasUltimoMes();
-        Task<List<CumplimientoDTO>> ObtenerFincasConCumplimiento();
+        Task<string> TotalPermisos();
+        Task<string> TotalDestinatarios();        
+        Task<string> AlertasMes();
+        Task<string> TotalVencimientoMes();
+        Task<Dictionary<string, int>> RenovacionesMes();
+        Task<Dictionary<string,int>> VencimientosMes();
+        Task<List<TbPermiso>> ObtenerPermisosPorFecha(DateTime fecha);
+        Task<int> TotalPermisosVencidosNoTramite();
+
 
     }
 }

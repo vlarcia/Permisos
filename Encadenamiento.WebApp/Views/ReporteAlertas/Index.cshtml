@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewData["Title"] = "Reporte Alertas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        .export-buttons {
+            margin-bottom: 15px;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h5 class="mb-0" style="color:darkblue">Reporte de Alertas</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-second-primary py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-white">Alertas por Resultado</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoResultado"></canvas>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-second-primary py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-white">Alertas por Medio de Envío</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoMedio"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-second-primary py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-white">Últimas Alertas Enviadas</h6>
+                    <div class="export-buttons">
+                        <button id="btnExportExcel" class="btn btn-success btn-sm mr-2">Exportar Excel</button>
+                        <button id="btnExportPDF" class="btn btn-danger btn-sm">Exportar PDF</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="tablaAlertas"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Librerías para exportar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="~/js/vistas/RepAlertas_Index.js"></script>
+}
+
+

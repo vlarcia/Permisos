@@ -1,4 +1,4 @@
-﻿namespace Encadenamiento.WebApp.Models.ViewModels
+﻿namespace Permisos.WebApp.Models.ViewModels
 {
     public class VMReporteCompra
     {

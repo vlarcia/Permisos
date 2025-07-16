@@ -1,15 +1,15 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 
-namespace Encadenamiento.WebApp.Utilidades.Extensiones
+namespace Permisos.WebApp.Utilidades.Extensiones
 {
     public class CustomAssemblyLoadContext: AssemblyLoadContext
     {
-        public IntPtr LoadUnmanagedLibrary(string absolutePath)
+        public nint LoadUnmanagedLibrary(string absolutePath)
         {
             return LoadUnmanagedDll(absolutePath);
         }
-        protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+        protected override nint LoadUnmanagedDll(string unmanagedDllName)
         {
             return LoadUnmanagedDllFromPath(unmanagedDllName);
         }

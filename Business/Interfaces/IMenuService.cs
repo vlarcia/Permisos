@@ -9,6 +9,6 @@ namespace Business.Interfaces
 {
     public interface IMenuService
     {
-        Task<List<Menu>> ObtenerMenus(int idusuario);
+        Task<List<TbMenu>> ObtenerMenus(int idusuario);
     }
 }

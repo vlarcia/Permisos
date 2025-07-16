@@ -1,4 +1,4 @@
-﻿namespace Produccion.AplicacionWeb.Models.ViewModels
+﻿namespace Permisos.WebApp.Models.ViewModels
 {
     public class VMInsumo
     {

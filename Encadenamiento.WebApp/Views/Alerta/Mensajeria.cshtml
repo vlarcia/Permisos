@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewData["Title"] = "Mensajeria de Permisos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <style>
+        .btn-whatsapp {
+            background-color: #25D366;
+            border: 1px solid #25D366;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            font-size: 1rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s;
+        }
+
+            .btn-whatsapp:hover {
+                background-color: #128C7E;
+                border-color: #128C7E;
+                color: white;
+            }
+
+        .btn-correo {
+            padding: 0.25rem 0.5rem;
+            font-size: 1rem;
+        }
+
+        .vencimiento-proximo {
+            background-color: #fff3cd !important;
+        }
+
+        .vencimiento-critico {
+            background-color: #f8d7da !important;
+        }
+
+        .card-header {
+            background-color: #4e73df !important;
+        }
+
+        .acciones-col {
+            white-space: nowrap;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Permisos que vencen en los próximos 6 meses</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="tbPermisosVencimiento" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Institución</th>
+                            <th>Encargado</th>
+                            <th>Vencimiento</th>
+                            <th>Días para Gestión</th>
+                            <th class="acciones-col">Acciones</th>
+                            <th style="display:none"></th> <!-- 🔧 Esta es la columna oculta para ordenamiento -->
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+    <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+    <script src="~/js/vistas/Common.js"></script>
+    <script src="~/js/vistas/Mensajeria_Index.js"></script>
+}
+

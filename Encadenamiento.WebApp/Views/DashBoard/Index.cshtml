@@ -15,54 +15,54 @@
     <!-- Content Row -->
     <div class="row">
 
-        <!-- Total de Fincas -->
+        <!-- Total de Permisos -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Fincas 
+                                Total Permisos 
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalFincas"></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalPermisos"></div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-warehouse fa-2x text-gray-300"></i>
+                            <i class="fas fa-file-shield fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Total de Planes -->
+        <!-- Total destinatarios -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-danger shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                Total Planes Activos
+                                Destinatarios Activos
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalPlanes"></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDestinatarios"></div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Total de Actividades -->
+        <!-- Total de Alertas -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Total Actividades
+                                Total Alertas Mes
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalActividades"></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="alertasUltimoMes"></div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar-plus fa-2x text-gray-300"></i>
@@ -72,44 +72,43 @@
             </div>
         </div>
 
-        <!-- Total de Visitas -->
+        <!-- Total de Vencimiento proximo mes -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-dark shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                Total de Visitas
+                                Vencimientos Próximo Mes
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalVisitas">totalVisitas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="vencimientosMes"></div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                            <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-        <!-- Total de Revisiones -->
+        <!-- Total de Vencidos sin tramite -->
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card border-left-danger shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Revisiones
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Vencidos Sin Trámite
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalRevisiones"></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalPermisosVencidos"></div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                            <i class="fas fa-skull fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
     <!-- Content Row -->
@@ -121,12 +120,12 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 bg-second-primary">
-                    <h6 class="m-0 font-weight-bold text-white">Fincas visitadas últimos 6 meses</h6>
+                    <h6 class="m-0 font-weight-bold text-white">Permisos renovados últimos 6 meses</h6>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
                     <div class="chart-area" style="height: 350px !important;">
-                        <canvas id="chartVisitas"></canvas>
+                        <canvas id="chartRenovaciones"></canvas>
                     </div>
                 </div>
             </div>
@@ -137,17 +136,50 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 bg-second-primary">
-                    <h6 class="m-0 font-weight-bold text-white">Actividades completadas ultimos 6 meses</h6>
+                    <h6 class="m-0 font-weight-bold text-white">Permisos a vencer próximo mes</h6>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
                     <div class="chart-area" style="height: 350px !important ;">
-                        <canvas id="chartActividades"></canvas>
+                        <canvas id="chartVencimientos"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Modal para mostrar permisos por fecha -->
+    <div class="modal fade" id="modalPermisosFecha" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Permisos que se vencen en la fecha <span id="fechaSeleccionadaTitulo"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm table-bordered" id="tablaPermisosFecha">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Estado</th>
+                                <th>Institucion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se insertarán las filas dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 
@@ -156,7 +188,4 @@
 <script src="~/js/vistas/DashBoard_Index.js"></script>
 <script src="~/js/vistas/Common.js"></script>
 
-<!-- SOLO ES DE EJEMPLO - IGNORAR -->
-@* <script src="~/js/vistas/chart-bar-demo.js"></script>
-<script src="~/js/vistas/chart-pie-demo.js"></script> *@
 }

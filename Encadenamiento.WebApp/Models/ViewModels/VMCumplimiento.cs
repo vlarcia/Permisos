@@ -1,6 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 
-namespace Encadenamiento.WebApp.Models.ViewModels
+namespace Permisos.WebApp.Models.ViewModels
 {
     public class VMCumplimiento
     {

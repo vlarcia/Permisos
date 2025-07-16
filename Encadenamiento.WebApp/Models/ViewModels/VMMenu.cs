@@ -1,6 +1,6 @@
 ﻿using Entity;
 
-namespace Encadenamiento.WebApp.Models.ViewModels
+namespace Permisos.WebApp.Models.ViewModels
 {
     public class VMMenu
     {

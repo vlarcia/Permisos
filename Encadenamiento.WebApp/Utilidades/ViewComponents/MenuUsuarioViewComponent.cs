@@ -2,7 +2,7 @@
 using System.Security.Claims;
 
 
-namespace Encadenamiento.WebApp.Utilidades.ViewComponents
+namespace Permisos.WebApp.Utilidades.ViewComponents
 {
     public class MenuUsuarioViewComponent: ViewComponent
     {

@@ -9,7 +9,7 @@ namespace Business.Interfaces
 {
     public interface IParametroService
     {
-        Task<List<Configuracion>> Lista();
-        Task<Configuracion> Editar(List<Configuracion> entidad);
+        Task<List<TbConfiguracion>> Lista();
+        Task<TbConfiguracion> Editar(List<TbConfiguracion> entidad);
     }    
 }

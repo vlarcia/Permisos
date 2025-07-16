@@ -16,21 +16,21 @@ namespace Business.Implementacion
 {
     public class NegocioService : INegocioService
     {
-        private readonly IGenericRepository<Negocio> _repositorio;        
+        private readonly IGenericRepository<TbNegocio> _repositorio;        
         private readonly IFireBaseService _firebaseService;
             
-        public NegocioService(IGenericRepository<Negocio> repositorio, IFireBaseService fireBaseService)
+        public NegocioService(IGenericRepository<TbNegocio> repositorio, IFireBaseService fireBaseService)
         {
             _repositorio = repositorio;
             _firebaseService = fireBaseService;
 
         }
-        public async Task<Negocio> Obtener()
+        public async Task<TbNegocio> Obtener()
         {
 
             try
             {
-                Negocio negocio_encontrado = await _repositorio.Obtener(n => n.IdNegocio == 1);
+                TbNegocio negocio_encontrado = await _repositorio.Obtener(n => n.IdNegocio == 1);
                 return negocio_encontrado;
             }
             catch (Exception ex)
@@ -38,12 +38,12 @@ namespace Business.Implementacion
                 throw;
             }            
         }
-        public async  Task<Negocio> GuardarCambios(Negocio entidad, Stream Logo = null, string NombreLogo = "")
+        public async  Task<TbNegocio> GuardarCambios(TbNegocio entidad, Stream Logo = null, string NombreLogo = "")
         {
 
             try
             {
-                Negocio negocio_encontrado = await _repositorio.Obtener(n => n.IdNegocio == 1);
+                TbNegocio negocio_encontrado = await _repositorio.Obtener(n => n.IdNegocio == 1);
 
                 negocio_encontrado.NumeroDocumento = entidad.NumeroDocumento;
                 negocio_encontrado.Nombre=entidad.Nombre;

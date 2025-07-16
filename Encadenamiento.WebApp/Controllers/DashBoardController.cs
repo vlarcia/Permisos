@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Encadenamiento.WebApp.Models.ViewModels;
-using Encadenamiento.WebApp.Utilidades.Response;
 using Business.Interfaces;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Net;
 using Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Permisos.WebApp.Utilidades.Response;
+using Permisos.WebApp.Models.ViewModels;
 
-namespace Encadenamiento.WebApp.Controllers
+namespace Permisos.WebApp.Controllers
 {
     [Authorize]
     public class DashBoardController : Controller
@@ -32,47 +32,41 @@ namespace Encadenamiento.WebApp.Controllers
             try
             {
                 VMDashBoard vmDashBoard = new VMDashBoard();
-                vmDashBoard.TotalFincas = await _dashboardService.TotalFincas();
-                vmDashBoard.TotalPlanes = await _dashboardService.TotalPlanesActivos();
-                vmDashBoard.TotalActividades = await _dashboardService.TotalActividadesActivas();
-                vmDashBoard.TotalRevisiones = await _dashboardService.RevisionesUltimoMes();
-                vmDashBoard.TotalVisitas = await _dashboardService.VisitasUltimoMes();
 
-                List<VMListaDashBoard> listaActividadesCompletadas = new List<VMListaDashBoard>();
-                List<VMListaDashBoard> listaFincasVisitadas = new List<VMListaDashBoard>();
+                vmDashBoard.TotalPermisos = await _dashboardService.TotalPermisos();
+                vmDashBoard.TotalDestinatarios = await _dashboardService.TotalDestinatarios();
+                vmDashBoard.AlertasUltimoMes = await _dashboardService.AlertasMes();
+                vmDashBoard.VencimientosMes = await _dashboardService.TotalVencimientoMes();
+                vmDashBoard.TotalPermisosVencidosNoTramite = await _dashboardService.TotalPermisosVencidosNoTramite();
 
-                List<CumplimientoDTO> fincasDTO = await _dashboardService.ObtenerFincasConCumplimiento();
-                List<VMCumplimiento> listaFincasCumplimiento = fincasDTO.Select(dto => new VMCumplimiento
 
+
+                List<VMListaDashBoard> listaRenovaciones = new List<VMListaDashBoard>();
+                List<VMListaDashBoard> listaVencimientos = new List<VMListaDashBoard>();
+
+              
+
+                foreach (KeyValuePair<string, int> item in await _dashboardService.RenovacionesMes())
                 {
-                    CodFinca = dto.CodFinca,
-                    NombreFinca = dto.NombreFinca,
-                    Cumplimiento = dto.Cumplimiento,
-                    FechaUltimarevision = dto.FechaUltimarevision
-                }).ToList();
-
-
-                foreach (KeyValuePair<string, int> item in await _dashboardService.ActividadesCompletadasUltimoMes())
-                {
-                    listaActividadesCompletadas.Add(new VMListaDashBoard()
+                    listaRenovaciones.Add(new VMListaDashBoard()
 
                     {
                         Llave = item.Key,
                         Valor = item.Value
                     });
                 }
-                foreach (KeyValuePair<string, int> item in await _dashboardService.FincasVisitadasUltimoMes())
+                foreach (KeyValuePair<string, int> item in await _dashboardService.VencimientosMes())
                 {
-                    listaFincasVisitadas.Add(new VMListaDashBoard()
+                    listaVencimientos.Add(new VMListaDashBoard()
 
                     {
                         Llave = item.Key,
                         Valor = item.Value
                     });
                 }
-                vmDashBoard.FincasVisitadas = listaFincasVisitadas;
-                vmDashBoard.ActividadesCompletas=listaActividadesCompletadas;
-                vmDashBoard.CumplimientoGlobal = listaFincasCumplimiento;
+                vmDashBoard.Renovaciones = listaRenovaciones;
+                vmDashBoard.Vencimientos=listaVencimientos;
+                
 
                 gResponse.Estado=true;
                 gResponse.Objeto=vmDashBoard;
@@ -85,5 +79,43 @@ namespace Encadenamiento.WebApp.Controllers
             }
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerPermisosPorFecha(string fecha)
+        {
+            var gResponse = new GenericResponse<List<VMPermiso>>();
+
+            try
+            {
+                if (!DateTime.TryParseExact(fecha, "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out DateTime fechaParsed))
+                {
+                    gResponse.Estado = false;
+                    gResponse.Mensaje = "Fecha inválida. Formato esperado: yyyy-MM-dd";
+                    return BadRequest(gResponse);
+                }
+
+                var lista = await _dashboardService.ObtenerPermisosPorFecha(fechaParsed);
+
+                gResponse.Estado = true;
+                gResponse.Objeto = lista.Select(p => new VMPermiso
+                {
+                    IdPermiso = p.IdPermiso,
+                    Nombre = p.Nombre,
+                    FechaVencimiento = p.FechaVencimiento,
+                    EstadoPermiso = p.EstadoPermiso,
+                    Institucion = p.Institucion
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                gResponse.Estado = false;
+                gResponse.Mensaje = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+
     }
 }

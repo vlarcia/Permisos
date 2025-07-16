@@ -6,7 +6,7 @@ $(document).ready(function () {
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         })
-        .then(responseJson => {          
+        .then(responseJson => {
             $(".card-body").LoadingOverlay("hide");
             if (responseJson.estado) {
                 const d = responseJson.objeto
@@ -20,13 +20,12 @@ $(document).ready(function () {
                 $("#txtLogo").attr("src", d.urlLogo)
 
             }
-            else
-            {
+            else {
                 Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
             }
         })
 })
-    
+
 $("#btnGuardarCambios").click(function () {
 
     const inputs = $("input.input-validar").serializeArray();
@@ -58,7 +57,7 @@ $("#btnGuardarCambios").click(function () {
 
     fetch("/Negocio/GuardarCambios", {
         method: "POST",
-          body: formData
+        body: formData
     })
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
@@ -68,12 +67,12 @@ $("#btnGuardarCambios").click(function () {
             if (responseJson.estado) {
                 const d = responseJson.objeto
 
-                $("#imgLogo").attr("src",d.urlLogo)
+                $("#imgLogo").attr("src", d.urlLogo)
 
 
             } else {
                 Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
             }
-        })        
-    
+        })
+
 })

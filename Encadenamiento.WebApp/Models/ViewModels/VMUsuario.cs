@@ -1,6 +1,6 @@
 ﻿using Entity;
 
-namespace Encadenamiento.WebApp.Models.ViewModels
+namespace Permisos.WebApp.Models.ViewModels
 {
     public class VMUsuario
     {
@@ -17,5 +17,6 @@ namespace Encadenamiento.WebApp.Models.ViewModels
         public string? NombreRol { get; set; }
         public string? UrlFoto { get; set; }
         public int? EsActivo { get; set; }
-    }
-}
+        public int IdArea { get; set; }
+        public string NombreArea { get; set; } = null!;
+    }}

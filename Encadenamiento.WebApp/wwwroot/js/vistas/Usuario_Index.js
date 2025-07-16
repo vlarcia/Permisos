@@ -1,12 +1,12 @@
 ﻿
 
 const MODELO_BASE = {
-
     idUsuario: 0,
     nombre: "",
     correo: "",
     telefono: "",
     idRol: 0,
+    idArea: 0,
     esActivo: 1,
     urlFoto: ""
 }
@@ -27,6 +27,7 @@ $(document).ready(function () {
                 })
             }
         })
+
     tablaData = $('#tbdata').DataTable({
 
         responsive: true,
@@ -46,6 +47,8 @@ $(document).ready(function () {
             { "data": "correo" },
             { "data": "telefono" },
             { "data": "nombreRol" },
+            { "data": "nombreArea" },
+
             {
                 "data": "esActivo", render: function (data) {
                     if (data == 1)
@@ -80,13 +83,31 @@ $(document).ready(function () {
             url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
         },
     });
+
+    fetch("/Area/Lista")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        })
+        .then(responseJson => {
+            if (responseJson.data && responseJson.data.length > 0) {
+                responseJson.data.forEach((item) => {
+                    $("#cboArea").append(
+                        $("<option>").val(item.idArea).text(item.nombre)
+                    )
+                });
+            }
+        });
+
 })
+
+
 function mostrarModal(modelo = MODELO_BASE) {
     $("#txtId").val(modelo.idUsuario)
     $("#txtNombre").val(modelo.nombre)
     $("#txtCorreo").val(modelo.correo)
     $("#txtTelefono").val(modelo.telefono)
     $("#cboRol").val(modelo.idRol == 0 ? $("#cboRol option:first").val() : modelo.idRol)
+    $("#cboArea").val(modelo.idArea == 0 ? $("#cboArea option:first").val() : modelo.idArea);
     $("#cboEstado").val(modelo.esActivo)
     $("#txtFoto").val("")
     $("#imgUsuario").attr("src", modelo.urlFoto)
@@ -100,14 +121,37 @@ $("#btnNuevo").click(function () {
 $("#btnGuardar").click(function () {
 
     const inputs = $("input.input-validar").serializeArray();
-    const inputs_sin_valor = inputs.filter((item) => item.value.trim() == "")
-    if (inputs_sin_valor.length > 0) {
-        const mensaje = `Debe completar el campo : "${inputs_sin_valor[0].name}"`;
-        toastr.warning("", mensaje)
-        $(`input[name="${inputs_sin_valor[0].name}"]`).focus()
-        return;
+    const selects = $("select.input-validar"); // ← obtenemos los selects con clase input-validar
 
+    let campoVacio = null;
+
+    // Validar inputs
+    const inputSinValor = inputs.find(item => item.value.trim() === "");
+    if (inputSinValor) {
+        campoVacio = inputSinValor.name;
     }
+
+    // Validar selects si no hubo inputs vacíos
+    if (!campoVacio) {
+        selects.each(function () {
+            if (!$(this).val() || $(this).val().trim() === "") {
+                campoVacio = $(this).attr("name");
+                return false; // rompe el .each
+            }
+        });
+    }
+
+    if (campoVacio) {
+        const mensaje = `Debe completar el campo: "${campoVacio}"`;
+        toastr.warning("", mensaje);
+
+        // Intenta enfocar ya sea input o select
+        $(`[name="${campoVacio}"]`).focus();
+
+        return;
+    }
+
+
 
     const modelo = structuredClone(MODELO_BASE);
     modelo["idUsuario"] = parseInt($("#txtId").val())
@@ -116,6 +160,8 @@ $("#btnGuardar").click(function () {
     modelo["telefono"] = $("#txtTelefono").val()
     modelo["idRol"] = $("#cboRol").val()
     modelo["esActivo"] = $("#cboEstado").val()
+    modelo["idArea"] = $("#cboArea").val()
+
 
     const inputFoto = document.getElementById("txtFoto")
 

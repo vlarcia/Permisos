@@ -9,13 +9,13 @@ namespace Business.Interfaces
 {
     public interface IUsuarioService
     {
-        Task<List<Usuario>> Lista();
-        Task<Usuario> Crear(Usuario entidad, Stream foto = null, string NombreFoto = "", string UrlPlantillaCorreo = "");
-        Task<Usuario> Editar(Usuario entidad, Stream foto = null, string NombreFoto = "");
+        Task<List<TbUsuario>> Lista();
+        Task<TbUsuario> Crear(TbUsuario entidad, Stream foto = null, string NombreFoto = "", string UrlPlantillaCorreo = "");
+        Task<TbUsuario> Editar(TbUsuario entidad, Stream foto = null, string NombreFoto = "");
         Task<bool> Eliminar(int IdUsuario);
-        Task<Usuario> ObtenerPorCredenciales(string correo, string clave);
-        Task<Usuario> ObtenerPorId(int IdUsuario);
-        Task<bool> GuardarPerfil(Usuario entidad);
+        Task<TbUsuario> ObtenerPorCredenciales(string correo, string clave);
+        Task<TbUsuario> ObtenerPorId(int IdUsuario);
+        Task<bool> GuardarPerfil(TbUsuario entidad);
         Task<bool> CambiarClave(int IdUsuario, string ClaveActual, string ClaveNueva);
         Task<bool> RestablecerClave(string correo, string UrlPlantillaCorreo);
     }

@@ -17,38 +17,36 @@ namespace Business.Implementacion
     public class DashBoardService : IDashBoardService
 
     {
-        private readonly IPlanesRepository _planesRepositorio;
-        private readonly IGenericRepository<Actividad> _actividadRepositorio;
-        private readonly IGenericRepository<Visita> _visitaRepositorio;
-        private readonly IGenericRepository<Revisione> _revisionRepositorio;
-        private readonly IGenericRepository<Revision> _revision2Repositorio;    // esta tabla se incorporó despues al diseño
-        private readonly IGenericRepository<MaestroFinca> _fincasRepositorio;        
+        
+        private readonly IGenericRepository<TbPermiso> _permisoRepositorio;
+        private readonly IGenericRepository<TbAlerta> _alertaRepositorio;
+        private readonly IGenericRepository<TbDestinatario> _destinatarioRepositorio;        
 
         private DateTime FechaInicial=DateTime.Now;
+        private DateTime FechaFinal=DateTime.Now;
 
-        public DashBoardService(IPlanesRepository planesRepositorio,
-                                IGenericRepository<Actividad> actividadRepositorio,
-                                IGenericRepository<Visita> visitaRepositorio,
-                                IGenericRepository<Revisione> revisionRepositorio,
-                                IGenericRepository<Revision> revision2Repositorio,
-                                IGenericRepository<MaestroFinca> fincasRepositorio)
+        public DashBoardService(
+                                IGenericRepository<TbPermiso> permisoRepositorio,
+                                IGenericRepository<TbAlerta> alertaRepositorio,
+                                IGenericRepository<TbDestinatario> destinatarioRepositorio)
         { 
-            _planesRepositorio=planesRepositorio;
-            _actividadRepositorio=actividadRepositorio;
-            _visitaRepositorio=visitaRepositorio;
-            _revisionRepositorio=revisionRepositorio;
-            _revision2Repositorio = revision2Repositorio;
-            _fincasRepositorio = fincasRepositorio;
-            FechaInicial = FechaInicial.AddDays(-180);
+            
+            _permisoRepositorio=permisoRepositorio;
+            _alertaRepositorio=alertaRepositorio;
+            _destinatarioRepositorio=destinatarioRepositorio;
+
+            FechaFinal = FechaInicial.AddDays(30);
+            FechaInicial = FechaInicial.AddDays(-30);
+            
 
         }
-        public async Task<string> TotalFincas()
+        public async Task<string> TotalPermisos()
         {
             try
             {
-                IQueryable<MaestroFinca> query = await _fincasRepositorio.Consultar();
+                IQueryable<TbPermiso> query = _permisoRepositorio.Consultar();
                 int total = query
-                    .Where(f => f.Grupo != null && f.Grupo > 0) // Filtro por Grupo
+                    .Where(f => f.EstadoPermiso.Trim().ToUpper() != "INACTVO") // Filtro por Grupo
                     .Count(); // Cuenta solo las fincas que cumplen la condición
                 return Convert.ToString(total, new CultureInfo("es-NI"));
 
@@ -58,11 +56,12 @@ namespace Business.Implementacion
                 throw;
             }
         }
-        public async Task<string> TotalPlanesActivos()
+        public async Task<string> TotalDestinatarios()
         {
             try {
-                IQueryable<PlanesTrabajo> query = await _planesRepositorio.Consultar(p => p.Estado.Trim() != "FINALIZADO");
+                IQueryable<TbDestinatario> query = _destinatarioRepositorio.Consultar(p => p.Activo==true);
                 int total = query.Count();
+                
                 return Convert.ToString(total, new CultureInfo("es-NI"));
             }
             catch
@@ -71,12 +70,12 @@ namespace Business.Implementacion
             }
         }
 
-        public async Task<string> TotalActividadesActivas()
+        public async Task<string> AlertasMes()
         {
             try
             {
-                IQueryable<Actividad> query = await _actividadRepositorio.Consultar(a => a.Estado.Trim() != "FINALIZADO");
-                int total = query.Count();
+                IQueryable<TbAlerta> query = _alertaRepositorio.Consultar(r => r.FechaEnvio >= FechaInicial.Date);
+                int total = await query.CountAsync();
                 return Convert.ToString(total, new CultureInfo("es-NI"));
             }
             catch
@@ -84,26 +83,12 @@ namespace Business.Implementacion
                 throw;
             }
         }
-        public async Task<string> RevisionesUltimoMes()
+        public async Task<string> TotalVencimientoMes()
         {
             try
             {
-                IQueryable<Revisione> query = await _revisionRepositorio.Consultar(r => r.Fecha >= FechaInicial.Date);
-                int total = query.Select(r => new { r.IdFinca, r.Fecha }).Distinct().Count();                
-                return Convert.ToString(total, new CultureInfo("es-NI"));
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public async Task<string> VisitasUltimoMes()
-        {
-            try
-            {
-                IQueryable<Visita> query = await _visitaRepositorio.Consultar(v => v.Fecha >= FechaInicial.Date);
-                int total = query.Count();
+                IQueryable<TbPermiso> query = _permisoRepositorio.Consultar(r => r.FechaVencimiento >= DateTime.Now && r.FechaVencimiento<=FechaFinal);
+                int total = await query.CountAsync();                
                 return Convert.ToString(total, new CultureInfo("es-NI"));
             }
             catch
@@ -112,16 +97,17 @@ namespace Business.Implementacion
             }
         }
 
-        public async Task<Dictionary<string, int>> ActividadesCompletadasUltimoMes()
+        
+        public async Task<Dictionary<string, int>> RenovacionesMes()
         {            
             try
             {
-                IQueryable<Actividad> query = await _actividadRepositorio
-                          .Consultar(a => a.FechaUltimarevision >= FechaInicial.Date && a.Estado.Trim() == "FINALIZADO");
-                Dictionary<string, int> resultado = query
-                    .GroupBy(a=> a.FechaUltimarevision.Value.Date).OrderByDescending(g=> g.Key)
+                IQueryable<TbPermiso> query = _permisoRepositorio
+                          .Consultar(a => a.FechaCreacion >= FechaInicial.Date && a.EstadoPermiso.Trim() == "RENOVADO");
+                Dictionary<string, int> resultado = await query
+                    .GroupBy(a=> a.FechaCreacion).OrderByDescending(g=> g.Key)
                     .Select(da=> new {fecha=da.Key.ToString("dd/MM/yyyy"), total=da.Count()})
-                    .ToDictionary(keySelector: r=> r.fecha, elementSelector: r => r.total);  
+                    .ToDictionaryAsync(keySelector: r=> r.fecha, elementSelector: r => r.total);  
                     ;
                 return resultado;            
             }
@@ -131,128 +117,34 @@ namespace Business.Implementacion
             }
         }
 
-        public async Task<Dictionary<string, int>> FincasVisitadasUltimoMes()
+        public async Task<Dictionary<string, int>> VencimientosMes()
         {
             try
             {
-                // Consulta de Visitas
-                IQueryable<Visita> visitasQuery = await _visitaRepositorio
-                    .Consultar(v => v.Fecha >= FechaInicial.Date);
-
-                Dictionary<string, int> visitasDict = visitasQuery
-                    .GroupBy(v => v.Fecha.Value.Date)
-                    .OrderByDescending(g => g.Key)
-                    .Select(g => new { fecha = g.Key.ToString("dd/MM/yyyy"), total = g.Count() })
-                    .ToDictionary(r => r.fecha, r => r.total);
-
-                // Consulta de Revisions
-                IQueryable<Revision> revisionsQuery = await _revision2Repositorio
-                    .Consultar(r => r.Fecha >= FechaInicial.Date);
-
-                Dictionary<string, int> revisionsDict = revisionsQuery
-                    .GroupBy(r => r.Fecha.Value.Date)
-                    .OrderByDescending(g => g.Key)
-                    .Select(g => new { fecha = g.Key.ToString("dd/MM/yyyy"), total = g.Count() })
-                    .ToDictionary(r => r.fecha, r => r.total);
-
-                // Combinar los resultados
-                Dictionary<string, int> combinedDict = new Dictionary<string, int>();
-
-                // Agregar datos de visitas
-                foreach (var visita in visitasDict)
-                {
-                    combinedDict[visita.Key] = visita.Value;
-                }
-
-                // Sumar datos de revisiones al diccionario combinado
-                foreach (var revision in revisionsDict)
-                {
-                    if (combinedDict.ContainsKey(revision.Key))
-                    {
-                        combinedDict[revision.Key] += revision.Value; // Sumar si la fecha ya existe
-                    }
-                    else
-                    {
-                        combinedDict[revision.Key] = revision.Value; // Agregar si es una nueva fecha
-                    }
-                }
-
-                return combinedDict;
+                IQueryable<TbPermiso> query = _permisoRepositorio
+                          .Consultar(r => r.FechaVencimiento >= DateTime.Now && r.FechaVencimiento <= FechaFinal);
+                Dictionary<string, int> resultado = await query
+                    .GroupBy(a => a.FechaVencimiento).OrderByDescending(g => g.Key)
+                    .Select(da => new { fecha = da.Key.ToString("dd/MM/yyyy"), total = da.Count() })
+                    .ToDictionaryAsync(keySelector: r => r.fecha, elementSelector: r => r.total);
+                ;
+                return resultado;
             }
             catch
             {
                 throw;
             }
         }
-
-
-        public async Task<List<CumplimientoDTO>> ObtenerFincasConCumplimiento()
+        public async Task<List<TbPermiso>> ObtenerPermisosPorFecha(DateTime fecha)
         {
-            try
-            {
-                IQueryable<Revisione> query = await _revisionRepositorio.Consultar();
-
-
-                // Incluir IdFincaNavigation
-                var revisionesConFinca = query.Include(r => r.IdFincaNavigation).AsEnumerable();
-
-                var fincasConCumplimiento = revisionesConFinca
-                    .GroupBy(r => r.IdFinca)
-                    .Select(grupo => new
-                    {
-                        IdFinca = grupo.Key,
-                        RevisionReciente = grupo.OrderByDescending(r => r.Fecha).FirstOrDefault()
-                    })
-                    .Where(g => g.RevisionReciente != null && g.RevisionReciente.IdFincaNavigation != null)
-                    .Select(g => new CumplimientoDTO
-                    {
-                        CodFinca = g.RevisionReciente.IdFincaNavigation.CodFinca,
-                        NombreFinca = g.RevisionReciente.IdFincaNavigation.Descripcion,
-                        Cumplimiento = g.RevisionReciente.Cumplimiento,
-                        FechaUltimarevision = g.RevisionReciente.Fecha
-                    })
-                    .ToList();
-
-                return fincasConCumplimiento;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Error al obtener cumplimiento de fincas: {ex.Message}", ex);
-            }
+            return await _permisoRepositorio.Consultar(p => p.FechaVencimiento.Date == fecha.Date).ToListAsync();
+        }
+        public async Task<int> TotalPermisosVencidosNoTramite()
+        {
+            var fechaActual = DateTime.Now;
+            return await _permisoRepositorio.Consultar(p => p.FechaVencimiento < fechaActual && p.EstadoPermiso != "EN TRÁMITE").CountAsync();
         }
 
-
-        //public async Task<List<CumplimientoDTO>> ObtenerFincasConCumplimiento()
-        //{            
-        //    try
-        //    {
-        //        IQueryable<Revisione> query = await _revisionRepositorio.Consultar();
-
-        //        var fincasConCumplimiento = query
-        //            .AsEnumerable() // Traemos los datos a memoria para operar en la aplicación
-        //            .GroupBy(r => r.IdFinca)
-        //            .Select(grupo => new
-        //            {
-        //                IdFinca = grupo.Key,
-        //                RevisionReciente = grupo.OrderByDescending(r => r.Fecha).FirstOrDefault()
-        //            })
-        //            .Select(g => new CumplimientoDTO
-        //            {
-        //                CodFinca = g.RevisionReciente.IdFincaNavigation.CodFinca,
-        //                NombreFinca = g.RevisionReciente.IdFincaNavigation.Descripcion,
-        //                Cumplimiento = g.RevisionReciente.Cumplimiento,
-        //                FechaUltimarevision = g.RevisionReciente.Fecha
-        //            })
-        //            .ToList();
-
-        //        return fincasConCumplimiento;
-
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
 
     }
 }

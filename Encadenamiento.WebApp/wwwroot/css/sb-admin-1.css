@@ -9956,8 +9956,8 @@ a:focus {
 }
 
 .bg-gradient-green {
-    background-color: green;
-    background-image: linear-gradient(180deg, #419d79 10%, #20b756 100%);
+    background-color: blue;
+    background-image: linear-gradient(180deg, #c5edec 10%, #819bef 100%);
     background-size: cover;
 } 
 
@@ -10927,16 +10927,15 @@ a:focus {
 }
 
 .bg-login-image {
-  background-image: url('/Images/ingenio.jpg');
+  background-image: url('/Images/pantaMR.png');
   /* background: url("https://source.unsplash.com/K4mSJ7kc0As/600x800"); */
   background-position: center;
   background-size: cover;
 }
 .bg-privacy-image {
-    background-image: url('/Images/Prueba 2.png');
+    background-image: url('/Images/IngenioMonteRosa.png');
     background-position: center;
-    background-size:contain;
-
+    background-size: contain;
 }
 
 .bg-register-image {

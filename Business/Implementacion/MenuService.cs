@@ -11,36 +11,36 @@ namespace Business.Implementacion
 {
     public class MenuService : IMenuService
     {
-        private readonly IGenericRepository<Menu> _repositorioMenu;
-        private readonly IGenericRepository<RolMenu> _repositorioRolMenu;
-        private readonly IGenericRepository<Usuario> _repositorioUsuario;
-        public MenuService(IGenericRepository<Menu> repositorioMenu, IGenericRepository<RolMenu> repositorioRolMenu, IGenericRepository<Usuario> repositorioUsuario)
+        private readonly IGenericRepository<TbMenu> _repositorioMenu;
+        private readonly IGenericRepository<TbRolMenu> _repositorioRolMenu;
+        private readonly IGenericRepository<TbUsuario> _repositorioUsuario;
+        public MenuService(IGenericRepository<TbMenu> repositorioMenu, IGenericRepository<TbRolMenu> repositorioRolMenu, IGenericRepository<TbUsuario> repositorioUsuario)
         {
             _repositorioMenu = repositorioMenu;
             _repositorioRolMenu = repositorioRolMenu;
             _repositorioUsuario = repositorioUsuario;
         }
 
-        public async Task<List<Menu>> ObtenerMenus(int idusuario)
+        public async Task<List<TbMenu>> ObtenerMenus(int idusuario)
         {
-            IQueryable<Usuario> tbUsuario= await _repositorioUsuario.Consultar(u=> u.IdUsuario==idusuario);
-            IQueryable<RolMenu> tbRolMenu = await _repositorioRolMenu.Consultar();
-            IQueryable<Menu> tbMenu= await _repositorioMenu.Consultar();
+            IQueryable<TbUsuario> tbUsuario= _repositorioUsuario.Consultar(u => u.IdUsuario == idusuario);
+            IQueryable<TbRolMenu> tbRolMenu = _repositorioRolMenu.Consultar();
+            IQueryable<TbMenu> tbMenu=  _repositorioMenu.Consultar();
 
-            IQueryable<Menu> MenuPadre=(from u in tbUsuario
+            IQueryable<TbMenu> MenuPadre=(from u in tbUsuario
                                         join rm in tbRolMenu on u.IdRol equals rm.IdRol
                                         join m in tbMenu on rm.IdMenu equals m.IdMenu
                                         join mpadre in tbMenu on m.IdMenuPadre equals mpadre.IdMenu
                                         select mpadre).Distinct().AsQueryable();
 
-            IQueryable<Menu> MenuHijos= (from u in tbUsuario
+            IQueryable<TbMenu> MenuHijos= (from u in tbUsuario
                                          join rm in tbRolMenu on u.IdRol equals rm.IdRol
                                          join m in tbMenu on rm.IdMenu equals m.IdMenu
                                          where m.IdMenu != m.IdMenuPadre
                                          select m).Distinct().AsQueryable();
 
-            List<Menu> listaMenu = (from mpadre in MenuPadre
-                                    select new Menu()
+            List<TbMenu> listaMenu = (from mpadre in MenuPadre
+                                    select new TbMenu()
                                     {
                                         Descripcion = mpadre.Descripcion,
                                         Icono = mpadre.Icono,

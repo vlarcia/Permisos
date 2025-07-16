@@ -1,14 +1,14 @@
-using Encadenamiento.WebApp.Utilidades.Automapper;
 using Control;
-using Encadenamiento.WebApp.Utilidades.Extensiones;  //Aqui mismo esta la configuracion segura de variables de entorno
+using Permisos.WebApp.Utilidades.Extensiones;  //Aqui mismo esta la configuracion segura de variables de entorno
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Rotativa.AspNetCore;
+using Permisos.WebApp.Utilidades.Automapper;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Agrega variables de entorno a la configuración
-builder.Configuration.AddEnvironmentVariables();
+//builder.Configuration.AddEnvironmentVariables();
 
 // Agregá servicios
 builder.Services.AddControllersWithViews();
@@ -25,7 +25,7 @@ builder.Services.InyectarDependencia(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 // Lectura de secretos desde entorno
-var cadenaConexion = builder.Configuration.GetConnectionString("Cadena_Conexion");
+var cadenaConexion = builder.Configuration.GetConnectionString("Cadena_ConexionPermisos");
 var googleApiKey = builder.Configuration["GoogleMaps:ApiKey"];
 
 // Inyectar como servicio singleton

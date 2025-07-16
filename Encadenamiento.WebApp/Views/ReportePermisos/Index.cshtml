@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewData["Title"] = "Reporte Permisos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h5 class="mb-0" style="color:darkblue">Reporte de Permisos</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-second-primary py-2">
+                    <h6 class="m-0 font-weight-bold text-white">Permisos por Estado</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoEstado"></canvas>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-second-primary py-2">
+                    <h6 class="m-0 font-weight-bold text-white">Permisos por Criticidad</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoCriticidad"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-second-primary py-2">
+                    <h6 class="m-0 font-weight-bold text-white">Permisos que vencen en los próximos 3 meses</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2 text-right">
+                        <button class="btn btn-sm btn-success" onclick="exportarExcel()">Exportar a Excel</button>
+                        <button class="btn btn-sm btn-danger" onclick="exportarPDF()">Exportar a PDF</button>
+                    </div>
+
+                    <div id="tablaVencimientos"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/vendor/chart.js/Chart.min.js"></script>
+    <script src="~/js/vistas/RepPermisos_Index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+}

@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Sistema de Encadenamiento">
+    <meta name="description" content="Sistema de Alertas de Permisos">
     <meta name="author" content="Laureano Arcia">
 
-    <title>Encadenamiento- @ViewData["Title"]</title>
+    <title>Permisos- @ViewData["Title"]</title>
     <link rel="icon" type="image/x-icon" href="~/images/pantaMR.png">
     <!-- Custom fonts for this template-->
     <link href="~/vendor/fontawesome-free/css/all.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="~/css/sb-admin-1.css" rel="stylesheet">
+    <link href="~/css/sb-admin-2.css" rel="stylesheet">
     <link href="~/vendor/toastr/toastr.min.css" rel="stylesheet">
     <link href="~/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
 
@@ -39,97 +39,16 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Home/Index">
                 <div class="sidebar-brand-icon">
-                    <i class="fa fa-handshake"></i>
+                    <i class="fas fa-file-signature"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Cumplimiento</div>
+                <div class="sidebar-brand-text mx-3">Permisos</div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             @await Component.InvokeAsync("Menu")
-            <!-- Nav Item - Dashboard -->
-           @*  <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index","DashBoard")">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Indicadores</span>
-                </a>
-            </li> *@
-
-            <!-- Nav Item - Administración Collapse Menu -->
-            @* <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Administración</span>
-                </a>
-                <div id="collapseAdministracion" class="collapse" data-parent="#accordionSidebar">
-                    <div class="bg-gray-300 py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("Index","MaestroFinca")">Fincas</a>
-                        <a class="collapse-item" href="@Url.Action("Index","Usuario")">Usuarios</a>
-                        <a class="collapse-item" href="@Url.Action("Index","Negocio")">Empresa</a>
-                    </div>
-                </div>
-            </li> *@
-
-            <!-- Nav Item - Requisitos Collapse Menu -->
-            @* <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRequisitos">
-                    <i class="fas fa-fw fa-clipboard-list"></i>
-                    <span>Requisitos</span>
-                </a>
-                <div id="collapseRequisitos" class="collapse" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("Index","CheckList")">Checklist Evaluación</a>
-                        <a class="collapse-item" href="@Url.Action("Index","Revision")">Revisiones</a>
-                    </div>
-                </div>
-            </li> *@
-
-            <!-- Nav Item - Registro Collapse Menu -->
-            @* <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRegistro">
-                    <i class="fas fa-fw fa-calendar-alt"></i>
-                    <span>Planes de Trabajo</span>
-                </a>
-                <div id="collapseRegistro" class="collapse" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("Index","PlanesTrabajo")">Registro Plan</a>
-                        <a class="collapse-item" href="@Url.Action("Planes","PlanesTrabajo")">Mantenimiento</a>
-                        <a class="collapse-item" href="@Url.Action("Actividades","PlanesTrabajo")">Actividades</a>
-                    </div>
-                </div>
-            </li> *@
-        
-            <!-- Nav Item - Catálogo Collapse Menu -->
-            @* <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCatalogo">
-                    <i class="fas fa-fw fa-cogs"></i>
-                    <span>Sincronizacion</span>
-                </a>
-                <div id="collapseCatalogo" class="collapse" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">                 
-                        <a class="collapse-item" href="@Url.Action("RevisionCampo","Sincronizacion")">Revisiones en Campo</a>                        
-                        <a class="collapse-item" href="@Url.Action("VisitaCampo","Sincronizacion")">Visitas de Campo</a>
-                        <a class="collapse-item" href="@Url.Action("Actividades","Sincronizacion")">Estado de Actividades</a>
-                        <a class="collapse-item" href="@Url.Action("Estadistica","Sincronizacion")">Estado de Planes</a>                        
-                    </div>
-                </div>
-            </li> *@
-
-
-            <!-- Nav Item - Reportes Collapse Menu -->
-            @* <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportes">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Reportes</span>
-                </a>
-                <div id="collapseReportes" class="collapse" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("Index","Reporte")">Reporte Gerencial</a>
-                        <a class="collapse-item" href="@Url.Action("Operativo","Reporte")">Reporte Operativo</a>
-                    </div>
-                </div>
-            </li> *@
+           
             <!-- Nav Item - Acerca de -->
             <li class="nav-item">
                 <a class="nav-link" href="@Url.Action("Privacy","Home")">

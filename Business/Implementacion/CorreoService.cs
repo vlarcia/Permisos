@@ -22,6 +22,7 @@ using Twilio.TwiML.Messaging;
 using Newtonsoft.Json;
 using Twilio.Jwt.AccessToken;
 using Entity.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -29,11 +30,11 @@ namespace Business.Implementacion
 {
     public class CorreoService : ICorreoService
     {
-        private readonly IGenericRepository<Configuracion> _repositorio;
+        private readonly IGenericRepository<TbConfiguracion> _repositorio;
         private readonly IFireBaseService _firebaseService;
         private IWebDriver? driver;
 
-        public CorreoService(IGenericRepository<Configuracion> repositorio, IFireBaseService firebaseService)
+        public CorreoService(IGenericRepository<TbConfiguracion> repositorio, IFireBaseService firebaseService)
         {
             _repositorio = repositorio;
             _firebaseService = firebaseService;        
@@ -44,8 +45,8 @@ namespace Business.Implementacion
             try
             {
                 // Obtener la configuración desde la base de datos
-                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Servicio_Correo"));
-                Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+                IQueryable<TbConfiguracion> query = _repositorio.Consultar(c => c.Recurso.Equals("Servicio_Correo"));
+                Dictionary<string, string> Config = await query.ToDictionaryAsync(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
 
                 var credenciales = new NetworkCredential(Config["correo"], Config["clave"]);
                 var correo = new MailMessage()
@@ -109,8 +110,8 @@ namespace Business.Implementacion
             try
             {
                 // Obtener la configuración desde la base de datos
-                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
-                Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+                IQueryable<TbConfiguracion> query = _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                Dictionary<string, string> Config = await query.ToDictionaryAsync(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
 
                 string UrlArchivo = await _firebaseService.SubirStorage(archivoAdjunto, "carpeta_pdf", nombreArchivo);               
                 
@@ -254,8 +255,8 @@ namespace Business.Implementacion
 
             try
             {
-                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
-                var config = query.ToDictionary(c => c.Propiedad, c => c.Valor);
+                IQueryable<TbConfiguracion> query = _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                var config = await query.ToDictionaryAsync(c => c.Propiedad, c => c.Valor);
 
                 TwilioClient.Init(config["accountSid"], config["authToken"]);
 
@@ -291,8 +292,8 @@ namespace Business.Implementacion
         {
             try
             {
-                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
-                var config = query.ToDictionary(c => c.Propiedad, c => c.Valor);
+                IQueryable<TbConfiguracion> query = _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                var config = await query.ToDictionaryAsync(c => c.Propiedad, c => c.Valor);
 
                 TwilioClient.Init(config["accountSid"], config["authToken"]);
 
@@ -323,8 +324,8 @@ namespace Business.Implementacion
             try
             {
                 // Obtener configuración desde la base de datos
-                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
-                Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+                IQueryable<TbConfiguracion> query = _repositorio.Consultar(c => c.Recurso.Equals("Twilio"));
+                Dictionary<string, string> Config = await query.ToDictionaryAsync(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
 
                 string telefonoOrigen = Config["numerotelefono"];
                 string accountSid = Config["accountSid"];

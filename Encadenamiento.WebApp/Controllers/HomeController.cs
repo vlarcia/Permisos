@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Encadenamiento.WebApp.Models;
+using Permisos.WebApp.Models;
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
-using Encadenamiento.WebApp.Models.ViewModels;
-using Encadenamiento.WebApp.Utilidades.Response;
 using Business.Interfaces;
 using Entity;
+using Permisos.WebApp.Utilidades.Response;
+using Permisos.WebApp.Models.ViewModels;
 
-namespace Encadenamiento.WebApp.Controllers
+namespace Permisos.WebApp.Controllers
 {
     [Authorize]
     public class HomeController : Controller
@@ -84,7 +84,7 @@ namespace Encadenamiento.WebApp.Controllers
                     .Where(c => c.Type == ClaimTypes.NameIdentifier)
                     .Select(c => c.Value).SingleOrDefault();
 
-                Usuario entidad = _mapper.Map<Usuario>(modelo);
+                TbUsuario entidad = _mapper.Map<TbUsuario>(modelo);
                 entidad.IdUsuario=int.Parse(idUsuario);
                 bool resultado = await _usuarioService.GuardarPerfil(entidad);
                 

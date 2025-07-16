@@ -1,4 +1,4 @@
-namespace Encadenamiento.WebApp.Models
+namespace Permisos.WebApp.Models
 {
     public class ErrorViewModel
     {

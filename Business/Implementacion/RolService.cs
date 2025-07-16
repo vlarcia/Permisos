@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 using Business.Interfaces;
 using Data.Interfaces;
 using Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Implementacion
 {
     public class RolService : IRolService
     {
-        private readonly IGenericRepository<Rol> _repositorio;
-        public RolService(IGenericRepository<Rol> repositorio)
+        private readonly IGenericRepository<TbRol> _repositorio;
+        public RolService(IGenericRepository<TbRol> repositorio)
         {
             _repositorio = repositorio;
         }
 
-        public async Task<List<Rol>> Lista()
+        public async Task<List<TbRol>> Lista()
         {
-           IQueryable<Rol> query = await _repositorio.Consultar();
-            return query.ToList();  
+           IQueryable<TbRol> query = _repositorio.Consultar();
+            return await query.ToListAsync();  
         }
     }
 }

@@ -12,21 +12,21 @@ namespace Business.Implementacion
 {
     public class ParametroService : IParametroService
     {
-        private readonly IGenericRepository<Configuracion> _repositorio;
-        public ParametroService(IGenericRepository<Configuracion> repositorio)
+        private readonly IGenericRepository<TbConfiguracion> _repositorio;
+        public ParametroService(IGenericRepository<TbConfiguracion> repositorio)
         {
             _repositorio = repositorio;
         }
 
-        public async Task<List<Configuracion>> Lista()
+        public async Task<List<TbConfiguracion>> Lista()
         {
-            IQueryable<Configuracion> query = await _repositorio.Consultar();
-            return query.ToList();
+            IQueryable<TbConfiguracion> query = _repositorio.Consultar();
+            return await query.ToListAsync();
         }
-        public async Task<Configuracion> Editar(List<Configuracion>  entidad)
+        public async Task<TbConfiguracion> Editar(List<TbConfiguracion>  entidad)
         {
             bool respuesta = false;
-            Configuracion parametro_modificado = null;
+            TbConfiguracion parametro_modificado = null;
             try
             {
                 foreach (var parametro in entidad)

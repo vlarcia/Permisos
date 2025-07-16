@@ -1,16 +1,16 @@
-﻿namespace Encadenamiento.WebApp.Models.ViewModels
+﻿namespace Permisos.WebApp.Models.ViewModels
 {
     public class VMDashBoard
     {
-        public string? TotalFincas {  get; set; }
-        public string? TotalPlanes { get; set; }           
-        public string? TotalRevisiones { get; set; }
-        public string? TotalVisitas {  get; set; }
-        public string? TotalActividades { get; set; }
+        public string? TotalPermisos {  get; set; }
+        public string? TotalDestinatarios { get; set; }           
+        public string? AlertasUltimoMes { get; set; }
+        public string? VencimientosMes {  get; set; }
+        public int TotalPermisosVencidosNoTramite { get; set; }
 
-        public List<VMListaDashBoard> ActividadesCompletas { get; set; }
-        public List<VMListaDashBoard> FincasVisitadas { get; set; }
-        public List<VMCumplimiento> CumplimientoGlobal { get; set; }
+
+        public List<VMListaDashBoard> Renovaciones { get; set; }
+        public List<VMListaDashBoard> Vencimientos { get; set; }        
 
 
     }

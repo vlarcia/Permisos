@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Newtonsoft.Json;
-using Encadenamiento.WebApp.Models.ViewModels;
-using Encadenamiento.WebApp.Utilidades.Response;
 using Business.Interfaces;
 using Entity;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Authorization;
+using Permisos.WebApp.Utilidades.Response;
+using Permisos.WebApp.Models.ViewModels;
 
-namespace Encadenamiento.WebApp.Controllers
+namespace Permisos.WebApp.Controllers
 {
     [Authorize]
     public class UsuarioController : Controller
@@ -63,8 +63,8 @@ namespace Encadenamiento.WebApp.Controllers
                     nombreFoto = string.Concat(vmUsuario.IdUsuario.ToString(), nombre_en_codigo, extension);
                     fotoStream = foto.OpenReadStream();
                 }
-                string urlPlantillaCorreo = $"{this.Request.Scheme}://{this.Request.Host}/Plantilla/EnviarClave?correo=[correo]&clave=[clave]";                
-                Usuario usuario_creado = await _usuarioService.Crear(_mapper.Map<Usuario>(vmUsuario), fotoStream, nombreFoto, urlPlantillaCorreo);
+                string urlPlantillaCorreo = $"{Request.Scheme}://{Request.Host}/Plantilla/EnviarClave?correo=[correo]&clave=[clave]";                
+                TbUsuario usuario_creado = await _usuarioService.Crear(_mapper.Map<TbUsuario>(vmUsuario), fotoStream, nombreFoto, urlPlantillaCorreo);
                 vmUsuario = _mapper.Map<VMUsuario>(usuario_creado);
                 gResponse.Estado=true;
                 gResponse.Objeto = vmUsuario;
@@ -95,7 +95,7 @@ namespace Encadenamiento.WebApp.Controllers
                     nombreFoto = string.Concat(vmUsuario.IdUsuario.ToString(), nombre_en_codigo, extension);
                     fotoStream = foto.OpenReadStream();
                 }             
-                Usuario usuario_editado = await _usuarioService.Editar(_mapper.Map<Usuario>(vmUsuario), fotoStream, nombreFoto);
+                TbUsuario usuario_editado = await _usuarioService.Editar(_mapper.Map<TbUsuario>(vmUsuario), fotoStream, nombreFoto);
                 vmUsuario = _mapper.Map<VMUsuario>(usuario_editado);
                 gResponse.Estado = true;
                 gResponse.Objeto = vmUsuario;

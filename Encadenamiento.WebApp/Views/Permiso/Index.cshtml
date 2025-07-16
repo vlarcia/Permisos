@@ -1,0 +1,247 @@
+﻿@{
+    ViewData["Title"] = "Permisos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link href="~/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <style>
+        .ui-datepicker {
+            z-index: 9999 !important;
+        }
+
+        .input-group {
+            overflow: visible !important;
+        }
+
+        .card-header {
+            background-color: #4e73df !important;
+        }
+
+        .btn-eliminar-evidencia {
+            margin-top: 5px;
+            width: 100%;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-2 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Gestión de Permisos</h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-sm-3">
+                    <button class="btn btn-success" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo Permiso</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-striped table-bordered" id="tbPermisos" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>IdPermiso</th>
+                                <th>Nombre</th>
+                                <th>Institución</th>
+                                <th>Encargado</th>
+                                <th>Fecha Vence</th>
+                                <th>Estado</th>
+                                <th>Alerta</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPermiso" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Detalle del Permiso</h6>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formPermiso">
+                        <input type="hidden" id="txtIdPermiso" name="IdPermiso" />
+
+                        <!-- DATOS GENERALES -->
+                        <div class="form-row mb-2">
+                            <div class="col-sm-6">
+                                <label>Nombre</label>
+                                <input type="text" class="form-control input-validar" id="txtNombre" name="Nombre" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Descripción</label>
+                                <input type="text" class="form-control" id="txtDescripcion" name="Descripcion">
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-2">
+                            <div class="col-sm-6">
+                                <label>Institución</label>
+                                <input type="text" class="form-control" id="txtInstitucion" name="Institucion">
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Encargado</label>
+                                <input type="text" class="form-control input-validar" id="txtEncargado" name="Encargado" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-2">
+                            <div class="col-sm-4">
+                                <label>Fecha Emisión</label>
+                                <input type="text" class="form-control input-validar datepicker" id="txtFechaCreacion" name="FechaEmision" required>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Fecha Vencimiento</label>
+                                <input type="text" class="form-control input-validar datepicker" id="txtFechaVencimiento" name="FechaVencimiento" required>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Días Gestión</label>
+                                <input type="number" class="form-control input-validar" id="txtDiasGestion" name="DiasGestion">
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-2">
+                            <div class="col-sm-12">
+                                <label>Área</label>
+                                <select class="form-control input-validar" id="cboArea" name="IdArea" required>
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- CRITICIDAD, TIPO, ESTADO -->
+                        <div class="form-row mb-2">
+                            <div class="col-sm-4">
+                                <label>Criticidad</label>
+                                <select class="form-control input-validar" id="cboCriticidad" name="Criticidad" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="ALTA">Alta</option>
+                                    <option value="MEDIA">Media</option>
+                                    <option value="BAJA">Baja</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Tipo</label>
+                                <select class="form-control input-validar" id="cboTipo" name="Tipo" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="LICENCIA">Licencia</option>
+                                    <option value="CONCESION">Concesión</option>
+                                    <option value="REGISTRO">Registro</option>
+                                    <option value="PERMISO">Permiso</option>
+                                    <option value="OTROS">Otros</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Estado</label>
+                                <select class="form-control input-validar" id="cboEstado" name="EstadoPermiso" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="VIGENTE">Vigente</option>
+                                    <option value="VENCIDO">Vencido</option>
+                                    <option value="EN TRÁMITE">En Trámite</option>
+                                    <option value="RENOVADO">Renovado</option>
+                                    <option value="INACTIVO">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <!-- ARCHIVOS PDF Y BOTONES -->
+                        <div class="form-row">
+                            <!-- Evidencia 1 -->
+                            <div class="col-sm-4">
+                                <label>Archivo Evidencia 1 (PDF)</label>
+                                <input type="file" class="form-control-file" id="txtEvidencia" accept=".pdf">
+
+                                <div class="mt-1">
+                                    <small id="lblNombreArchivo" class="form-text text-truncate" style="font-weight: bold; color: #004085;"></small>
+                                </div>
+
+                                <div class="d-flex justify-content-start gap-2 mt-1">
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" id="btnVerPdf" style="display:none">
+                                        <i class="fas fa-file-pdf"></i> Ver Evidencia 1
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" id="btnEliminarPdf" style="display:none">
+                                        ...<i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Evidencia 2 -->
+                            <div class="col-sm-4">
+                                <label>Archivo Evidencia 2 (PDF)</label>
+                                <input type="file" class="form-control-file" id="txtEvidencia2" accept=".pdf">
+
+                                <div class="mt-1">
+                                    <small id="lblNombreArchivo2" class="form-text text-truncate" style="font-weight: bold; color: #004085;"></small>
+                                </div>
+
+                                <div class="d-flex justify-content-start gap-2 mt-1">
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" id="btnVerPdf2" style="display:none">
+                                        <i class="fas fa-file-pdf"></i> Ver Evidencia 2
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" id="btnEliminarPdf2" style="display:none">
+                                        ...<i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Evidencia 3 -->
+                            <div class="col-sm-4">
+                                <label>Archivo Evidencia 3 (PDF)</label>
+                                <input type="file" class="form-control-file" id="txtEvidencia3" accept=".pdf">
+
+                                <div class="mt-1">
+                                    <small id="lblNombreArchivo3" class="form-text text-truncate" style="font-weight: bold; color: #004085;"></small>
+                                </div>
+
+                                <div class="d-flex justify-content-start gap-2 mt-1">
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" id="btnVerPdf3" style="display:none">
+                                        <i class="fas fa-file-pdf"></i> Ver Evidencia 3
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" id="btnEliminarPdf3" style="display:none">
+                                        ...<i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" id="btnGuardar"><i class="fas fa-save"></i> Guardar</button>
+                    <button class="btn btn-danger btn-sm" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/vendor/jquery-ui/jquery-ui.js"></script>
+    <script src="~/vendor/jquery-ui/idioma/datepicker-es.js"></script>
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+    <script src="~/js/vistas/Permiso_Index.js"></script>
+    <script src="~/js/vistas/Common.js"></script>
+}

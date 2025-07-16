@@ -1,6 +1,6 @@
 ﻿using Entity;
 
-namespace Encadenamiento.WebApp.Models.ViewModels
+namespace Permisos.WebApp.Models.ViewModels
 {
     // Esta tabla surgió por necesidad y no se consideró en el diseño original
     // evitar confundor con el detalle de la revision, se hizo para contener

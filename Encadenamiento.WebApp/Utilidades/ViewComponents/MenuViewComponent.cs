@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Encadenamiento.WebApp.Models.ViewModels;
 using Business.Interfaces;
+using Permisos.WebApp.Models.ViewModels;
 
-namespace Encadenamiento.WebApp.Utilidades.ViewComponents
+namespace Permisos.WebApp.Utilidades.ViewComponents
 {
     public class MenuViewComponent: ViewComponent
     {

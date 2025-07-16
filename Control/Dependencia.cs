@@ -21,15 +21,13 @@ namespace Control
     {
         public static void InyectarDependencia(this IServiceCollection services, IConfiguration Configuration)
         {
-            services.AddDbContext<CumplimientoContext>(options =>
+            services.AddDbContext<PermisosContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("Cadena_Conexion"));
+                options.UseSqlServer(Configuration.GetConnectionString("Cadena_ConexionPermisos"));
             });
+          
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-            services.AddScoped<IPlanesRepository, PlanesRepository>();
-
-            services.AddScoped<IVisitaRepository, VisitaRepository>();
+          
 
             services.AddScoped<ICorreoService, CorreoService>();
 
@@ -39,27 +37,25 @@ namespace Control
 
             services.AddScoped<IRolService, RolService>();
 
-            services.AddScoped<IUsuarioService, UsuarioService>();
-
-            services.AddScoped<IMaestroFincaService, MaestroFincaService>();
-
-            services.AddScoped<ICheckListService, CheckListService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();           
 
             services.AddScoped<INegocioService, NegocioService>();
-
-            services.AddScoped<IPlanesTrabajoService, PlanesTrabajoService>();
-
+           
             services.AddScoped<IDashBoardService, DashBoardService>();
 
-            services.AddScoped<IMenuService, MenuService>();
-
-            services.AddScoped<IRevisionService, RevisionService>();
-
-            services.AddScoped<IVisitaService, VisitaService>();
+            services.AddScoped<IMenuService, MenuService>();            
 
             services.AddScoped<IParametroService, ParametroService>();
 
-            services.AddScoped<ISincronizaService, SincronizaService>();
+            services.AddScoped<IAlertaService, AlertaService>();
+
+            services.AddScoped<IDestinatarioService, DestinatarioService>();
+
+            services.AddScoped<IPermisoService, PermisoService>();
+
+            services.AddScoped<IPlantillaService, PlantillaService>();
+
+            services.AddScoped<IAreaService, AreaService>();
 
             services.AddHttpClient();
 

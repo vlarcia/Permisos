@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Encadenamiento.WebApp.Models.ViewModels;
 using Business.Interfaces;
 using Entity;
 using System.Security.Claims;
@@ -7,11 +6,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Business.Implementacion;
 using Newtonsoft.Json;
-using Encadenamiento.WebApp.Utilidades.Response;
+using Permisos.WebApp.Utilidades.Response;
+using Permisos.WebApp.Models.ViewModels;
 
 
 
-namespace Encadenamiento.WebApp.Controllers
+namespace Permisos.WebApp.Controllers
 {
     public class AccesoController : Controller
     {
@@ -40,28 +40,41 @@ namespace Encadenamiento.WebApp.Controllers
         public IActionResult Parametros()
         {
             return View();
-        }  
-
+        }
         [HttpPost]
-        public async Task <IActionResult> Login(VMUsuarioLogin modelo)
+        public async Task<IActionResult> Login(VMUsuarioLogin modelo)
         {
-            
-            Usuario usuaro_encontrado = await _usuarioService.ObtenerPorCredenciales(modelo.Correo, modelo.Clave);
+            // Validar si correo o clave están vacíos
+            if (string.IsNullOrWhiteSpace(modelo.Correo) || string.IsNullOrWhiteSpace(modelo.Clave))
+            {
+                ViewData["Mensaje"] = "Por favor, completa tu correo y contraseña.";
+                return View();
+            }
+
+            TbUsuario usuaro_encontrado = await _usuarioService.ObtenerPorCredenciales(modelo.Correo, modelo.Clave);
+
             if (usuaro_encontrado == null)
             {
                 ViewData["Mensaje"] = "No se encontraron coincidencias";
                 return View();
             }
-            ViewData["Mensaje"]=null;
+
+            ViewData["Mensaje"] = null;
+
             List<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, usuaro_encontrado.Nombre),
-                new Claim(ClaimTypes.NameIdentifier, usuaro_encontrado.IdUsuario.ToString()),
-                new Claim(ClaimTypes.Role, usuaro_encontrado.IdRol.ToString()),
-                new Claim("UrlFoto", usuaro_encontrado.UrlFoto),               
-            }; 
+            new Claim(ClaimTypes.Name, usuaro_encontrado.Nombre),
+            new Claim(ClaimTypes.NameIdentifier, usuaro_encontrado.IdUsuario.ToString()),
+            new Claim(ClaimTypes.Role, usuaro_encontrado.IdRol.ToString()),
+            new Claim("UrlFoto", usuaro_encontrado.UrlFoto ?? string.Empty),
+            new Claim("IdArea", usuaro_encontrado.IdArea?.ToString() ?? "0"),
+
+            };
+
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            AuthenticationProperties properties = new AuthenticationProperties() {
+
+            AuthenticationProperties properties = new AuthenticationProperties()
+            {
                 AllowRefresh = true,
                 IsPersistent = modelo.MantenerSesion
             };
@@ -72,7 +85,7 @@ namespace Encadenamiento.WebApp.Controllers
                 properties
             );
 
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -80,7 +93,7 @@ namespace Encadenamiento.WebApp.Controllers
         {
             try
             {
-                string urlPlantillaCorreo = $"{this.Request.Scheme}://{this.Request.Host}/Plantilla/RestablecerClave?clave=[clave]";
+                string urlPlantillaCorreo = $"{Request.Scheme}://{Request.Host}/Plantilla/RestablecerClave?clave=[clave]";
                 bool resultado=await _usuarioService.RestablecerClave(modelo.Correo, urlPlantillaCorreo);
                 if (resultado)
                 {
@@ -118,7 +131,7 @@ namespace Encadenamiento.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Lista()
         {
-            List<Configuracion> parametrosLista =await _parametroService.Lista();
+            List<TbConfiguracion> parametrosLista =await _parametroService.Lista();
             return StatusCode(StatusCodes.Status200OK, new { data = parametrosLista });
         }
 
@@ -132,11 +145,11 @@ namespace Encadenamiento.WebApp.Controllers
 
         public async Task<IActionResult> GuardarCambios([FromForm] string parametros)        
         {
-            GenericResponse<Configuracion> gResponse = new GenericResponse<Configuracion>();
-            Configuracion parametromodificado = null;
+            GenericResponse<TbConfiguracion> gResponse = new GenericResponse<TbConfiguracion>();
+            TbConfiguracion parametromodificado = null;
             try
             {
-                List<Configuracion> parametroLista = JsonConvert.DeserializeObject<List<Configuracion>>(parametros);
+                List<TbConfiguracion> parametroLista = JsonConvert.DeserializeObject<List<TbConfiguracion>>(parametros);
 
                 parametromodificado = await _parametroService.Editar(parametroLista);
                 gResponse.Estado = true;

@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Newtonsoft.Json;
-using Encadenamiento.WebApp.Models.ViewModels;
-using Encadenamiento.WebApp.Utilidades.Response;
 using Business.Interfaces;
 using Entity;
 using Microsoft.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
+using Permisos.WebApp.Utilidades.Response;
+using Permisos.WebApp.Models.ViewModels;
 
-namespace Encadenamiento.WebApp.Controllers
+namespace Permisos.WebApp.Controllers
 {
     [Authorize]
     public class NegocioController : Controller
@@ -62,7 +62,7 @@ namespace Encadenamiento.WebApp.Controllers
                     logoStream = logo.OpenReadStream();
                 }
 
-                Negocio negocio_editado= await _negocioService.GuardarCambios(_mapper.Map<Negocio>(vmNegocio), logoStream, nombreLogo);
+                TbNegocio negocio_editado= await _negocioService.GuardarCambios(_mapper.Map<TbNegocio>(vmNegocio), logoStream, nombreLogo);
                 vmNegocio=_mapper.Map<VMNegocio>(negocio_editado);
 
                 gResponse.Estado = true;

@@ -1,4 +1,4 @@
-﻿namespace Encadenamiento.WebApp.Utilidades.Extensiones
+﻿namespace Permisos.WebApp.Utilidades.Extensiones
 {
     public class ConfiguracionSegura
     {

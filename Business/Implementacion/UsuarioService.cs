@@ -17,12 +17,12 @@ namespace Business.Implementacion
 {
     public class UsuarioService : IUsuarioService
     {
-        private readonly IGenericRepository<Usuario> _repositorio;
+        private readonly IGenericRepository<TbUsuario> _repositorio;
         private readonly IFireBaseService _firebaseService;
         private readonly IUtilidadesService _utilidadesService; 
         private readonly ICorreoService _correoService;
         public UsuarioService(
-            IGenericRepository<Usuario> repositorio,
+            IGenericRepository<TbUsuario> repositorio,
             IFireBaseService firebaseService,
             IUtilidadesService utilidadesService,
             ICorreoService correoService
@@ -34,14 +34,14 @@ namespace Business.Implementacion
             _correoService = correoService; 
 
         }
-        public async Task<List<Usuario>> Lista()
+        public async Task<List<TbUsuario>> Lista()
         {
-            IQueryable<Usuario> query = await _repositorio.Consultar();
-            return query.Include(r => r.IdRolNavigation).ToList();    
+            IQueryable<TbUsuario> query = _repositorio.Consultar();
+            return await query.Include(r => r.IdRolNavigation).Include(a=> a.IdAreaNavigation).ToListAsync();    
         }
-        public async Task<Usuario> Crear(Usuario entidad, Stream foto = null, string NombreFoto = "", string UrlPlantillaCorreo = "")
+        public async Task<TbUsuario> Crear(TbUsuario entidad, Stream foto = null, string NombreFoto = "", string UrlPlantillaCorreo = "")
         {
-            Usuario usuario_existe = await _repositorio.Obtener(u => u.Correo == entidad.Correo);
+            TbUsuario usuario_existe = await _repositorio.Obtener(u => u.Correo == entidad.Correo);
             if (usuario_existe != null)
                 throw new TaskCanceledException("El usuario ya existe");
             try
@@ -54,7 +54,7 @@ namespace Business.Implementacion
                     string UrlFoto = await _firebaseService.SubirStorage(foto, "carpeta_usuario", NombreFoto);
                     entidad.UrlFoto=UrlFoto;
                 }
-                Usuario usuario_creado = await _repositorio.Crear(entidad);
+                TbUsuario usuario_creado = await _repositorio.Crear(entidad);
                 if (usuario_creado.IdUsuario == 0)
                     throw new TaskCanceledException("No se pudo crear el Usuario!");
 
@@ -81,10 +81,8 @@ namespace Business.Implementacion
                     if (htmlCorreo != null)
                         await _correoService.EnviarCorreo(usuario_creado.Correo, "Cuenta Creada", htmlCorreo,null,null);
                 }
-                IQueryable<Usuario> query=await _repositorio.Consultar(u=> u.IdUsuario==usuario_creado.IdUsuario);
-                usuario_creado=query.Include(r=>r.IdRolNavigation).First();
-
-                return usuario_creado;
+                IQueryable<TbUsuario> query=_repositorio.Consultar(u => u.IdUsuario == usuario_creado.IdUsuario);
+                return await query.Include(r=>r.IdRolNavigation).FirstAsync();
 
             }
             catch(Exception ex) 
@@ -93,20 +91,21 @@ namespace Business.Implementacion
             }
         }
 
-        public async Task<Usuario> Editar(Usuario entidad, Stream Foto = null, string NombreFoto = "")
+        public async Task<TbUsuario> Editar(TbUsuario entidad, Stream Foto = null, string NombreFoto = "")
         {
-            Usuario usuario_existe = await _repositorio.Obtener(u => u.Correo == entidad.Correo && u.IdUsuario != entidad.IdUsuario);
+            TbUsuario usuario_existe = await _repositorio.Obtener(u => u.Correo == entidad.Correo && u.IdUsuario != entidad.IdUsuario);
             if (usuario_existe != null)
                 throw new TaskCanceledException("El correo ya existe");
             try
             {
-                IQueryable<Usuario> queryUsuario = await _repositorio.Consultar(u => u.IdUsuario == entidad.IdUsuario);
-                Usuario usuario_editar = queryUsuario.First();
+                IQueryable<TbUsuario> queryUsuario = _repositorio.Consultar(u => u.IdUsuario == entidad.IdUsuario);
+                TbUsuario usuario_editar = queryUsuario.First();
                 usuario_editar.Nombre=entidad.Nombre;
                 usuario_editar.Correo=entidad.Correo;   
                 usuario_editar.Telefono=entidad.Telefono;
                 usuario_editar.IdRol = entidad.IdRol;
                 usuario_editar.EsActivo=entidad.EsActivo;
+                usuario_editar.IdArea = entidad.IdArea;
 
                 if (usuario_editar.NombreFoto == "")
                     usuario_editar.NombreFoto = NombreFoto;
@@ -120,8 +119,8 @@ namespace Business.Implementacion
                 bool respuesta = await _repositorio.Editar(usuario_editar);
                 if(!respuesta)
                     throw new TaskCanceledException("No se pudo actualizar el usuario.  Revise !");
-                Usuario usuario_editado=queryUsuario.Include(r=> r.IdRolNavigation).First();
-                return usuario_editado;
+                return await queryUsuario.Include(r=> r.IdRolNavigation).FirstAsync();
+                
             }
             catch 
             {
@@ -133,7 +132,7 @@ namespace Business.Implementacion
         {
             try
             {
-                Usuario usuario_encontrado = await _repositorio.Obtener(u => u.IdUsuario == IdUsuario);
+                TbUsuario usuario_encontrado = await _repositorio.Obtener(u => u.IdUsuario == IdUsuario);
                 if (usuario_encontrado == null)
                     throw new TaskCanceledException("El usuario no existe!");
                 string nombreFoto = usuario_encontrado.NombreFoto;
@@ -148,25 +147,24 @@ namespace Business.Implementacion
             }
         }       
 
-        public async Task<Usuario> ObtenerPorCredenciales(string correo, string clave)
+        public async Task<TbUsuario> ObtenerPorCredenciales(string correo, string clave)
         {
             string clave_encriptada = _utilidadesService.ConvertirSha256(clave);
-            Usuario usuario_encontardo = await _repositorio.Obtener(u=>u.Correo == correo && u.Clave==clave_encriptada);
+            TbUsuario usuario_encontardo = await _repositorio.Obtener(u=>u.Correo == correo && u.Clave==clave_encriptada);
             return usuario_encontardo;  
         }
 
-        public async Task<Usuario> ObtenerPorId(int IdUsuario)
+        public async Task<TbUsuario> ObtenerPorId(int IdUsuario)
         {
-            IQueryable<Usuario> query = await _repositorio.Consultar(u => u.IdUsuario == IdUsuario);
-                Usuario resultado=query.Include(r=> r.IdRolNavigation).FirstOrDefault();
-            return resultado;
+            IQueryable<TbUsuario> query = _repositorio.Consultar(u => u.IdUsuario == IdUsuario);                
+            return await query.Include(r => r.IdRolNavigation).FirstOrDefaultAsync();
 
         }
-        public async Task<bool> GuardarPerfil(Usuario entidad)
+        public async Task<bool> GuardarPerfil(TbUsuario entidad)
         {
             try 
             {
-                Usuario usuario_encontrado=await _repositorio.Obtener(u=> u.IdUsuario==entidad.IdUsuario);
+                TbUsuario usuario_encontrado=await _repositorio.Obtener(u=> u.IdUsuario==entidad.IdUsuario);
                 if (usuario_encontrado == null)
                     throw new TaskCanceledException("El usuario no existe!");
                 usuario_encontrado.Correo = entidad.Correo;
@@ -186,7 +184,7 @@ namespace Business.Implementacion
         {
             try 
             {
-                Usuario usuario_encontrado = await _repositorio.Obtener(u => u.IdUsuario == IdUsuario);
+                TbUsuario usuario_encontrado = await _repositorio.Obtener(u => u.IdUsuario == IdUsuario);
                 if (usuario_encontrado == null)
                     throw new TaskCanceledException("El usuario no existe!");
 
@@ -208,7 +206,7 @@ namespace Business.Implementacion
         {
             try
             {
-                Usuario usuario_encontrado = await _repositorio.Obtener(u => u.Correo == Correo);
+                TbUsuario usuario_encontrado = await _repositorio.Obtener(u => u.Correo == Correo);
                 if (usuario_encontrado == null)
                     throw new TaskCanceledException("No existe usuario asociado a ese correo!");
 

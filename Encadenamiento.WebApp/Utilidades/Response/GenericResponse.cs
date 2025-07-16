@@ -1,4 +1,4 @@
-﻿namespace Encadenamiento.WebApp.Utilidades.Response
+﻿namespace Permisos.WebApp.Utilidades.Response
 {
     public class GenericResponse<TObject>
     {

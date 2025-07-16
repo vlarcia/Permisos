@@ -9,6 +9,6 @@ namespace Business.Interfaces
 {
     public interface IRolService
     {
-        Task<List<Rol>> Lista();
+        Task<List<TbRol>> Lista();
     }
 }
