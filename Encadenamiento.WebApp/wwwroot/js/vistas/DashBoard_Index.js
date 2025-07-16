@@ -10,11 +10,15 @@
             if (responseJson.estado) {
                 const d = responseJson.objeto
                 $("#totalPermisos").text(d.totalPermisos)
-                $("#totalDestinatarios").text(d.totalDestinatarios)            
+                $("#totalDestinatarios").text(d.totalDestinatarios)
                 $("#alertasUltimoMes").text(d.alertasUltimoMes)
                 $("#vencimientosMes").text(d.vencimientosMes)
                 $("#totalPermisosVencidos").text(d.totalPermisosVencidosNoTramite);
 
+                // Evento click en tarjeta "Vencidos sin Trámite"
+                $("#cardPermisosVencidos").on("click", function () {
+                    mostrarPermisosVencidos();
+                });
 
                 // Graficas
                 let barchart_labels;
@@ -24,7 +28,7 @@
                     barchart_data = d.renovaciones.map((item) => { return item.valor })
                 } else {
                     barchart_labels = ["Sin Resultados"]
-                    barchart_data=[0]
+                    barchart_data = [0]
                 }
 
                 let barchart_labels2;
@@ -36,7 +40,6 @@
                     barchart_labels2 = ["Sin Resultados"]
                     barchart_data2 = [0]
                 }
-
 
                 // Bar Chart Fincas
                 let controlRenovaciones = document.getElementById("chartRenovaciones");
@@ -74,6 +77,7 @@
                         },
                     }
                 });
+
                 // Bar Chart Actividades
                 let controlVencimientos = document.getElementById("chartVencimientos");
                 let myBarChart2 = new Chart(controlVencimientos, {
@@ -97,7 +101,6 @@
                             if (elements.length > 0) {
                                 const index = elements[0]._index;
                                 const fechaSeleccionada = barchart_labels2[index];
-                                // Fetch al backend para obtener los permisos que vencen en esa fecha y mostrarlos en un modal
                                 mostrarTablaPermisosPorFecha(fechaSeleccionada);
                             }
                         },
@@ -116,22 +119,54 @@
                                 }
                             }],
                         },
-
                     }
                 });
             }
-
             else {
                 Swal.fire("Lo sentimos!", responseJson.mensaje, "error")
             }
         })
 
-    function mostrarPermisosPorFecha(fechaSeleccionada) {
-        // Convertir fechaSeleccionada (dd/MM/yyyy) a objeto Date
-        const partes = fechaSeleccionada.split('/');
-        const fechaObj = new Date(partes[2], partes[1] - 1, partes[0]); // Año, mes-1, día
+    function mostrarPermisosVencidos() {
+        $("#fechaSeleccionadaTitulo").text("con estado vencido sin Trámite");
+        $("#tablaPermisosFecha tbody").empty();
+        $("div.container-fluid").LoadingOverlay("show");
 
-        // Convertir a formato ISO yyyy-MM-dd para enviar al backend
+        fetch(`/DashBoard/ObtenerPermisosVencidos`)
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(data => {
+                $("div.container-fluid").LoadingOverlay("hide");
+                if (data.estado) {
+                    if (data.objeto.length > 0) {
+                        data.objeto.forEach(permiso => {
+                            let fila = `
+                            <tr>
+                                <td>${permiso.idPermiso}</td>
+                                <td>${permiso.nombre.length > 100 ? permiso.nombre.substring(0, 100) + "..." : permiso.nombre}</td>
+                                <td>${new Date(permiso.fechaVencimiento).toLocaleDateString()}</td>
+                                <td>${permiso.nombreArea}</td>
+                                <td>${permiso.estadoPermiso}</td>
+                                <td>${permiso.institucion}</td>
+                            </tr>`;
+                            $("#tablaPermisosFecha tbody").append(fila);
+                        });
+                    } else {
+                        $("#tablaPermisosFecha tbody").append(`<tr><td colspan="6" class="text-center">No hay permisos vencidos.</td></tr>`);
+                    }
+                    $("#modalPermisosFecha").modal("show");
+                } else {
+                    Swal.fire("Error", data.mensaje, "error");
+                }
+            })
+            .catch(err => {
+                $("div.container-fluid").LoadingOverlay("hide");
+                Swal.fire("Error", "No se pudo obtener la información. " + err, "error");
+            });
+    }
+
+    function mostrarPermisosPorFecha(fechaSeleccionada) {
+        const partes = fechaSeleccionada.split('/');
+        const fechaObj = new Date(partes[2], partes[1] - 1, partes[0]);
         const fechaISO = fechaObj.toISOString().split('T')[0];
 
         $("div.container-fluid").LoadingOverlay("show");
@@ -149,7 +184,6 @@
                         return;
                     }
 
-                    // Construir HTML personalizado alineado a la izquierda
                     let contenidoHtml = `<div style="text-align:left;">`;
 
                     permisos.forEach(p => {
@@ -185,27 +219,14 @@
             });
     }
 
-    function mostrarTablaPermisosPorFecha(fecha) {   //muestro los datos de permisos a vencer con un modal (mas detalle)
-        // Actualiza el título del modal
-        $("#fechaSeleccionadaTitulo").text(fecha);
-
-        // Limpiar tabla antes de llenar
+    function mostrarTablaPermisosPorFecha(fecha) {
+        $("#fechaSeleccionadaTitulo").text("que se vencen en la fecha " + fecha);
         $("#tablaPermisosFecha tbody").empty();
-
-        // Mostrar loader o algo si quieres
         $("div.container-fluid").LoadingOverlay("show");
 
-        // Llama al backend para obtener permisos que vencen en la fecha seleccionada
-
-        // Convertir fechaSeleccionada (dd/MM/yyyy) a objeto Date
         const partes = fecha.split('/');
-        const fechaObj = new Date(partes[2], partes[1] - 1, partes[0]); // Año, mes-1, día
-
-        // Convertir a formato ISO yyyy-MM-dd para enviar al backend
+        const fechaObj = new Date(partes[2], partes[1] - 1, partes[0]);
         const fechaISO = fechaObj.toISOString().split('T')[0];
-
-
-
 
         fetch(`/DashBoard/ObtenerPermisosPorFecha?fecha=${encodeURIComponent(fechaISO)}`)
             .then(response => response.ok ? response.json() : Promise.reject(response))
@@ -219,13 +240,14 @@
                                 <td>${permiso.idPermiso}</td>
                                 <td>${permiso.nombre.length > 100 ? permiso.nombre.substring(0, 100) + "..." : permiso.nombre}</td>
                                 <td>${new Date(permiso.fechaVencimiento).toLocaleDateString()}</td>
+                                <td>${permiso.nombreArea}</td>
                                 <td>${permiso.estadoPermiso}</td>
                                 <td>${permiso.institucion}</td>
                             </tr>`;
                             $("#tablaPermisosFecha tbody").append(fila);
                         });
                     } else {
-                        $("#tablaPermisosFecha tbody").append(`<tr><td colspan="4" class="text-center">No hay permisos vencidos para esta fecha.</td></tr>`);
+                        $("#tablaPermisosFecha tbody").append(`<tr><td colspan="6" class="text-center">No hay permisos vencidos para esta fecha.</td></tr>`);
                     }
                     $("#modalPermisosFecha").modal("show");
                 } else {
@@ -238,5 +260,4 @@
             });
     }
 
-
-})
+});

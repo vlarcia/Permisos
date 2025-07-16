@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Reporte Evidencias";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <style>
+        .btn-ver-evidencia {
+            margin-right: 5px;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-2 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Reporte de Permisos con Evidencias</h6>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="tbReporteEvidencias" width="100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Área</th>
+                        <th>Institución</th>
+                        <th>Fecha Vencimiento</th>
+                        <th>Evidencias</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#tbReporteEvidencias").DataTable({
+                responsive: true,
+                ajax: {
+                    url: '/ReportePermisos/PermisosConEvidencias',
+                    type: 'GET',
+                    datatype: 'json'
+                },
+                columns: [
+                    { data: "idPermiso" },
+                    { data: "nombre" },
+                    { data: "nombreArea" },
+                    { data: "institucion" },
+                    {
+                        data: "fechaVencimiento",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString("es-NI");
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data) {
+                            let botones = "";
+                            if (data.urlEvidencia) {
+                                botones += `<a href="${data.urlEvidencia}" target="_blank" class="btn btn-sm btn-outline-success btn-ver-evidencia"><i class="fas fa-file-pdf"></i> Ver 1</a>`;
+                            }
+                            if (data.urlEvidencia2) {
+                                botones += `<a href="${data.urlEvidencia2}" target="_blank" class="btn btn-sm btn-outline-success btn-ver-evidencia"><i class="fas fa-file-pdf"></i> Ver 2</a>`;
+                            }
+                            if (data.urlEvidencia3) {
+                                botones += `<a href="${data.urlEvidencia3}" target="_blank" class="btn btn-sm btn-outline-success btn-ver-evidencia"><i class="fas fa-file-pdf"></i> Ver 3</a>`;
+                            }
+                            return botones || "Sin Evidencias";
+                        }
+                    }
+                ],
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Exportar Excel',
+                        className: 'btn btn-success btn-sm'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Imprimir',
+                        className: 'btn btn-secondary btn-sm'
+                    }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json'
+                }
+            });
+        });
+    </script>
+}

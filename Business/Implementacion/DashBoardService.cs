@@ -137,7 +137,9 @@ namespace Business.Implementacion
         }
         public async Task<List<TbPermiso>> ObtenerPermisosPorFecha(DateTime fecha)
         {
-            return await _permisoRepositorio.Consultar(p => p.FechaVencimiento.Date == fecha.Date).ToListAsync();
+            return await _permisoRepositorio.Consultar(p => p.FechaVencimiento.Date == fecha.Date)
+                .Include(p => p.IdAreaNavigation)
+                .ToListAsync();
         }
         public async Task<int> TotalPermisosVencidosNoTramite()
         {
@@ -145,6 +147,13 @@ namespace Business.Implementacion
             return await _permisoRepositorio.Consultar(p => p.FechaVencimiento < fechaActual && p.EstadoPermiso != "EN TRÁMITE").CountAsync();
         }
 
+        public async Task<List<TbPermiso>> ObtenerPermisosVencidosSinTramite()
+        {
+            return await _permisoRepositorio.Consultar(p =>
+                p.FechaVencimiento < DateTime.Now && p.EstadoPermiso != "EN TRÁMITE")
+                .Include(p => p.IdAreaNavigation)
+                .ToListAsync();
+        }
 
     }
 }

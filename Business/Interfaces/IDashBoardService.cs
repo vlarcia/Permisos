@@ -18,6 +18,9 @@ namespace Business.Interfaces
         Task<Dictionary<string,int>> VencimientosMes();
         Task<List<TbPermiso>> ObtenerPermisosPorFecha(DateTime fecha);
         Task<int> TotalPermisosVencidosNoTramite();
+        Task<List<TbPermiso>> ObtenerPermisosVencidosSinTramite();
+
+
 
 
     }

@@ -16,7 +16,7 @@
     <div class="row">
 
         <!-- Total de Permisos -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-2 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Total destinatarios -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-2 col-md-6 mb-4">
             <div class="card border-left-danger shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -54,7 +54,7 @@
         </div>
 
         <!-- Total de Alertas -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-2 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -73,7 +73,7 @@
         </div>
 
         <!-- Total de Vencimiento proximo mes -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-2 col-md-6 mb-4">
             <div class="card border-left-dark shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -91,9 +91,9 @@
             </div>
         </div>
         <!-- Total de Vencidos sin tramite -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-2 col-md-6 mb-4">
             <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body" id="cardPermisosVencidos" style="cursor: pointer;">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
@@ -115,7 +115,7 @@
 
     <div class="row">
 
-        <!-- Area Chart - Fincas Visitadas días -->
+        <!-- Area Chart - Renovaciones del mes -->
         <div class="col-xl-6 col-lg-6">
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
@@ -131,7 +131,7 @@
             </div>
         </div>
 
-        <!-- Chart - Actividades Completadas-->
+        <!-- Chart - Vencimientos del mes-->
         <div class="col-xl-6 col-lg-6">
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
@@ -152,7 +152,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Permisos que se vencen en la fecha <span id="fechaSeleccionadaTitulo"></span></h5>
+                    <h5 class="modal-title text-primary font-weight-bold">Permisos <span id="fechaSeleccionadaTitulo"></span></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -163,7 +163,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Fecha Vencimiento</th>
+                                <th>Fecha Vence</th>
+                                <th>Area</th>
                                 <th>Estado</th>
                                 <th>Institucion</th>
                             </tr>

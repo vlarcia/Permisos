@@ -104,7 +104,8 @@ namespace Permisos.WebApp.Controllers
                     Nombre = p.Nombre,
                     FechaVencimiento = p.FechaVencimiento,
                     EstadoPermiso = p.EstadoPermiso,
-                    Institucion = p.Institucion
+                    Institucion = p.Institucion,
+                    NombreArea = p.IdAreaNavigation.Nombre   //Como no hago mapeo de Area, lo hago manualmente
                 }).ToList();
             }
             catch (Exception ex)
@@ -116,6 +117,34 @@ namespace Permisos.WebApp.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ObtenerPermisosVencidos()
+        {
+            var gResponse = new GenericResponse<List<VMPermiso>>();
+
+            try
+            {                
+                var lista = await _dashboardService.ObtenerPermisosVencidosSinTramite();
+
+                gResponse.Estado = true;
+                gResponse.Objeto = lista.Select(p => new VMPermiso
+                {
+                    IdPermiso = p.IdPermiso,
+                    Nombre = p.Nombre,
+                    FechaVencimiento = p.FechaVencimiento,
+                    EstadoPermiso = p.EstadoPermiso,
+                    Institucion = p.Institucion != null ? p.Institucion : "No Definida",                    
+                    NombreArea = p.IdArea !=null ? p.IdAreaNavigation.Nombre : "Area No Definida"  //Como no hago mapeo de Area, lo hago manualmente
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                gResponse.Estado = false;
+                gResponse.Mensaje = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
 
     }
 }
